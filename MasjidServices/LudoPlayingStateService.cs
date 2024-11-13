@@ -1,4 +1,5 @@
 ﻿using MasjidApi.Data;
+using MasjidApi.DTO;
 using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace MasjidApi.MasjidServices
             _logService = loggingService;
         }
 
-        public async Task<IEnumerable<LudoPlayingState>?> GetById(string sessionId)
+        public async Task<IEnumerable<LudoPlayingState>?> GetBySessionId(string sessionId)
         {
             try
             {
@@ -129,12 +130,50 @@ namespace MasjidApi.MasjidServices
                     updatePlayer.MappingId = player.MappingId;
                     updatePlayer.isPlayerActive = player.isPlayerActive;
                     updatePlayer.isActive = player.isActive;
+                    updatePlayer.DiceValue = player.DiceValue;
+                    updatePlayer.SelectedValue = player.SelectedValue;
+                    updatePlayer.SelectedBall = player.SelectedBall;
+                    updatePlayer.wasRead = player.wasRead;
+
+                    updatePlayer.MyTurn = updatePlayer.MyTurn;  //keep it as it is, its update by other method
+
+                    await _dbContext.SaveChangesAsync();
+
+
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateDiceTurnAsync(IEnumerable<LudoPlayingState> allPlayersState)
+        {
+            try
+            {
+
+                foreach (var player in allPlayersState)
+                {
+                    var updatePlayer = await _dbContext.LudoPlayingState.Where(x => x.SessionId == player.SessionId && x.PlayerId == player.PlayerId).FirstOrDefaultAsync();
+                    if (updatePlayer == null)
+                    {
+                        return false;
+                    }
+
+                    //updatePlayer.SessionId = player.SessionId;
+                    updatePlayer.PlayerId = player.PlayerId;
+                    updatePlayer.MappingId = player.MappingId;
+                    updatePlayer.isPlayerActive = player.isPlayerActive;
+                    updatePlayer.isActive = player.isActive;
                     updatePlayer.MyTurn = player.MyTurn;
                     updatePlayer.DiceValue = player.DiceValue;
                     updatePlayer.SelectedValue = player.SelectedValue;
                     updatePlayer.SelectedBall = player.SelectedBall;
                     updatePlayer.wasRead = player.wasRead;
-                    
+
                     await _dbContext.SaveChangesAsync();
 
 

@@ -1,4 +1,5 @@
-﻿using MasjidApi.MasjidRepository;
+﻿using MasjidApi.DTO;
+using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +28,7 @@ namespace MasjidApi.Controllers
                     return NotFound();
                 }
 
-                var session = await _sessionServeice.GetById(sessionId);
+                var session = await _sessionServeice.GetBySessionId(sessionId);
 
                 if (session == null)
                 {
@@ -55,7 +56,7 @@ namespace MasjidApi.Controllers
                     return NotFound();
                 }
 
-                var session = await _sessionServeice.GetById(sessionid);
+                var session = await _sessionServeice.GetBySessionId(sessionid);
 
                 if (session == null)
                 {
@@ -89,7 +90,7 @@ namespace MasjidApi.Controllers
 
                 if (session != null)
                 {
-                    //session.MasjidID = Guid.NewGuid().ToString();
+                    //diceTurn.MasjidID = Guid.NewGuid().ToString();
                 }
 
                 var masjid = await _sessionServeice.SaveAllAsync(session);
@@ -126,10 +127,83 @@ namespace MasjidApi.Controllers
 
                 if (session != null)
                 {
-                    //session.MasjidID = Guid.NewGuid().ToString();
+                    //diceTurn.MasjidID = Guid.NewGuid().ToString();
                 }
 
                 var masjid = await _sessionServeice.UpdateAllAsync(session);
+                if (masjid == true)
+                {
+                    return Ok(masjid);
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpPut("UpdateDiceTurnAsync")]
+        public async Task<IActionResult> UpdateDiceTurnAsync([FromBody] DiceTurnDto diceTurn)
+        {
+            try
+            {
+                if (diceTurn == null)
+                {
+                    return BadRequest();
+                }
+
+                //Note: if diceTurn = True, it will update the seleted user as True and all others will be false, but if the value is False then it will only update the selected player.
+
+                List<LudoPlayingState> allPlayersState = new List<LudoPlayingState>();
+
+                var currentState = await _sessionServeice.GetBySessionId(diceTurn.SessionId);
+                if (currentState != null)
+                {
+                    foreach(var player in currentState)
+                    {
+                        LudoPlayingState newState = new LudoPlayingState()
+                        {
+                            SessionId = player.SessionId,
+                            isActive = player.isActive,
+                            isPlayerActive = player.isPlayerActive,
+                            PlayerId = player.PlayerId,
+                            MappingId = player.MappingId,
+                            MyTurn = player.MyTurn,
+                            DiceValue = player.DiceValue,
+                            SelectedValue = player.SelectedValue,
+                            SelectedBall = player.SelectedBall,
+                            wasRead = player.wasRead
+                        };
+
+                        if (newState.MappingId == diceTurn.MappingId)
+                        {
+                            newState.MyTurn = diceTurn.MyTurn;
+                        }
+                        else
+                        {
+                            if (diceTurn.MyTurn == "True")
+                            {
+                                newState.MyTurn = "False";
+                            }
+                            
+                        }
+
+                        allPlayersState.Add(newState);
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+
+                var masjid = await _sessionServeice.UpdateDiceTurnAsync(allPlayersState);
                 if (masjid == true)
                 {
                     return Ok(masjid);
