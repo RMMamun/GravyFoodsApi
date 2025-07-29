@@ -1,12 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MasjidApi.Models
 {
-    
+
     public class MasjidPrayerTime
-    {   
+    {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long MPTId { get; set; }

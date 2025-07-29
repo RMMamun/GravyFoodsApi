@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
-using MasjidApi.Models;
+﻿using MasjidApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace MasjidApi.Data
 {
@@ -24,7 +23,7 @@ namespace MasjidApi.Data
 
         public DbSet<LudoSession> LudoSession { get; set; }
         public DbSet<LudoPlayingState> LudoPlayingState { get; set; }
-        
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

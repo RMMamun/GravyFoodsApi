@@ -1,6 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MasjidApi.Models
@@ -30,7 +28,7 @@ namespace MasjidApi.Models
         public required DateTime SubscriptionStartDate { get; set; }
         public required DateTime SubscriptionEndDate { get; set; }
 
-        
+
     }
 
 

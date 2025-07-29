@@ -1,19 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace MasjidApi.Models
 {
     //[Keyless]
     public class MasjidInfo
-	{
+    {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         public string MasjidID { get; set; }
-		public string MasjidName { get; set; }
-		public string Address { get; set; }
+        public string MasjidName { get; set; }
+        public string Address { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public string? ContactNumber { get; set; }
@@ -63,7 +61,7 @@ namespace MasjidApi.Models
     public class MasjidFacilityDTO
     {
         public string MasjidID { get; set; }
-        
+
         public int? IsWaterAvailable { get; set; } = 0;
         public int? IsWomanPlaceAvailable { get; set; } = 0;
     }

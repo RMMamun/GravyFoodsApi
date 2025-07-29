@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
-namespace MasjidApi.DTO
+﻿namespace MasjidApi.DTO
 {
     public class MasjidEventParamDto
     {

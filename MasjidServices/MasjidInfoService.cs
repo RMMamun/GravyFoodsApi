@@ -3,11 +3,7 @@ using MasjidApi.Data;
 using MasjidApi.DTO;
 using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
-using static MasjidApi.Controllers.MasjidInfoController;
 
 namespace MasjidApi.MasjidServices
 {
@@ -50,7 +46,7 @@ namespace MasjidApi.MasjidServices
 
                 // Define the maximum distance in kilometers
                 if (kilometers <= 0)
-                { 
+                {
                     kilometers = 1;
                 }
 
@@ -65,9 +61,9 @@ namespace MasjidApi.MasjidServices
                 // Query the database using the calculated latitude and longitude ranges
                 var qry = await _dbContext.MasjidInfo
                     .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude && x.Longitude >= minLongitude && x.Longitude <= maxLongitude
-                    && ( (!string.IsNullOrEmpty(address) ? x.Address.Contains(address) : true) || (!string.IsNullOrEmpty(address) ? x.MasjidName.Contains(address) : true)) )
+                    && ((!string.IsNullOrEmpty(address) ? x.Address.Contains(address) : true) || (!string.IsNullOrEmpty(address) ? x.MasjidName.Contains(address) : true)))
                     .ToListAsync();
-                
+
                 return qry;
             }
             catch (Exception ex)
@@ -75,13 +71,16 @@ namespace MasjidApi.MasjidServices
                 return null;
             }
         }
+
+
         public async Task<MasjidInfoDTO> Create(MasjidInfoDTO masjidInfoDTO)
         {
             try
             {
                 bool isNew = false;
                 var masjid = await _dbContext.MasjidInfo.Where(x => x.MasjidID == masjidInfoDTO.MasjidID).FirstOrDefaultAsync();
-                if (masjid != null)
+                
+                if (masjid != null)     //UPDATE
                 {
                     masjid.MasjidName = masjidInfoDTO.MasjidName;
                     masjid.Address = masjidInfoDTO.Address;
@@ -90,7 +89,7 @@ namespace MasjidApi.MasjidServices
                     masjid.Capacity = masjidInfoDTO.Capacity;
                     masjid.City = masjidInfoDTO.City;
                     masjid.ContactNumber = masjidInfoDTO.ContactNumber;
-                    masjid.CountryId = 1;
+                    masjid.CountryId = masjidInfoDTO.CountryId == 0 ? 1 : masjidInfoDTO.CountryId;
                     masjid.Email = masjidInfoDTO.Email;
                     masjid.Website = masjidInfoDTO.Website;
                     masjid.ImagePath = masjidInfoDTO.ImagePath;
@@ -105,7 +104,7 @@ namespace MasjidApi.MasjidServices
 
                     return MasjidDTO(masjid);
                 }
-                else
+                else        //CREATE
                 {
                     isNew = true;
 
@@ -120,7 +119,7 @@ namespace MasjidApi.MasjidServices
                         Capacity = masjidInfoDTO.Capacity,
                         City = masjidInfoDTO.City,
                         ContactNumber = masjidInfoDTO.ContactNumber,
-                        CountryId = 1,
+                        CountryId = masjidInfoDTO.CountryId == 0 ? 1 : masjidInfoDTO.CountryId,
                         Email = masjidInfoDTO.Email,
                         Website = masjidInfoDTO.Website,
                         ImagePath = masjidInfoDTO.ImagePath,
@@ -129,7 +128,7 @@ namespace MasjidApi.MasjidServices
                         IsWaterAvailable = masjidInfoDTO.IsWaterAvailable,
                         IsWomanPlaceAvailable = masjidInfoDTO.IsWomanPlaceAvailable
 
-                    
+
                     };
 
                     var result = await _dbContext.MasjidInfo.AddAsync(newMasjid);
@@ -140,7 +139,7 @@ namespace MasjidApi.MasjidServices
                     if (isNew == true)
                     {
                         var isCopied = await CopyAndSavePrayerTimeOfNearestMasjid((double)newMasjid.Latitude, (double)newMasjid.Longitude);
-                    
+
                     }
 
                     return MasjidDTO(newMasjid);
@@ -166,11 +165,11 @@ namespace MasjidApi.MasjidServices
                 {
                     foreach (var item in neasrest)
                     {
-                        double distance =  geoLoc.CalculateDistance(latitude, longitude, (double)item.Longitude, (double)item.Longitude);
+                        double distance = geoLoc.CalculateDistance(latitude, longitude, (double)item.Longitude, (double)item.Longitude);
 
                     }
-                    
-                    
+
+
                     return false;
                 }
                 else
@@ -178,7 +177,7 @@ namespace MasjidApi.MasjidServices
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -205,7 +204,7 @@ namespace MasjidApi.MasjidServices
 
                 return true;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return false;
             }
@@ -277,7 +276,7 @@ namespace MasjidApi.MasjidServices
                 }
                 return existed;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
                 return false;
@@ -379,8 +378,8 @@ namespace MasjidApi.MasjidServices
             IsWaterAvailable = masjidInfo.IsWaterAvailable,
             IsWomanPlaceAvailable = masjidInfo.IsWomanPlaceAvailable,
             ImageAsByte = masjidInfo?.ImageAsByte,
-            
-            
+
+
         };
     }
 }

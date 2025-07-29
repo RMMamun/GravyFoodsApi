@@ -1,11 +1,9 @@
-﻿using MasjidApi.Models;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace MasjidApi.DTO
 {
-    public class EventListDto 
+    public class EventListDto
     {
 
         [JsonPropertyName("eventId")]

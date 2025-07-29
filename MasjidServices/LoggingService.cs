@@ -1,7 +1,6 @@
 ﻿using MasjidApi.Data;
 using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace MasjidApi.MasjidServices
 {
@@ -18,7 +17,7 @@ namespace MasjidApi.MasjidServices
             try
             {
                 //Logging newlog = new Logging { LogDescription = sDescription, SourceName = sSource, UserId = sUser, EntryDateTime = DateTime.UtcNow };
-                                
+
                 var result = await _dbContext.Logging.AddAsync(log);
                 await _dbContext.SaveChangesAsync();
 
@@ -30,7 +29,7 @@ namespace MasjidApi.MasjidServices
             }
         }
 
-        public async Task<bool> SaveLogAsync (string description, string scource, string userid)
+        public async Task<bool> SaveLogAsync(string description, string scource, string userid)
         {
             try
             {

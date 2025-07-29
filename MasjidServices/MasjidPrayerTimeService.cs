@@ -8,7 +8,7 @@ namespace MasjidApi.MasjidServices
     public class MasjidPrayerTimeService : IMasjidPrayerTimeService
     {
         private readonly MasjidDBContext _dbContext;
-        public MasjidPrayerTimeService (MasjidDBContext dbContext)
+        public MasjidPrayerTimeService(MasjidDBContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -37,7 +37,7 @@ namespace MasjidApi.MasjidServices
                 return true;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }

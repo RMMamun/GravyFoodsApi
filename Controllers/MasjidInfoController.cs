@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MasjidApi.Models;
-using NuGet.Common;
-using System.Net;
+﻿using MasjidApi.DTO;
 using MasjidApi.MasjidRepository;
-using MasjidApi.Data;
-using System.Collections.Generic;
-using MasjidApi.DTO;
+using MasjidApi.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MasjidApi.Controllers
 {
@@ -78,7 +73,7 @@ namespace MasjidApi.Controllers
                     return NotFound();
                 }
 
-                var masjid = await _masjidServeice.GetAllMasjids(locCo.Latitude, locCo.Longitude,locCo.Address, locCo.Kilometers);
+                var masjid = await _masjidServeice.GetAllMasjids(locCo.Latitude, locCo.Longitude, locCo.Address, locCo.Kilometers);
 
                 if (masjid == null)
                 {
@@ -219,7 +214,7 @@ namespace MasjidApi.Controllers
                     return null;
                 }
 
-               
+
             }
             catch (Exception ex)
             {
@@ -281,7 +276,7 @@ namespace MasjidApi.Controllers
                 {
                     return NotFound();
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -386,8 +381,8 @@ namespace MasjidApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMasjidInfo(string id, MasjidInfoDTO masjidInfoDTO)
         {
-            try 
-            { 
+            try
+            {
                 var masjid = await _masjidServeice.Update(masjidInfoDTO);
 
                 return null;
@@ -399,6 +394,6 @@ namespace MasjidApi.Controllers
             }
         }
 
-        
+
     }
 }

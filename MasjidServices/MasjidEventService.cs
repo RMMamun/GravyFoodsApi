@@ -1,10 +1,9 @@
 ﻿using MasjidApi.Common;
 using MasjidApi.Data;
-using MasjidApi.MasjidRepository;
-using Microsoft.EntityFrameworkCore;
-using MasjidApi.Models;
 using MasjidApi.DTO;
-using System.Collections.Generic;
+using MasjidApi.MasjidRepository;
+using MasjidApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace MasjidApi.MasjidServices
 {
@@ -75,7 +74,7 @@ namespace MasjidApi.MasjidServices
         {
             try
             {
-                
+
                 var result = await _dbContext.MasjidsEvent.Where(x => x.MasjidID == Dto.MasjidID && Dto.StartDate >= x.EventStartDate && Dto.StartDate <= x.EventEndDate).ToListAsync();
                 return result;
 
@@ -86,7 +85,7 @@ namespace MasjidApi.MasjidServices
             }
         }
 
-        public async Task<IEnumerable<EventListDto>> GetAllEventsByUserAndDate(string userId,DateTime eventEndDate)
+        public async Task<IEnumerable<EventListDto>> GetAllEventsByUserAndDate(string userId, DateTime eventEndDate)
         {
             try
             {
@@ -118,7 +117,7 @@ namespace MasjidApi.MasjidServices
 
                 List<EventListDto> eventLists = new List<EventListDto>();
 
-                foreach ( var item in result )
+                foreach (var item in result)
                 {
                     var eventListDto = new EventListDto
                     {
@@ -131,7 +130,7 @@ namespace MasjidApi.MasjidServices
                         EventStartDate = item.EventStartDate,
                         EventEndDate = item.EventEndDate,
                         EntryDateTime = item.EntryDateTime
-                        
+
                     };
 
                     eventLists.Add(eventListDto);
@@ -140,7 +139,7 @@ namespace MasjidApi.MasjidServices
                 return eventLists;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }

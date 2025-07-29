@@ -1,6 +1,4 @@
-﻿using MasjidApi.Common;
-using MasjidApi.Data;
-using MasjidApi.DTO;
+﻿using MasjidApi.Data;
 using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -187,7 +185,7 @@ namespace MasjidApi.MasjidServices
         {
             try
             {
-                
+
                 var sessionId = "";
                 var mappingId = "";
 
@@ -195,7 +193,7 @@ namespace MasjidApi.MasjidServices
                 var p1 = ludoSession.Where(x => x.Sequence == 1).FirstOrDefault();
                 if (p1 != null)
                 {
-                    await DeleteAllActiveSessionByUser(p1.PlayerId,p1.SessionId);
+                    await DeleteAllActiveSessionByUser(p1.PlayerId, p1.SessionId);
                 }
                 //
 
@@ -250,7 +248,7 @@ namespace MasjidApi.MasjidServices
                     return null;
                 }
 
-                    
+
                 //}
 
             }
@@ -311,14 +309,14 @@ namespace MasjidApi.MasjidServices
         //            ludo.Points = session.Points;
         //            ludo.isActive = "True";
         //            ludo.PlayerImageAsByte = session.PlayerImageAsByte;
-                    
+
         //            await _dbContext.SaveChangesAsync();
 
         //            return true;
         //        }
         //        else
         //        {
-                    
+
         //            return false;
         //        }
 
@@ -507,7 +505,7 @@ namespace MasjidApi.MasjidServices
                 var sessionIds = await _dbContext.LudoSession.Where(w => w.isActive == "True")
                                 .GroupBy(x => x.SessionId)
                                 .Where(g => g.Count() == 1)
-                                .Select(g => g.Key) 
+                                .Select(g => g.Key)
                                 .ToListAsync();
 
 
@@ -556,7 +554,7 @@ namespace MasjidApi.MasjidServices
             }
         }
 
-        
+
 
     }
 }

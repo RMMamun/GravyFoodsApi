@@ -1,11 +1,9 @@
 
-using Microsoft.EntityFrameworkCore;
-using System.Configuration;
 using MasjidApi.Common;
 using MasjidApi.Data;
 using MasjidApi.MasjidRepository;
 using MasjidApi.MasjidServices;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +19,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<MasjidDBContext>(options =>
 options.UseSqlServer(GlobalVariable.ConnString,
-    builder => builder.EnableRetryOnFailure(5,TimeSpan.FromSeconds(60),null)));
+    builder => builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(60), null)));
 
 builder.Services.AddScoped<IMasjidInfoService, MasjidInfoService>();
 builder.Services.AddScoped<IFavoriteMasjidsByUserService, FavoriteMasjidsByUserService>();

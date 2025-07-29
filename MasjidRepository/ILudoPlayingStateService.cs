@@ -1,9 +1,8 @@
 ﻿using MasjidApi.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace MasjidApi.MasjidRepository
 {
-    public interface ILudoPlayingStateService 
+    public interface ILudoPlayingStateService
     {
         Task<IEnumerable<LudoPlayingState>?> GetBySessionId(string sessionId);
 
@@ -15,7 +14,7 @@ namespace MasjidApi.MasjidRepository
 
         Task<bool> UpdateAllAsync(IEnumerable<LudoPlayingState> allPlayersState);
         Task<bool> UpdateDiceTurnAsync(IEnumerable<LudoPlayingState> allPlayersState);
-        
+
         Task<bool> DeleteById(string sessionId);
 
     }

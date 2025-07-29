@@ -166,7 +166,7 @@ namespace MasjidApi.Controllers
                 var currentState = await _sessionServeice.GetBySessionId(diceTurn.SessionId);
                 if (currentState != null)
                 {
-                    foreach(var player in currentState)
+                    foreach (var player in currentState)
                     {
                         LudoPlayingState newState = new LudoPlayingState()
                         {
@@ -192,7 +192,7 @@ namespace MasjidApi.Controllers
                             {
                                 newState.MyTurn = "False";
                             }
-                            
+
                         }
 
                         allPlayersState.Add(newState);

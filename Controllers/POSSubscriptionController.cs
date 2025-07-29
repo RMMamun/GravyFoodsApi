@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Common;
-using MasjidApi.Models;
-using MasjidApi.Data;
+﻿using MasjidApi.DTO;
 using MasjidApi.MasjidRepository;
-using MasjidApi.DTO;
+using MasjidApi.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MasjidApi.Controllers
 {
@@ -18,7 +15,7 @@ namespace MasjidApi.Controllers
         public POSSubscriptionController(IPOSSubscription posSubs, ILoggingService logService)
         {
             _posSubs = posSubs;
-            _logService = logService;   
+            _logService = logService;
         }
 
         // POST: api/UserInfo
@@ -46,7 +43,39 @@ namespace MasjidApi.Controllers
                 else
                 {
                     var user = await _posSubs.Create(subscription);
-                    return user;
+                    return Ok(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("UpdateSubscription")]
+        public async Task<ActionResult<bool>> UpdateSubscription(POSSubscription subscription)
+        {
+            try
+            {
+
+                if (subscription == null)
+                {
+                    return NotFound();
+                }
+
+                SubscriptionDto dto = new SubscriptionDto();
+                dto.DeviceKey = subscription.DeviceKey;
+                dto.SubscriptionEndDate = subscription.SubscriptionEndDate;
+
+                var check = await _posSubs.isExisted(dto);
+                if (check == true)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    var user = await _posSubs.UpdateSubscriptionAsync(subscription);
+                    return Ok(user);
                 }
             }
             catch (Exception ex)
@@ -82,7 +111,7 @@ namespace MasjidApi.Controllers
                     //Logging log = new Logging();
                     //log.EntryDateTime = DateTime.Now;
                     //log.SourceName = "POS: Loging Request";
-                    //log.LogDescription = subscription.DeviceKey + " " + subscription.SubscriptionEndDate;
+                    //log.LogDescription = sub.DeviceKey + " " + sub.SubscriptionEndDate;
 
                     //var logstatus = await _logService.Create(log);
 
@@ -100,5 +129,25 @@ namespace MasjidApi.Controllers
         }
 
 
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<POSSubscription>>> GetAllAsync()
+        {
+            try
+            {
+                var sub = await _posSubs.GetAllAsync();
+
+                if (sub == null || !sub.Any()) // Optionally check if the collection is empty
+                {
+                    return NotFound(); // Returns a 404 Not Found response
+                }
+
+                return Ok(sub); // Wrap the result in Ok() to return a 200 OK response
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); // Returns a 400 Bad Request response with the error message
+            }
+        }
     }
 }

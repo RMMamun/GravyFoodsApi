@@ -1,6 +1,5 @@
 ﻿using MasjidApi.DTO;
 using MasjidApi.Models;
-using static MasjidApi.Controllers.MasjidInfoController;
 
 namespace MasjidApi.MasjidRepository
 {

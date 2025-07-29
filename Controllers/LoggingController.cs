@@ -1,7 +1,5 @@
-﻿using MasjidApi.DTO;
-using MasjidApi.MasjidRepository;
+﻿using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MasjidApi.Controllers
@@ -32,7 +30,7 @@ namespace MasjidApi.Controllers
 
                 var user = await _logService.Create(log);
                 return true;
-                
+
             }
             catch (Exception ex)
             {

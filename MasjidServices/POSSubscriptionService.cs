@@ -4,8 +4,6 @@ using MasjidApi.DTO;
 using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MasjidApi.MasjidServices
 {
@@ -70,6 +68,30 @@ namespace MasjidApi.MasjidServices
             }
         }
 
+        public async Task<IEnumerable<POSSubscription>?> GetAllAsync()
+        {
+            try
+            {
+
+                var result = await _dbContext.POSSubscription.OrderBy(x => x.SubscriptionStartDate).ToListAsync();
+
+                if (result != null)
+                {
+                    
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
         public async Task<POSSubscription> Create(POSSubscription subscription)
         {
             try
@@ -85,6 +107,36 @@ namespace MasjidApi.MasjidServices
                 return null;
             }
         }
+
+        public async Task<bool> UpdateSubscriptionAsync(POSSubscription subs)
+        {
+            try
+            {
+
+                
+                var result = await _dbContext.POSSubscription.Where(x => x.DeviceKey == subs.DeviceKey).FirstOrDefaultAsync();
+                if (result != null)
+                {
+
+                    result.SubscriptionEndDate = subs.SubscriptionEndDate;
+
+                    await _dbContext.SaveChangesAsync();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
 
     }
 }

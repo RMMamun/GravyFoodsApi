@@ -1,5 +1,4 @@
-﻿using MasjidApi.DTO;
-using MasjidApi.Models;
+﻿using MasjidApi.Models;
 
 namespace MasjidApi.MasjidRepository
 {

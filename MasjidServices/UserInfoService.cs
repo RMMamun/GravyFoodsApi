@@ -4,7 +4,6 @@ using MasjidApi.DTO;
 using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 
 namespace MasjidApi.MasjidServices
@@ -52,7 +51,7 @@ namespace MasjidApi.MasjidServices
                 return result;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -88,7 +87,7 @@ namespace MasjidApi.MasjidServices
                     _dbContext.Entry(isExisted).CurrentValues.SetValues(user);
 
                 }
-                
+
                 await _dbContext.SaveChangesAsync();
 
                 return user;

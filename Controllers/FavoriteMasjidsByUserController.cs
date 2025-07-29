@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Common;
+﻿using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
-using System.Reflection.Metadata.Ecma335;
-using NuGet.Protocol;
-using MasjidApi.Data;
-using MasjidApi.MasjidServices;
-using MasjidApi.MasjidRepository;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MasjidApi.Controllers
 {
@@ -18,7 +12,7 @@ namespace MasjidApi.Controllers
     {
 
         private readonly IFavoriteMasjidsByUserService _fevService;
-        private readonly IMasjidInfoService  _masjidService;
+        private readonly IMasjidInfoService _masjidService;
         public FavoriteMasjidsByUserController(IFavoriteMasjidsByUserService fevService, IMasjidInfoService masjidService)
         {
             _fevService = fevService;
@@ -68,7 +62,7 @@ namespace MasjidApi.Controllers
                     return NotFound();
                 }
 
-                foreach(var masj in  masjid)
+                foreach (var masj in masjid)
                 {
                     if (masj.ImagePath != "")
                     {

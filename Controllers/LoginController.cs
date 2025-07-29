@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Common;
+﻿using MasjidApi.Data;
 using MasjidApi.Models;
-using System.Reflection.Metadata.Ecma335;
-using NuGet.Protocol;
-using MasjidApi.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MasjidApi.Controllers
 {
@@ -26,7 +23,7 @@ namespace MasjidApi.Controllers
             public string password { get; set; }
             public string deviceId { get; set; }
         }
-        
+
         // POST: api/UserInfo
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

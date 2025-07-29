@@ -1,9 +1,7 @@
 ﻿
 using MasjidApi.Data;
-using MasjidApi.DTO;
 using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace MasjidApi.MasjidServices
@@ -12,10 +10,10 @@ namespace MasjidApi.MasjidServices
     {
         private readonly MasjidDBContext _dbContext;
         private readonly ILogger<FavoriteMasjidsByUserService> _logger;
-        public FavoriteMasjidsByUserService (MasjidDBContext dbContext, ILogger<FavoriteMasjidsByUserService> logger)
+        public FavoriteMasjidsByUserService(MasjidDBContext dbContext, ILogger<FavoriteMasjidsByUserService> logger)
         {
             _dbContext = dbContext;
-            _logger = logger;   
+            _logger = logger;
         }
 
         public async Task<bool> Create(FavoriteMasjidsByUser fevmasjid)
@@ -146,7 +144,7 @@ namespace MasjidApi.MasjidServices
                 {
                     return false;
                 }
-                
+
                 _logger.LogInformation("Before using DbContext");
 
                 var result = await _dbContext.FavoriteMasjidsByUser
@@ -218,7 +216,7 @@ namespace MasjidApi.MasjidServices
                     return false;
                 }
 
-    
+
                 //    var masjidDelete = _dbContext.FavoriteMasjidsByUser.Remove(masjid);
                 _dbContext.FavoriteMasjidsByUser.Remove(masjid);
                 await _dbContext.SaveChangesAsync();

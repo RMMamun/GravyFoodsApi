@@ -1,13 +1,11 @@
 ﻿using MasjidApi.Data;
-using MasjidApi.DTO;
 using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace MasjidApi.MasjidServices
 {
-    public class LudoPlayingStateService: ILudoPlayingStateService
+    public class LudoPlayingStateService : ILudoPlayingStateService
     {
         private readonly MasjidDBContext _dbContext;
         private readonly ILoggingService _logService;

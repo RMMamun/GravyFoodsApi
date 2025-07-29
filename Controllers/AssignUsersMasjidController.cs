@@ -1,5 +1,4 @@
-﻿using MasjidApi.Data;
-using MasjidApi.DTO;
+﻿using MasjidApi.DTO;
 using MasjidApi.MasjidRepository;
 using Microsoft.AspNetCore.Mvc;
 

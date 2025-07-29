@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Common;
+﻿using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
-using MasjidApi.Data;
-using MasjidApi.MasjidRepository;
-using MasjidApi.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MasjidApi.Controllers
 {
@@ -63,7 +59,7 @@ namespace MasjidApi.Controllers
             public string DeviceId { get; set; }
 
         }
-        
+
 
         // PUT: api/UserInfo/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -120,7 +116,7 @@ namespace MasjidApi.Controllers
             }
         }
 
-        
+
 
 
 
@@ -221,8 +217,8 @@ namespace MasjidApi.Controllers
                 UserRole = userInfo.UserRole,
                 MasjidID = userInfo.MasjidID,
                 Latitude = userInfo.Latitude,
-                Longitude   = userInfo.Longitude
-                
+                Longitude = userInfo.Longitude
+
             };
     }
 }

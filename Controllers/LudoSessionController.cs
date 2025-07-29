@@ -1,7 +1,5 @@
-﻿using MasjidApi.DTO;
-using MasjidApi.MasjidRepository;
+﻿using MasjidApi.MasjidRepository;
 using MasjidApi.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MasjidApi.Controllers

@@ -47,13 +47,13 @@ namespace MasjidApi.Controllers
 
 
         [HttpGet("GetAllEventsAsOnDate")]
-        public async Task<ActionResult<IEnumerable<MasjidsEvent>>> GetAllEventsAsOnDate(string masjidID,DateTime AsOnDateTime)
+        public async Task<ActionResult<IEnumerable<MasjidsEvent>>> GetAllEventsAsOnDate(string masjidID, DateTime AsOnDateTime)
         {
 
             try
             {
 
-                if (string.IsNullOrEmpty(masjidID) == true || (AsOnDateTime == null || AsOnDateTime == default(DateTime)) )
+                if (string.IsNullOrEmpty(masjidID) == true || (AsOnDateTime == null || AsOnDateTime == default(DateTime)))
                 {
                     return NotFound();
                 }
