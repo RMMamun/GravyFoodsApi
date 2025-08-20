@@ -1,9 +1,9 @@
-﻿using MasjidApi.Data;
-using MasjidApi.MasjidRepository;
-using MasjidApi.Models;
+﻿using GravyFoodsApi.Data;
+using GravyFoodsApi.MasjidRepository;
+using GravyFoodsApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace MasjidApi.MasjidServices
+namespace GravyFoodsApi.MasjidServices
 {
     public class MasjidPrayerTimeService : IMasjidPrayerTimeService
     {

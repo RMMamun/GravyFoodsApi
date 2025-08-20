@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MasjidApi.Models
+namespace GravyFoodsApi.Models
 {
 
     public class MasjidPrayerTime

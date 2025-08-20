@@ -1,4 +1,4 @@
-﻿namespace MasjidApi.Common
+﻿namespace GravyFoodsApi.Common
 {
     public class CommonMethods
     {

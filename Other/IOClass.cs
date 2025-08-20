@@ -1,4 +1,4 @@
-﻿namespace MasjidApi.Other
+﻿namespace GravyFoodsApi.Other
 {
     public class IOClass
     {

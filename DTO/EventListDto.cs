@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace MasjidApi.DTO
+namespace GravyFoodsApi.DTO
 {
     public class EventListDto
     {

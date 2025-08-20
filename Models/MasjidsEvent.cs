@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 
 
-namespace MasjidApi.Models
+namespace GravyFoodsApi.Models
 {
     public class MasjidsEvent
     {

@@ -1,6 +1,6 @@
-﻿using MasjidApi.Models;
+﻿using GravyFoodsApi.Models;
 
-namespace MasjidApi.MasjidRepository
+namespace GravyFoodsApi.MasjidRepository
 {
     public interface ILoggingService
     {

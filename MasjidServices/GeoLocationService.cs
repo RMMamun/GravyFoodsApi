@@ -1,4 +1,4 @@
-﻿namespace MasjidApi.MasjidServices
+﻿namespace GravyFoodsApi.MasjidServices
 {
     public class GeoLocationService
     {

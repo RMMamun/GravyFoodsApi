@@ -1,8 +1,8 @@
 
-using MasjidApi.Common;
-using MasjidApi.Data;
-using MasjidApi.MasjidRepository;
-using MasjidApi.MasjidServices;
+using GravyFoodsApi.Common;
+using GravyFoodsApi.Data;
+using GravyFoodsApi.MasjidRepository;
+using GravyFoodsApi.MasjidServices;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,7 +37,7 @@ builder.Services.AddScoped<ILudoPlayingStateService, LudoPlayingStateService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "MasjidApi", Version = "v1" });
+    c.SwaggerDoc("v1", new() { Title = "GravyFoodsApi", Version = "v1" });
 });
 
 var app = builder.Build();
@@ -47,7 +47,7 @@ if (builder.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MasjidApi v1"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GravyFoodsApi v1"));
 }
 else
 {

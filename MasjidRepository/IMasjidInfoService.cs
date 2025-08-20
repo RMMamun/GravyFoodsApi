@@ -1,7 +1,7 @@
-﻿using MasjidApi.DTO;
-using MasjidApi.Models;
+﻿using GravyFoodsApi.DTO;
+using GravyFoodsApi.Models;
 
-namespace MasjidApi.MasjidRepository
+namespace GravyFoodsApi.MasjidRepository
 {
     public interface IMasjidInfoService
     {

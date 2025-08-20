@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace MasjidApi.Models
+namespace GravyFoodsApi.Models
 {
     [Keyless]
     public class Country

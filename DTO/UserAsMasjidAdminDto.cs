@@ -1,4 +1,4 @@
-﻿namespace MasjidApi.DTO
+﻿namespace GravyFoodsApi.DTO
 {
     public class UserAsMasjidAdminDto
     {

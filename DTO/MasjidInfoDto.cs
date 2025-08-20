@@ -1,6 +1,6 @@
-﻿using MasjidApi.Models;
+﻿using GravyFoodsApi.Models;
 
-namespace MasjidApi.DTO
+namespace GravyFoodsApi.DTO
 {
     public class MasjidInfoDto
     {

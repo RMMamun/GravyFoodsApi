@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "MasjidApi": {
+    "GravyFoodsApi": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

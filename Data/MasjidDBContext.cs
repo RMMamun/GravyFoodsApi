@@ -1,7 +1,7 @@
-﻿using MasjidApi.Models;
+﻿using GravyFoodsApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace MasjidApi.Data
+namespace GravyFoodsApi.Data
 {
     public class MasjidDBContext : DbContext
     {

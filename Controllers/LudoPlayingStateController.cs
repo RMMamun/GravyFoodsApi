@@ -1,9 +1,9 @@
-﻿using MasjidApi.DTO;
-using MasjidApi.MasjidRepository;
-using MasjidApi.Models;
+﻿using GravyFoodsApi.DTO;
+using GravyFoodsApi.MasjidRepository;
+using GravyFoodsApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MasjidApi.Controllers
+namespace GravyFoodsApi.Controllers
 {
     [ApiController]
     /*[Route("api/[controller]")]*/

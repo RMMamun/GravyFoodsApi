@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MasjidApi.DTO
+namespace GravyFoodsApi.DTO
 {
     public class DiceTurnDto
     {

@@ -1,11 +1,11 @@
-﻿using MasjidApi.Common;
-using MasjidApi.Data;
-using MasjidApi.DTO;
-using MasjidApi.MasjidRepository;
-using MasjidApi.Models;
+﻿using GravyFoodsApi.Common;
+using GravyFoodsApi.Data;
+using GravyFoodsApi.DTO;
+using GravyFoodsApi.MasjidRepository;
+using GravyFoodsApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace MasjidApi.MasjidServices
+namespace GravyFoodsApi.MasjidServices
 {
     public class MasjidInfoService : IMasjidInfoService
     {
