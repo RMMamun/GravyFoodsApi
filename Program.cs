@@ -5,6 +5,7 @@ using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidServices;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 GlobalVariable.ConnString = builder.Configuration.GetConnectionString("myconn");
@@ -33,7 +34,12 @@ builder.Services.AddScoped<ILoggingService, LoggingService>();
 builder.Services.AddScoped<ILudoSessionService, LudoSessionService>();
 builder.Services.AddScoped<ILudoPlayingStateService, LudoPlayingStateService>();
 
+////2028 08 21 Register DI
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
+
+//2028 08 21 <-
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -79,6 +85,7 @@ app.UseCors(builder =>
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseAuthentication();    //2028 08 21
 
 app.MapControllers();
 

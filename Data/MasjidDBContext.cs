@@ -24,7 +24,15 @@ namespace GravyFoodsApi.Data
         public DbSet<LudoSession> LudoSession { get; set; }
         public DbSet<LudoPlayingState> LudoPlayingState { get; set; }
 
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
 
+        public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<ProductAttribute> ProductAttributes { get; set; }
+        public DbSet<ProductSerial> ProductSerials { get; set; }
+        public DbSet<ProductStock> ProductStocks { get; set; }
+        public DbSet<ProductVariant> ProductVariants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +41,41 @@ namespace GravyFoodsApi.Data
 
             modelBuilder.Entity<MasjidInfo>()
                 .HasKey(c => new { c.MasjidID });
+
+
+            modelBuilder.Entity<Product>()
+                .HasKey(p => p.ProductId);
+
+
+            // Relationships
+            modelBuilder.Entity<Product>()
+                .HasMany(p => p.Images)
+                .WithOne(i => i.Product)
+                .HasForeignKey(i => i.ProductId);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(p => p.Attributes)
+                .WithOne(a => a.Product)
+                .HasForeignKey(a => a.ProductId);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(p => p.Serials)
+                .WithOne(s => s.Product)
+                .HasForeignKey(s => s.ProductId);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(p => p.Stocks)
+                .WithOne(st => st.Product)
+                .HasForeignKey(st => st.ProductId);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(p => p.Variants)
+                .WithOne(v => v.Product)
+                .HasForeignKey(v => v.ProductId);
+
+
+
+            base.OnModelCreating(modelBuilder);
 
         }
 

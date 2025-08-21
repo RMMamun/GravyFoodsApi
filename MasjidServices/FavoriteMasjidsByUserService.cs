@@ -1,5 +1,4 @@
-﻿
-using GravyFoodsApi.Data;
+﻿using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
 using Microsoft.EntityFrameworkCore;
