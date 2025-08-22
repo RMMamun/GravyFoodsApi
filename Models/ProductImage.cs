@@ -24,6 +24,7 @@ namespace GravyFoodsApi.Models
         [ForeignKey(nameof(ProductId))]
         public Product Product { get; set; } = null!;
     }
+}
 
     
 

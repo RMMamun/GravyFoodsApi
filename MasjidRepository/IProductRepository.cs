@@ -2,7 +2,6 @@
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Repositories;
 using GravyFoodsApi.Data;
-using GravyFoodsApi.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 
