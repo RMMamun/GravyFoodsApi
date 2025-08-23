@@ -15,7 +15,7 @@ namespace GravyFoodsApi.MasjidServices
         public AuthService(ILoginService userRepository, IConfiguration config)
         {
             _loginService = userRepository;
-            _jwtKey = config["Jwt:Key"] ?? "super_secret_key_123!";
+            _jwtKey = config["Jwt:Key"] ?? "Subana11ahi#Wabihamdihi$Subahana11ahiul@Azim!";
         }
 
         public string? Authenticate(LoginRequest request)
