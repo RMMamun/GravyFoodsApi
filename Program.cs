@@ -3,6 +3,7 @@ using GravyFoodsApi.Common;
 using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidServices;
+using GravyFoodsApi.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -38,7 +39,7 @@ builder.Services.AddScoped<ILudoPlayingStateService, LudoPlayingStateService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-
+builder.Services.AddScoped<IProductRepository, ProductService>();
 //2028 08 21 <-
 
 builder.Services.AddSwaggerGen(c =>

@@ -27,7 +27,10 @@ namespace GravyFoodsApi.Models
         public decimal Price { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal? DiscountPrice { get; set; }
+        public decimal? DiscountedPrice { get; set; }
+
+        [Required]
+        public int UnitTypeId { get; set; }
 
         [Required]
         public bool IsAvailable { get; set; } = true;
@@ -56,6 +59,39 @@ namespace GravyFoodsApi.Models
         public ICollection<ProductSerial> Serials { get; set; } = new List<ProductSerial>();
         public ICollection<ProductStock> Stocks { get; set; } = new List<ProductStock>();
         public ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
+
+    }
+
+
+    public class ProductDto
+    {
+
+        public string ProductId { get; set; } = string.Empty;
+
+        public string Name { get; set; } = string.Empty;
+
+        public string? Description { get; set; }
+
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
+
+        public int? BrandId { get; set; }
+        public string BrandName { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Price { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? DiscountedPrice { get; set; }
+
+        public int UnitTypeId { get; set; }
+        public string UnitTypeName { get; set; }
+
+        public bool IsAvailable { get; set; } = true;
+
+        public bool IsSalable { get; set; }
+
+        public string ImageUrl { get; set; }
 
     }
 
