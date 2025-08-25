@@ -25,16 +25,36 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<Product?> GetProductsDetailsDto()
+        public async Task<IEnumerable<ProductDto?>> GetProductsDetailsDto()
         {
             try
             {
-                var product = await GetProductsWithDetailsAsync();
+                IEnumerable<Product> product = await GetProductsWithDetailsAsync();
+                IEnumerable<ProductDto> productDtos = product.Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Description = p.Description,
+                    CategoryId = p.CategoryId,
+                    BrandId = p.BrandId,
+                    Price = p.Price,
+                    DiscountedPrice = p.DiscountedPrice,
+                    IsAvailable = p.IsAvailable,
+                    IsSalable = p.IsSalable,
+                    BrandName = p.Brand != null ? p.Brand.Name : null,
+                    CategoryName = p.Category != null ? p.Category.Name : null,
+                    ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
+                    UnitId = p.Unit != null ? p.Unit.UnitId : null,
+                    UnitName = p.Unit != null ? p.Unit.UnitName : null
 
+                });
+
+                return productDtos;
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                //throw new Exception(ex.Message);
+                return null;
             }
 
             
