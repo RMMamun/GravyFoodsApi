@@ -16,7 +16,7 @@ namespace MasjidWorldwide.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
         {
             var products = await _repository.GetProductsWithDetailsAsync();
             return Ok(products);
