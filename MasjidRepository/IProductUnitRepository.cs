@@ -8,8 +8,8 @@ namespace GravyFoodsApi.Repositories
 {
     public interface IProductUnitRepository : IRepository<ProductUnits>
     {
-        Task<Brand> CreateAsync(ProductUnits  productUnits);
-        Task<Brand> GetUnitsById(int Id);
+        Task<ProductUnits> CreateAsync(ProductUnits  productUnits);
+        Task<ProductUnits> GetUnitsById(int Id);
         Task<IEnumerable<ProductUnits>> GetAllUnitsAsync();
     }
 

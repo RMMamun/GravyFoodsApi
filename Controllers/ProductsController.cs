@@ -1,6 +1,7 @@
 ﻿using GravyFoodsApi.Models;
 using GravyFoodsApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 
 namespace MasjidWorldwide.Controllers
 {
@@ -23,26 +24,26 @@ namespace MasjidWorldwide.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> Get(string id)
+        public async Task<ActionResult<ProductDto>> Get(string id)
         {
-            var product = await _repository.GetByIdAsync(id);
+            var product = await _repository.GetProductByIdAsync(id);
             if (product == null) return NotFound();
             return Ok(product);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> Create(Product product)
+        public async Task<ActionResult<Product>> Create(ProductDto product)
         {
-            var created = await _repository.AddAsync(product);
+            var created = await _repository.AddProductAsync(product);
             return CreatedAtAction(nameof(Get), new { id = created.ProductId }, created);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, Product product)
+        public async Task<IActionResult> Update(string id, ProductDto product)
         {
             if (id != product.ProductId) return BadRequest();
 
-            await _repository.UpdateAsync(product);
+            await _repository.UpdateProductByIdAsync(product);
             return NoContent();
         }
 

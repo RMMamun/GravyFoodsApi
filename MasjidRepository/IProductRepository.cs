@@ -10,6 +10,12 @@ namespace GravyFoodsApi.Repositories
     public interface IProductRepository : IRepository<Product>
     {
         Task<IEnumerable<ProductDto>> GetProductsWithDetailsAsync();
+
+        Task<ProductDto> GetProductByIdAsync(string ProductId);
+
+        Task<ProductDto> UpdateProductByIdAsync(ProductDto product);
+
+        Task<ProductDto> AddProductAsync(ProductDto product);
     }
 
     

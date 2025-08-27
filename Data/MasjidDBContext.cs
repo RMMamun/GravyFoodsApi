@@ -38,6 +38,8 @@ namespace GravyFoodsApi.Data
         public DbSet<CompanyInfo> CompanyInfo { get; set; }
 
 
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserInfo>()

@@ -7,7 +7,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace GravyFoodsApi.MasjidServices
 {
-    public class ProductUnitService : Repository<Product> ,IProductUnitRepository
+    public class ProductUnitService : Repository<ProductUnits>, IProductUnitRepository
     {
         private readonly MasjidDBContext _context;
 
@@ -21,7 +21,7 @@ namespace GravyFoodsApi.MasjidServices
             throw new NotImplementedException();
         }
 
-        public Task<Brand> CreateAsync(ProductUnits productUnits)
+        public Task<ProductUnits> CreateAsync(ProductUnits productUnits)
         {
             throw new NotImplementedException();
         }
@@ -58,6 +58,11 @@ namespace GravyFoodsApi.MasjidServices
         }
 
         Task<ProductUnits?> IRepository<ProductUnits>.GetByIdAsync(object id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<ProductUnits> IProductUnitRepository.GetUnitsById(int Id)
         {
             throw new NotImplementedException();
         }

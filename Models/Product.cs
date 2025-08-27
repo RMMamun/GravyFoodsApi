@@ -114,7 +114,7 @@ namespace GravyFoodsApi.Models
         public string CompanyId { get; set; }
         public string CompanyName { get; set; }
 
-
+        public DateTime CreatedDateTime { get; set; }
     }
 
 

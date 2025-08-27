@@ -42,6 +42,10 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductRepository, ProductService>();
 builder.Services.AddScoped<IBrandRepository, BrandService>();
 builder.Services.AddScoped<IProductUnitRepository, ProductUnitService>();
+builder.Services.AddScoped<IProductCategoryRepository,  ProductCategoryService>();
+
+
+
 //2028 08 21 <-
 ////Gravy Foods/ POS ingegration <-
 

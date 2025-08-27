@@ -6,10 +6,11 @@ using System;
 
 namespace GravyFoodsApi.Repositories
 {
-    public interface IProductCategoryRepository : IRepository<ProductCategory> { }
-
-    public class ProductCategoryRepository : Repository<ProductCategory>, IProductCategoryRepository
+    public interface IProductCategoryRepository : IRepository<ProductCategory>
     {
-        public ProductCategoryRepository(MasjidDBContext context) : base(context) { }
+        Task<ProductCategory> CreateCategoryAsync(ProductCategory productCategory);
+        Task<ProductCategory> GetCategoryById(int Id);
+        Task<IEnumerable<ProductCategory>> GetAllCategoriesAsync();
     }
+
 }
