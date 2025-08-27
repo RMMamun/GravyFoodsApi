@@ -1,10 +1,12 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace GravyFoodsApi.Models
 {
     public class ProductUnits
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
+        [Key]
         public string UnitId { get; set; } = string.Empty;
         public string UnitName { get; set; } = string.Empty;
         public string UnitDescription { get; set; } = string.Empty;
@@ -17,6 +19,8 @@ namespace GravyFoodsApi.Models
         // Navigation Properties
         public BranchInfo Branch { get; set; }
         public CompanyInfo Company { get; set; }
+
+        public ICollection<Product> Products { get; set; }
     }
 
 }

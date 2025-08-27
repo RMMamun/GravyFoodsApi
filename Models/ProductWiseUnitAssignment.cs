@@ -11,7 +11,7 @@ namespace GravyFoodsApi.Models
         public string CompanyId { get; set; } = string.Empty;
 
         // Navigation Properties
-        public ProductUnit Unit { get; set; }
+        public ProductUnits Unit { get; set; }
         public BranchInfo Branch { get; set; }
         public CompanyInfo Company { get; set; }
     }

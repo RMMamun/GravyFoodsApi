@@ -33,6 +33,10 @@ namespace GravyFoodsApi.Data
         public DbSet<ProductSerial> ProductSerials { get; set; }
         public DbSet<ProductStock> ProductStocks { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
+        public DbSet<ProductUnits> ProductUnits { get; set; }
+        public DbSet<BranchInfo> BranchInfo { get; set; }
+        public DbSet<CompanyInfo> CompanyInfo { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -72,6 +76,24 @@ namespace GravyFoodsApi.Data
                 .HasMany(p => p.Variants)
                 .WithOne(v => v.Product)
                 .HasForeignKey(v => v.ProductId);
+
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Brand)
+                .WithMany(b => b.Products)
+                .HasForeignKey(p => p.BrandId);
+
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.CategoryId);
+
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Unit)
+                .WithMany(u => u.Products)
+                .HasForeignKey(p => p.UnitId);
+
+
+
 
 
 

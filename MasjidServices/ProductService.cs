@@ -15,21 +15,12 @@ namespace GravyFoodsApi.MasjidServices
             _context = context;
         }
 
-        public async Task<IEnumerable<Product>> GetProductsWithDetailsAsync()
-        {
-            return await _context.Products
-                .Include(p => p.Brand)
-                .Include(p => p.Category)
-                .Where( w => w.IsAvailable == true && w.IsSalable == true)
-                .ToListAsync();
-        }
-
-
-        public async Task<IEnumerable<ProductDto?>> GetProductsDetailsDto()
+        public async Task<IEnumerable<ProductDto>> GetProductsWithDetailsAsync()
         {
             try
             {
-                IEnumerable<Product> product = await GetProductsWithDetailsAsync();
+
+                IEnumerable<Product> product = await GetProductsDetailsAsyc();
                 IEnumerable<ProductDto> productDtos = product.Select(p => new ProductDto
                 {
                     ProductId = p.ProductId,
@@ -39,17 +30,47 @@ namespace GravyFoodsApi.MasjidServices
                     BrandId = p.BrandId,
                     Price = p.Price,
                     DiscountedPrice = p.DiscountedPrice,
+                    Quantity = 0,
                     IsAvailable = p.IsAvailable,
                     IsSalable = p.IsSalable,
-                    BrandName = p.Brand != null ? p.Brand.Name : null,
-                    CategoryName = p.Category != null ? p.Category.Name : null,
+                    BrandName = p.Brand?.Name,
+                    CategoryName = p.Category?.Name,
                     ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
                     UnitId = p.Unit != null ? p.Unit.UnitId : null,
-                    UnitName = p.Unit != null ? p.Unit.UnitName : null
+                    UnitName = p.Unit != null ? p.Unit.UnitName : null,
+                    BranchId = p.BranchId,
+                    BranchName = p.Branch != null ? p.Branch.BranchName : null,
+                    CompanyId = p.CompanyId,
+                    CompanyName = p.Company != null ? p.Company.CompanyName : null,
 
                 });
 
                 return productDtos;
+            }
+            catch (Exception ex)
+            {
+                //throw new Exception(ex.Message);
+                return null;
+            }
+
+        }
+
+
+        public async Task<IEnumerable<Product?>> GetProductsDetailsAsyc()
+        {
+            try
+            {
+
+                return await _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.Images )
+                .Include(p => p.Branch)
+                .Include(p => p.Company)
+                .Include(p => p.Unit)
+                .Where(w => w.IsAvailable == true && w.IsSalable == true)
+                .ToListAsync();
+
             }
             catch (Exception ex)
             {

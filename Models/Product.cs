@@ -47,6 +47,18 @@ namespace GravyFoodsApi.Models
         [Required]
         public DateTime CreatedDateTime { get; set; }
 
+        public string? BranchId { get; set; }
+        public string? CompanyId { get; set; }
+
+        // Navigation Properties
+        [ForeignKey(nameof(BranchId))]
+        public BranchInfo? Branch { get; set; }
+
+        // Navigation Properties
+        [ForeignKey(nameof(CompanyId))]
+        public CompanyInfo? Company { get; set; }
+
+
         // Navigation Properties
         [ForeignKey(nameof(BrandId))]
         public Brand? Brand { get; set; }
@@ -96,6 +108,12 @@ namespace GravyFoodsApi.Models
         public bool IsSalable { get; set; }
 
         public string ImageUrl { get; set; }
+
+        public string BranchId { get; set; }
+        public string BranchName { get; set; }
+        public string CompanyId { get; set; }
+        public string CompanyName { get; set; }
+
 
     }
 

@@ -1,8 +1,15 @@
-﻿namespace GravyFoodsApi.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GravyFoodsApi.Models
 {
     public class BranchInfo
     {
-        public int Id { get; set; }
+
+        //public int Id { get; set; }
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] // ProductId is PK, not Id
         public string BranchId { get; set; } = string.Empty;
         public string BranchName { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
