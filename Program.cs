@@ -35,12 +35,15 @@ builder.Services.AddScoped<ILoggingService, LoggingService>();
 builder.Services.AddScoped<ILudoSessionService, LudoSessionService>();
 builder.Services.AddScoped<ILudoPlayingStateService, LudoPlayingStateService>();
 
-////2028 08 21 Register DI
+////Gravy Foods/ POS ingegration ->
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IProductRepository, ProductService>();
+builder.Services.AddScoped<IBrandRepository, BrandService>();
+builder.Services.AddScoped<IProductUnitRepository, ProductUnitService>();
 //2028 08 21 <-
+////Gravy Foods/ POS ingegration <-
 
 builder.Services.AddSwaggerGen(c =>
 {
