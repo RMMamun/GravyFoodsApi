@@ -99,47 +99,49 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<bool> Update_AssignMasjidToUser(UserAsMasjidAdminDto userInfo)
-        {
-            try
-            {
-                //UserInfoDTO user = new UserInfoDTO();
-                var user = await _dbContext.UserInfo.Where(u => u.UserId == userInfo.UserId && u.DeviceId == userInfo.DeviceId).FirstOrDefaultAsync();
-                if (user == null)
-                {
-                    return false;
-                }
-                //else
-                //{
-                //    user.UserId = result.UserId;
-                //    user.Password = result.Password;
-                //    user.UserName = result.UserName;
-                //    user.UserRole = result.UserRole;
-                //    user.DeviceId = result.DeviceId;
-                //    user.MasjidID = result.MasjidID;
-                //    user.Latitude = result.Latitude;
-                //    user.Longitude = result.Longitude;
-                //    user.EntryDateTime = result.EntryDateTime;
+        //public async Task<bool> Update_AssignMasjidToUser(UserAsMasjidAdminDto userInfo)
+        //{
+        //    try
+        //    {
+        //        //UserInfoDTO user = new UserInfoDTO();
+        //        var user = await _dbContext.UserInfo.Where(u => u.UserId == userInfo.UserId && u.DeviceId == userInfo.DeviceId).FirstOrDefaultAsync();
+        //        if (user == null)
+        //        {
+        //            return false;
+        //        }
+        //        //else
+        //        //{
+        //        //    user.UserId = result.UserId;
+        //        //    user.Password = result.Password;
+        //        //    user.UserName = result.UserName;
+        //        //    user.UserRole = result.UserRole;
+        //        //    user.DeviceId = result.DeviceId;
+        //        //    user.MasjidID = result.MasjidID;
+        //        //    user.Latitude = result.Latitude;
+        //        //    user.Longitude = result.Longitude;
+        //        //    user.EntryDateTime = result.EntryDateTime;
 
-                //}
+        //        //}
 
-                if (!string.IsNullOrWhiteSpace(user.MasjidID) || user.MasjidID == "")
-                {
-                    user.MasjidID = userInfo.MasjidID;
-                }
+        //        if (!string.IsNullOrWhiteSpace(user.MasjidID) || user.MasjidID == "")
+        //        {
+        //            user.MasjidID = userInfo.MasjidID;
+        //        }
 
-                //await _dbContext.UserInfo.Update(user);
-                await _dbContext.SaveChangesAsync();
+        //        //await _dbContext.UserInfo.Update(user);
+        //        await _dbContext.SaveChangesAsync();
 
-                //_dbContext.Update(user);
-                //_dbContext.SaveChangesAsync();
+        //        //_dbContext.Update(user);
+        //        //_dbContext.SaveChangesAsync();
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return false;
+        //    }
+        //}
+
+
     }
 }

@@ -10,20 +10,9 @@ namespace GravyFoodsApi.Data
         }
 
         public DbSet<UserInfo> UserInfo { get; set; } = null!;
-        public DbSet<MasjidInfo> MasjidInfo { get; set; }
-        //public DbSet<MasjidInfoDTO> MasjidInfoDTO { get; set; }
         public DbSet<Country> Country { get; set; }
-        public DbSet<FavoriteMasjidsByUser> FavoriteMasjidsByUser { get; set; }
-        public DbSet<MasjidPrayerTime> MasjidPrayerTime { get; set; }
-        public DbSet<MasjidsEvent> MasjidsEvent { get; set; }
-        public DbSet<EventTypes> EventTypes { get; set; }
-
         public DbSet<POSSubscription> POSSubscription { get; set; }
         public DbSet<Logging> Logging { get; set; }
-
-        public DbSet<LudoSession> LudoSession { get; set; }
-        public DbSet<LudoPlayingState> LudoPlayingState { get; set; }
-
         public DbSet<Product> Products { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
@@ -44,10 +33,6 @@ namespace GravyFoodsApi.Data
         {
             modelBuilder.Entity<UserInfo>()
                 .HasKey(c => new { c.UserId });
-
-            modelBuilder.Entity<MasjidInfo>()
-                .HasKey(c => new { c.MasjidID });
-
 
             modelBuilder.Entity<Product>()
                 .HasKey(p => p.ProductId);
@@ -93,9 +78,6 @@ namespace GravyFoodsApi.Data
                 .HasOne(p => p.Unit)
                 .WithMany(u => u.Products)
                 .HasForeignKey(p => p.UnitId);
-
-
-
 
 
 

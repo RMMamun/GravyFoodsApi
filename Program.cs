@@ -23,17 +23,10 @@ builder.Services.AddDbContext<MasjidDBContext>(options =>
 options.UseSqlServer(GlobalVariable.ConnString,
     builder => builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(60), null)));
 
-builder.Services.AddScoped<IMasjidInfoService, MasjidInfoService>();
-builder.Services.AddScoped<IFavoriteMasjidsByUserService, FavoriteMasjidsByUserService>();
 builder.Services.AddScoped<IUserInfoService, UserInfoService>();
-builder.Services.AddScoped<IMasjidPrayerTimeService, MasjidPrayerTimeService>();
-builder.Services.AddScoped<IMasjidsEventService, MasjidEventService>();
 
 builder.Services.AddScoped<IPOSSubscription, POSSubscriptionService>();
 builder.Services.AddScoped<ILoggingService, LoggingService>();
-
-builder.Services.AddScoped<ILudoSessionService, LudoSessionService>();
-builder.Services.AddScoped<ILudoPlayingStateService, LudoPlayingStateService>();
 
 ////Gravy Foods/ POS ingegration ->
 builder.Services.AddScoped<ILoginService, LoginService>();

@@ -1,8 +1,11 @@
 ﻿using GravyFoodsApi.Data;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Repositories;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace GravyFoodsApi.MasjidServices
 {
@@ -133,12 +136,50 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<ProductDto> UpdateProductByIdAsync(ProductDto product)
+        public async Task<ProductDto> UpdateProductByIdAsync(ProductDto _product)
         {
             try
             {
 
-                return new ProductDto();
+                var product = await _context.Products.FindAsync(_product.ProductId);
+                if (product == null)
+                {
+                    return null;
+                }
+
+                //product.ProductId = _product.ProductId;
+                product.Name = _product.Name;
+                product.Description = _product.Description;
+                product.CategoryId = _product.CategoryId;
+                product.BrandId = _product.BrandId;
+                product.Price = _product.Price;
+                product.DiscountedPrice = _product.DiscountedPrice;
+                product.IsAvailable = _product.IsAvailable;
+                product.IsSalable = _product.IsSalable;
+                product.UnitId = _product.UnitId;
+                product.BranchId = _product.BranchId;
+                product.CompanyId = _product.CompanyId;
+                
+
+                //product.Quantity = 0,
+                //product.BrandName = _product.Brand?.Name,
+                //product.CategoryName = _product.Category?.Name,
+                //product.ImageUrl = _product.Images.FirstOrDefault() != null ? _product.Images.FirstOrDefault().ImageUrl : null,
+                //product.UnitName = _product.Unit != null ? _product.Unit.UnitName : null,
+                //product.BranchName = _product.Branch != null ? _product.Branch.BranchName : null,
+                //product.CompanyName = _product.Company != null ? _product.Company.CompanyName : null,
+
+
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
             }
             catch (Exception ex)
             {

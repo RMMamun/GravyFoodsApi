@@ -19,6 +19,6 @@ namespace GravyFoodsApi.Models
 
         public string FlagImagePath { get; set; }
 
-        public ICollection<MasjidInfo> MasjidInfos { get; set; }
+
     }
 }
