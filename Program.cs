@@ -36,7 +36,7 @@ builder.Services.AddScoped<IProductRepository, ProductService>();
 builder.Services.AddScoped<IBrandRepository, BrandService>();
 builder.Services.AddScoped<IProductUnitRepository, ProductUnitService>();
 builder.Services.AddScoped<IProductCategoryRepository,  ProductCategoryService>();
-
+builder.Services.AddScoped<IProductImageRepository, ProductImageService>();
 
 
 //2028 08 21 <-

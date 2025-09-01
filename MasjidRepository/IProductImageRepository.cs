@@ -5,10 +5,15 @@ using System;
 
 namespace GravyFoodsApi.MasjidRepository
 {
-    public interface IProductImageRepository : IRepository<ProductImage> { }
-
-    public class ProductImageRepository : Repository<ProductImage>, IProductImageRepository
+    public interface IProductImageRepository : IRepository<ProductImage> 
     {
-        public ProductImageRepository(MasjidDBContext context) : base(context) { }
+        Task<string> SaveProductImagesAsync(IEnumerable<ProductImageDTO> productImage);
+        Task<IEnumerable<ProductImageDTO>> GetProductImagesAsync(string productId);
+
     }
+
+    //public class ProductImageRepository : Repository<ProductImage>, IProductImageRepository
+    //{
+    //    public ProductImageRepository(MasjidDBContext context) : base(context) { }
+    //}
 }

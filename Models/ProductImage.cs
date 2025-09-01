@@ -20,9 +20,26 @@ namespace GravyFoodsApi.Models
         [MaxLength(500)]
         public string ImageUrl { get; set; } = string.Empty;
 
+        [MaxLength(255)]
+        public string BranchId { get; set; } = string.Empty;
+
+        [MaxLength(255)]
+        public string CompanyId { get; set; } = string.Empty;
+
         // Navigation
         [ForeignKey(nameof(ProductId))]
         public Product Product { get; set; } = null!;
+    }
+
+
+    public class ProductImageDTO
+    {
+        public string ProductId { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
+
+        public string BranchId { get; set; } = string.Empty;
+        public string CompanyId { get; set; } = string.Empty;
+
     }
 }
 
