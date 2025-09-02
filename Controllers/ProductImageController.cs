@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GravyFoodsApi.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class ProductImageController : Controller
     {
 
@@ -16,15 +18,16 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDto>> Get(string id)
+        public async Task<ActionResult<ProductImageDTO>> Get(string id)
         {
             var product = await _repository.GetProductImagesAsync(id);
             if (product == null) return NotFound();
             return Ok(product);
         }
 
+
         [HttpPost]
-        public async Task<ActionResult<Product>> Create(IEnumerable<ProductImageDTO> product)
+        public async Task<ActionResult<ProductImageDTO>> Create(IEnumerable<ProductImageDTO> product)
         {
             var created = await _repository.SaveProductImagesAsync(product);
             return Ok(product);
