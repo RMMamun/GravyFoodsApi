@@ -36,7 +36,8 @@ namespace GravyFoodsApi.Models
     {
         public string ProductId { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
-
+        public string ImageName { get; set; } = string.Empty;
+        public byte[] ImageAsByte { get; set; } = Array.Empty<byte>();
         public string BranchId { get; set; } = string.Empty;
         public string CompanyId { get; set; } = string.Empty;
 

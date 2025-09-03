@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MasjidImages\" />
+    <Folder Include="ProductImages\" />
   </ItemGroup>
 
 </Project>
