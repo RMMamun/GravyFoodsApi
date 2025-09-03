@@ -3,6 +3,8 @@ using GravyFoodsApi.DTO;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Repositories;
+using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace GravyFoodsApi.MasjidServices
@@ -10,6 +12,9 @@ namespace GravyFoodsApi.MasjidServices
     public class ProductImageService : Repository<ProductImage>, IProductImageRepository
     {
         private readonly MasjidDBContext _context;
+
+        private string imageDirectory = Path.Combine(Environment.CurrentDirectory, "ProductImages");
+
 
         public ProductImageService(MasjidDBContext context) : base(context)
         {
@@ -48,20 +53,35 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
                 var isSaved = false;
+                string productId = productImage.Select(p => p.ProductId).FirstOrDefault() ?? string.Empty;
+
+
+                //Delete existing images for the product from the Directory & Database
+                this.DeleteProductImages(productId);
+                
+
                 foreach (var img in productImage)
                 {
+
+                    // Save image to directory and get the file path
+                    string imagefilepath = await SaveImageToDirectory(img.ImageAsByte, img.ImageName);
+                    imagefilepath = "/images/" + img.ImageName; // For URL purpose
+
                     var productImg = new ProductImage
                     {
                         ProductId = img.ProductId,
-                        ImageUrl = await this.SaveImage(img.ImageAsByte, img.ImageName),
+                        ImageUrl = imagefilepath,
                         BranchId = img.BranchId,
                         CompanyId = img.CompanyId,
 
                     };
+
+
                     _context.ProductImages.Add(productImg);
 
                     
                 }
+
                 _context.SaveChanges();
                 return ("Success");
             }
@@ -75,24 +95,24 @@ namespace GravyFoodsApi.MasjidServices
 
 
 
-        public async Task<string> SaveImage(byte[] imageData , string fileName)
+        public async Task<string> SaveImageToDirectory(byte[] imageData , string fileName)
         {
             try
             {
                 //byte[] imageData = fileData.FileData;
                 //string fileName = fileData.fileName;
 
-                //string uploadDirectory = @"C:\MasjidImages";
-                string uploadDirectory = Path.Combine(Environment.CurrentDirectory, "ProductImages");
+                //string imageDirectory = @"C:\MasjidImages";
+                
 
                 // Create the directory if it doesn't exist
-                if (!Directory.Exists(uploadDirectory))
+                if (!Directory.Exists(imageDirectory))
                 {
-                    Directory.CreateDirectory(uploadDirectory);
+                    Directory.CreateDirectory(imageDirectory);
                 }
 
                 //string fileName = $"{fileName}.jpg";
-                string filePath = Path.Combine(uploadDirectory, fileName); // Set your desired upload directory
+                string filePath = Path.Combine(imageDirectory, fileName); // Set your desired upload directory
                 await System.IO.File.WriteAllBytesAsync(filePath, imageData);
 
                 return filePath;
@@ -124,6 +144,39 @@ namespace GravyFoodsApi.MasjidServices
                 return null;
             }
         }
+
+        public Task<bool> DeleteProductImages(string productid)
+        {
+            try
+            {
+                IList<ProductImage?> img = _context.ProductImages.Where(p => p.ProductId == productid).ToList();
+
+                string fileDirectory = Path.Combine(Environment.CurrentDirectory, "MasjidImages");
+
+                foreach (var item in img)
+                {
+                    if (item != null)
+                    {
+                        _context.ProductImages.Remove(item);
+
+                        string filePath = Path.Combine(fileDirectory, item.ImageUrl);
+                        if (File.Exists(filePath))
+                        {
+                            File.Delete(filePath);
+                        }
+                    }
+                }
+
+                _context.SaveChanges();
+                return Task.FromResult(true);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) as needed
+                return Task.FromResult(false);
+            }
+        }
+
 
     }
 }

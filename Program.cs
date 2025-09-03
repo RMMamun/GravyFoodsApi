@@ -5,6 +5,7 @@ using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidServices;
 using GravyFoodsApi.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -82,6 +83,14 @@ app.UseCors(builder =>
 //});
 
 
+// Serve ProductImages as static files
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "ProductImages")),
+    RequestPath = "/images"
+});
+//app.UseRouting();
 
 app.UseHttpsRedirection();
 
