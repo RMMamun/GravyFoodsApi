@@ -16,6 +16,8 @@ namespace GravyFoodsApi.Repositories
         Task<ProductDto> UpdateProductByIdAsync(ProductDto product);
 
         Task<ProductDto> AddProductAsync(ProductDto product);
+
+        Task<bool> DeleteProductAsync(string ProductId);
     }
 
     

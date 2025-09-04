@@ -88,7 +88,7 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
         Path.Combine(builder.Environment.ContentRootPath, "ProductImages")),
-    RequestPath = "/images"
+    RequestPath = $"/{GlobalVariable.StaticFileDir}"
 });
 //app.UseRouting();
 

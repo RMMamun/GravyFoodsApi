@@ -1,4 +1,5 @@
-﻿using GravyFoodsApi.Data;
+﻿using GravyFoodsApi.Common;
+using GravyFoodsApi.Data;
 using GravyFoodsApi.DTO;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
@@ -65,7 +66,7 @@ namespace GravyFoodsApi.MasjidServices
 
                     // Save image to directory and get the file path
                     string imagefilepath = await SaveImageToDirectory(img.ImageAsByte, img.ImageName);
-                    imagefilepath = "/images/" + img.ImageName; // For URL purpose
+                    imagefilepath = $"{GlobalVariable.StaticFileDir}/{img.ImageName}"  ; // For URL purpose
 
                     var productImg = new ProductImage
                     {
@@ -149,7 +150,11 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
+                //Get all images of the product
                 IList<ProductImage?> img = _context.ProductImages.Where(p => p.ProductId == productid).ToList();
+                
+                //Delete all images of the product
+                _context.ProductImages.Where(p => p.ProductId == productid).ExecuteDelete();
 
                 string fileDirectory = Path.Combine(Environment.CurrentDirectory, "MasjidImages");
 
@@ -157,8 +162,6 @@ namespace GravyFoodsApi.MasjidServices
                 {
                     if (item != null)
                     {
-                        _context.ProductImages.Remove(item);
-
                         string filePath = Path.Combine(fileDirectory, item.ImageUrl);
                         if (File.Exists(filePath))
                         {

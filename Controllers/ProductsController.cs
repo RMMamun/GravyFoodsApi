@@ -50,7 +50,7 @@ namespace MasjidWorldwide.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            await _repository.DeleteAsync(id);
+            await _repository.DeleteProductAsync(id);
             return NoContent();
         }
     }

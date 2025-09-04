@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
+using System.Reflection.Emit;
 
 namespace GravyFoodsApi.MasjidServices
 {
@@ -222,6 +223,39 @@ namespace GravyFoodsApi.MasjidServices
             catch (Exception ex)
             {
                 return new ProductDto();
+            }
+        }
+
+        public async Task<bool> DeleteProductAsync(string ProductId)
+        {
+            try
+            {
+                var product = await _context.Products.FindAsync(ProductId);
+                if (product == null)
+                {
+                    return false;
+                }
+
+                //ProductImageService _productImageService = new ProductImageService(_context);
+                //await _productImageService.DeleteProductImages(ProductId);
+
+
+                await _context.ProductImages
+                .Where(od => od.ProductId == ProductId)
+                .ExecuteDeleteAsync();
+
+                await _context.Products
+                .Where(od => od.ProductId == ProductId)
+                .ExecuteDeleteAsync();
+
+                //_context.Products.Remove(product);
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
 
