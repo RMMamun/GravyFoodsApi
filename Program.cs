@@ -12,7 +12,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 GlobalVariable.ConnString = builder.Configuration.GetConnectionString("myconn");
 
-builder.Services.AddCors();
+//builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins(
+            "https://gravyfoods.goooget.com",
+            "https://localhost:7065") // frontend origin
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 
 // Add services to the container.
 
@@ -65,13 +78,35 @@ else
 }
 // in general
 
-app.UseCors(builder =>
+app.MapGet("/health", () => Results.Ok("Healthy"));
+app.MapGet("/test-cors", (HttpContext context) =>
 {
-    builder
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader();
+    return Results.Ok("CORS works!");
+}).RequireCors("AllowFrontend");
+
+
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+// Serve ProductImages as static files
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "ProductImages")),
+    RequestPath = $"/{GlobalVariable.StaticFileDir}"
 });
+
+
+//app.UseCors(builder =>
+//{
+//    builder
+//    .AllowAnyOrigin()
+//    .AllowAnyMethod()
+//    .AllowAnyHeader();
+//});
+
+app.UseCors("AllowFrontend");  // must be before auth & MapControllers
 
 //app.UseCors(builder =>
 //{
@@ -83,19 +118,8 @@ app.UseCors(builder =>
 //});
 
 
-// Serve ProductImages as static files
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(builder.Environment.ContentRootPath, "ProductImages")),
-    RequestPath = $"/{GlobalVariable.StaticFileDir}"
-});
-//app.UseRouting();
-
-app.UseHttpsRedirection();
-
+app.UseAuthentication();    //2025 08 21
 app.UseAuthorization();
-app.UseAuthentication();    //2028 08 21
 
 app.MapControllers();
 
