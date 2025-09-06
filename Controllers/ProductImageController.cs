@@ -34,5 +34,16 @@ namespace GravyFoodsApi.Controllers
             //return CreatedAtAction(nameof(Get), new { id = created.ProductId }, created);
         }
 
+
+        [HttpPost("GetAllImagesAsync")]
+        public async Task<ActionResult<ProductImageDTO>> GetAllImagesAsync([FromBody] AllProductImageGetParameterDto product)
+        {
+            var created = await _repository.GetAllProductImagesAsync(product);
+            return Ok(created);
+            //return CreatedAtAction(nameof(Get), new { id = created.ProductId }, created);
+        }
+
+        
+
     }
 }

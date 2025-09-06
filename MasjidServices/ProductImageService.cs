@@ -49,6 +49,35 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
+
+        public Task<IEnumerable<ProductImageDTO>> GetAllProductImagesAsync(AllProductImageGetParameterDto allProductImage)
+        {
+
+            try
+            {
+                var images = _context.ProductImages
+                    .Where(pi => pi.BranchId == allProductImage.BranchId && pi.CompanyId == allProductImage.CompanyId)
+                    .Select(pi => new ProductImageDTO
+                    {
+                        ProductId = pi.ProductId,
+                        ImageUrl = pi.ImageUrl,
+                        BranchId = pi.BranchId,
+                        CompanyId = pi.CompanyId
+
+
+                    }).ToList();
+                return Task.FromResult((IEnumerable<ProductImageDTO>)images);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex) as needed
+                return Task.FromResult(Enumerable.Empty<ProductImageDTO>());
+            }
+
+
+        }
+
+
         public async Task<string> SaveProductImagesAsync(IEnumerable<ProductImageDTO> productImage)
         {
             try

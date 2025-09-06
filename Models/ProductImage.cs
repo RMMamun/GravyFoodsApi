@@ -42,8 +42,25 @@ namespace GravyFoodsApi.Models
         public string CompanyId { get; set; } = string.Empty;
 
     }
+
+    public class ProductImageGetParameterDto
+    {
+        public string ProductId { get; set; } = string.Empty;
+        public string BranchId { get; set; } = string.Empty;
+        public string CompanyId { get; set; } = string.Empty;
+
+    }
+
+    public class AllProductImageGetParameterDto
+    {
+        public string BranchId { get; set; } = string.Empty;
+        public string CompanyId { get; set; } = string.Empty;
+
+    }
+
+
 }
 
-    
 
-  
+
+

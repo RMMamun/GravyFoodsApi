@@ -18,14 +18,18 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins(
-            "https://gravyfoods.goooget.com",
-            "https://localhost:7065") // frontend origin
+
+            .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
 });
 
+            //.WithOrigins(
+            //"https://gravyfoods.goooget.com",
+            //"http://gravyfoods.goooget.com",
+
+            //"https://localhost:7065") // frontend origin
 
 // Add services to the container.
 

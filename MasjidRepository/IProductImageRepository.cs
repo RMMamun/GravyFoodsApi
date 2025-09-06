@@ -10,6 +10,8 @@ namespace GravyFoodsApi.MasjidRepository
         Task<string> SaveProductImagesAsync(IEnumerable<ProductImageDTO> productImage);
         Task<IEnumerable<ProductImageDTO>> GetProductImagesAsync(string productId);
 
+        Task<IEnumerable<ProductImageDTO>> GetAllProductImagesAsync(AllProductImageGetParameterDto allProductImages);
+
     }
 
     //public class ProductImageRepository : Repository<ProductImage>, IProductImageRepository
