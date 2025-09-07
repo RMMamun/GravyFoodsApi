@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace GravyFoodsApi.Models
 {
@@ -45,15 +46,23 @@ namespace GravyFoodsApi.Models
 
     public class ProductImageGetParameterDto
     {
+        [JsonPropertyName("productId")]
         public string ProductId { get; set; } = string.Empty;
+
+        [JsonPropertyName("branchId")]
         public string BranchId { get; set; } = string.Empty;
+
+        [JsonPropertyName("companyId")]
         public string CompanyId { get; set; } = string.Empty;
 
     }
 
     public class AllProductImageGetParameterDto
     {
+        //[JsonPropertyName("branchId")]
         public string BranchId { get; set; } = string.Empty;
+
+        //[JsonPropertyName("companyId")]
         public string CompanyId { get; set; } = string.Empty;
 
     }
