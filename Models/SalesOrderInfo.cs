@@ -9,16 +9,6 @@ namespace GravyFoodsApi.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SalesId { get; set; }
 
-        [Required]
-        [MaxLength(200)]
-        public string ProductId { get; set; } = string.Empty;
-
-        [Required]
-        public double Quantity { get; set; }
-
-        public double PricePerUnit { get; set; }
-        public double Discount { get; set; } = 0;
-        public string DiscountType { get; set; } = "%"; // Default to Percentage and Amount can be another option
         public string OrderStatus { get; set; } = "Pending"; // Pending, Completed, Cancelled, etc.
         public bool IsActive { get; set; } = true; // Default to true, can be set to false if order is cancelled or completed
 
@@ -34,8 +24,7 @@ namespace GravyFoodsApi.Models
         
 
         // Navigation
-        [ForeignKey(nameof(ProductId))]
-        public Product Product { get; set; } = null!;
+
 
         [ForeignKey(nameof(CustomerId))]
         public CustomerInfo CustomerInfo { get; set; } = null!;

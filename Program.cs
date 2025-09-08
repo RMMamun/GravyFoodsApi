@@ -3,6 +3,7 @@ using GravyFoodsApi.Common;
 using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidServices;
+using GravyFoodsApi.Models;
 using GravyFoodsApi.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -55,6 +56,8 @@ builder.Services.AddScoped<IBrandRepository, BrandService>();
 builder.Services.AddScoped<IProductUnitRepository, ProductUnitService>();
 builder.Services.AddScoped<IProductCategoryRepository,  ProductCategoryService>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageService>();
+
+builder.Services.AddScoped<ICustomerInfoService, CustomerInfoService>();
 
 
 //2028 08 21 <-

@@ -26,6 +26,8 @@ namespace GravyFoodsApi.Data
         public DbSet<BranchInfo> BranchInfo { get; set; }
         public DbSet<CompanyInfo> CompanyInfo { get; set; }
 
+        public DbSet<CustomerInfo> CustomerInfo { get; set; }
+
 
 
 
