@@ -28,6 +28,8 @@ namespace GravyFoodsApi.Data
 
         public DbSet<CustomerInfo> CustomerInfo { get; set; }
 
+        public DbSet<SalesInfo> SalesInfo { get; set; }
+        public DbSet<SalesDetails> SalesDetails { get; set; }
 
 
 
@@ -80,6 +82,27 @@ namespace GravyFoodsApi.Data
                 .HasOne(p => p.Unit)
                 .WithMany(u => u.Products)
                 .HasForeignKey(p => p.UnitId);
+
+            // Set custom PK for SalesInfo
+            modelBuilder.Entity<CustomerInfo>()
+                .HasKey(s => s.CustomerId);
+
+
+            // Set custom PK for SalesInfo
+            modelBuilder.Entity<SalesInfo>()
+                .HasKey(s => s.SalesId);
+
+            // Relationship: SalesInfo (1) -> SalesDetails (many)
+            modelBuilder.Entity<SalesDetails>()
+                .HasOne(d => d.SalesInfo)
+                .WithMany(m => m.SalesDetails)
+                .HasForeignKey(d => d.SalesId);
+
+            // Optional: Configure Customer relationship if CustomerInfo.CustomerId is the PK
+            modelBuilder.Entity<SalesInfo>()
+                .HasOne(s => s.CustomerInfo)
+                .WithMany() // assuming no navigation collection in CustomerInfo
+                .HasForeignKey(s => s.CustomerId);
 
 
 

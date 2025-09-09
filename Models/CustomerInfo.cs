@@ -5,13 +5,13 @@ namespace GravyFoodsApi.Models
 {
     public class CustomerInfo
     {
-        [Key]
+        
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        [Required]
+        [Key]
         [StringLength(50)]
-        public string CustomerId { get; set; } = string.Empty;
+        public required string CustomerId { get; set; } = string.Empty;
 
         [Required]
         [StringLength(250)]

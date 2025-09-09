@@ -58,6 +58,7 @@ builder.Services.AddScoped<IProductCategoryRepository,  ProductCategoryService>(
 builder.Services.AddScoped<IProductImageRepository, ProductImageService>();
 
 builder.Services.AddScoped<ICustomerInfoService, CustomerInfoService>();
+builder.Services.AddScoped<ISalesService, SalesService>();
 
 
 //2028 08 21 <-
