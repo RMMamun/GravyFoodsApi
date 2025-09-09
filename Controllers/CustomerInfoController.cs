@@ -19,7 +19,7 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CustomerInfo>> Create(CustomerInfoDTO customer)
+        public async Task<ActionResult<CustomerInfo>> Create([FromBody] CustomerInfoDTO customer)
         {
             //var created = await _repository.Create(customer);
             //return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
