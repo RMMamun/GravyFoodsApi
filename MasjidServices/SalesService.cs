@@ -2,6 +2,7 @@
 using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -34,12 +35,77 @@ namespace GravyFoodsApi.MasjidServices
                 .FirstOrDefaultAsync(s => s.SalesId == salesId);
         }
 
-        public async Task<SalesInfo> CreateSaleAsync(SalesInfo sale)
+        public async Task<SalesInfoDto> CreateSaleAsync(SalesInfoDto saleDto)
         {
+            string strSalesId = GenerateSalesId();
+            SalesInfo sale = new SalesInfo
+            {
+                SalesId = strSalesId,
+                CustomerId = saleDto.CustomerId,
+                OrderStatus = saleDto.OrderStatus,
+                TotalAmount = saleDto.TotalAmount,
+                TotalDiscountAmount = saleDto.TotalDiscountAmount,
+                TotalPaidAmount = saleDto.TotalPaidAmount,
+                CreatedDateTime = DateTime.UtcNow,
+                
+                SalesDetails = saleDto.SalesDetails.Select(d => new SalesDetails
+                {
+                    ProductId = d.ProductId,
+                    Quantity = d.Quantity,
+                    UnitType = d.UnitType,
+                    PricePerUnit = d.PricePerUnit,
+                    DiscountPerUnit = d.DiscountPerUnit,
+                    DiscountType = d.DiscountType,
+                    SalesId = strSalesId // Fix: Set the required SalesId property
+                }).ToList()
+            };
             _context.SalesInfo.Add(sale);
             await _context.SaveChangesAsync();
-            return sale;
+
+            saleDto.SalesId = strSalesId;
+            return saleDto;
         }
+
+        private string GenerateSalesId()
+        {
+            string str = Guid.NewGuid().ToString("N").Substring(0, 30).ToUpper();
+            //check if already exists, 
+            var isExist = _context.SalesInfo.Any(c => c.SalesId == str);
+            if (isExist)
+            {
+                //recursively call the function until a unique ID is found
+                return GenerateSalesId();
+            }
+            return str;
+        }
+
+        //public async Task<SalesInfo> CreateSaleAsync(SalesInfoDto saleDto)
+        //{
+
+        //    SalesInfo sale = new SalesInfo
+        //    {
+        //        SalesId = saleDto.SalesId,
+        //        CustomerId = saleDto.CustomerId,
+        //        OrderStatus = saleDto.OrderStatus,
+        //        TotalAmount = saleDto.TotalAmount,
+        //        TotalDiscountAmount = saleDto.TotalDiscountAmount,
+        //        TotalPaidAmount = saleDto.TotalPaidAmount,
+        //        CreatedDateTime = DateTime.UtcNow,
+        //        SalesDetails = saleDto.SalesDetails.Select(d => new SalesDetails
+        //        {
+        //            ProductId = d.ProductId,
+        //            Quantity = d.Quantity,
+        //            UnitType = d.UnitType,
+        //            PricePerUnit = d.PricePerUnit,
+        //            DiscountPerUnit = d.DiscountPerUnit,
+        //            DiscountType = d.DiscountType
+        //        }).ToList()
+        //    };
+        //    _context.SalesInfo.Add(sale);
+        //    await _context.SaveChangesAsync();
+        //    return sale;
+        //}
+
 
         public async Task<SalesInfo?> UpdateSaleAsync(string salesId, SalesInfo sale)
         {

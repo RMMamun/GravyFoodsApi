@@ -1,4 +1,5 @@
 ﻿using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 
 namespace GravyFoodsApi.MasjidRepository
 {
@@ -6,7 +7,7 @@ namespace GravyFoodsApi.MasjidRepository
     {
         Task<IEnumerable<SalesInfo>> GetAllSalesAsync();
         Task<SalesInfo?> GetSaleByIdAsync(string salesId);
-        Task<SalesInfo> CreateSaleAsync(SalesInfo sale);
+        Task<SalesInfoDto> CreateSaleAsync(SalesInfoDto sale);
         Task<SalesInfo?> UpdateSaleAsync(string salesId, SalesInfo sale);
         Task<bool> DeleteSaleAsync(string salesId);
     }

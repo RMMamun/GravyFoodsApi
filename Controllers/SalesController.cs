@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using GravyFoodsApi.MasjidRepository;
+﻿using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GravyFoodsApi.Controllers
 {
@@ -32,7 +33,7 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SalesInfo>> CreateSale(SalesInfo sale)
+        public async Task<ActionResult<SalesInfoDto>> CreateSale(SalesInfoDto sale)
         {
             var created = await _salesService.CreateSaleAsync(sale);
             return CreatedAtAction(nameof(GetSale), new { id = created.SalesId }, created);
