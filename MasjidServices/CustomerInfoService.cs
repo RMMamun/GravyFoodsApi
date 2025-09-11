@@ -18,8 +18,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             // Implementation to add customer info to database
             // Check if email or phone number already exists
-            bool isExisted = await CheckCustomerByNameAndEmail(customerInfo.PhoneNo, customerInfo.Email);
-
+            bool isExisted = await CheckCustomerByMobileOrEmail(customerInfo.PhoneNo, customerInfo.Email);
             if (isExisted)
             {
                 //return null;
@@ -42,7 +41,7 @@ namespace GravyFoodsApi.MasjidServices
             return ServiceResultWrapper<CustomerInfo>.Ok(newCustomer);
         }
 
-        public Task<bool> CheckCustomerByNameAndEmail(string PhoneNo, string email)
+        public Task<bool> CheckCustomerByMobileOrEmail(string PhoneNo, string email)
         {
             var isExisted = _context.CustomerInfo.Any(c => c.Email == email || c.PhoneNo == PhoneNo);
             return Task.FromResult(isExisted);
@@ -58,6 +57,13 @@ namespace GravyFoodsApi.MasjidServices
             var customer = _context.CustomerInfo.FirstOrDefault(c => c.Id == Id);
             return Task.FromResult(customer);
         }
+
+        public Task<CustomerInfo?> GetCustomerByMobileOrEmail(string PhoneNo, string email)
+        {
+            var customer = _context.CustomerInfo.FirstOrDefault(c => c.Email == email || c.PhoneNo == PhoneNo);
+            return Task.FromResult(customer);
+        }
+
 
         public Task<bool> UpdateCustomerInfoAsync(CustomerInfo customerInfo)
         {

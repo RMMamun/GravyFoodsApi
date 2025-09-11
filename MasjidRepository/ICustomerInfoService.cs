@@ -6,6 +6,8 @@ namespace GravyFoodsApi.MasjidRepository
     {
         Task<ServiceResultWrapper<CustomerInfo>> Create(CustomerInfoDTO customerInfo);
         Task<CustomerInfo?> GetCustomerInfoById(int Id);
+        Task<CustomerInfo?> GetCustomerByMobileOrEmail(string PhoneNo, string email);
+
         Task<bool> UpdateCustomerInfoAsync(CustomerInfo customerInfo);
         Task<IEnumerable<CustomerInfo>?> GetAllCustomersAsync();
     }

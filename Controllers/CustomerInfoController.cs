@@ -24,6 +24,11 @@ namespace GravyFoodsApi.Controllers
             //var created = await _repository.Create(customer);
             //return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
 
+            var customerExists = await _repository.GetCustomerByMobileOrEmail(customer.PhoneNo, customer.Email);
+            if (customerExists != null)
+            {
+                return Ok(customerExists);
+            }
 
             var result = await _repository.Create(customer);
 
