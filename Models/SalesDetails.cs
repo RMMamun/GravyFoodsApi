@@ -16,10 +16,10 @@ namespace GravyFoodsApi.Models
 
         [Required]
         public double Quantity { get; set; }
-        public double UnitType { get; set; }    //PCS,KG,Ltr
-        public double PricePerUnit { get; set; }
-        public double DiscountPerUnit { get; set; } = 0;
-        public double DiscountAmountPerUnit { get; set; } = 0;
+        public string UnitType { get; set; }    //PCS,KG,Ltr
+        public decimal PricePerUnit { get; set; }
+        public decimal DiscountPerUnit { get; set; } = 0;
+        public decimal DiscountAmountPerUnit { get; set; } = 0;
         public string DiscountType { get; set; } = "%"; // Default to Percentage and Amount can be another option
 
 

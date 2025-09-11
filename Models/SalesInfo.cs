@@ -24,9 +24,9 @@ namespace GravyFoodsApi.Models
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
         public DateTime? ModifiedDateTime { get; set; } // Nullable in case not yet modified
 
-        public double TotalAmount { get; set; }
-        public double TotalDiscountAmount { get; set; }
-        public double TotalPaidAmount { get; set; }
+        public decimal TotalAmount { get; set; }
+        public decimal TotalDiscountAmount { get; set; }
+        public decimal TotalPaidAmount { get; set; }
 
         
 
