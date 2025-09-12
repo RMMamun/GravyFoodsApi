@@ -7,9 +7,12 @@ using GravyFoodsApi.Models;
 using GravyFoodsApi.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
+
 
 GlobalVariable.ConnString = builder.Configuration.GetConnectionString("myconn");
 
