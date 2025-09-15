@@ -32,7 +32,7 @@ namespace MasjidWorldwide.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> Create(ProductDto product)
+        public async Task<ActionResult<ProductDto>> Create(ProductDto product)
         {
             var created = await _repository.AddProductAsync(product);
             return CreatedAtAction(nameof(Get), new { id = created.ProductId }, created);

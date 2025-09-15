@@ -20,6 +20,12 @@
         public string UnitType { get; set; }
         public decimal PricePerUnit { get; set; }
         public decimal DiscountPerUnit { get; set; }
+
+        public decimal TotalPrice { get; set; }
+        public decimal TotalDiscount { get; set; }
+        public decimal VATPerUnit { get; set; }
+        public decimal TotalVAT { get; set; }
+
         public string DiscountType { get; set; } = "%";
 
     }

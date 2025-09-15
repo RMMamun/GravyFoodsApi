@@ -35,6 +35,9 @@ namespace GravyFoodsApi.MasjidServices
                     BrandId = p.BrandId,
                     Price = p.Price,
                     DiscountedPrice = p.DiscountedPrice,
+                    DiscountAmount = p.DiscountAmount,
+                    Cost = p.Cost,
+
                     Quantity = 0,
                     IsAvailable = p.IsAvailable,
                     IsSalable = p.IsSalable,
@@ -42,7 +45,7 @@ namespace GravyFoodsApi.MasjidServices
                     CategoryName = p.Category?.Name,
                     ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
                     UnitId = p.Unit != null ? p.Unit.UnitId : null,
-                    UnitName = p.Unit != null ? p.Unit.UnitName : null,
+                    UnitType = p.Unit != null ? p.Unit.UnitName : null,
                     BranchId = p.BranchId,
                     BranchName = p.Branch != null ? p.Branch.BranchName : null,
                     CompanyId = p.CompanyId,
@@ -113,6 +116,9 @@ namespace GravyFoodsApi.MasjidServices
                         BrandId = _product.BrandId,
                         Price = _product.Price,
                         DiscountedPrice = _product.DiscountedPrice,
+                        DiscountAmount = _product.DiscountAmount,
+                        Cost = _product.Cost,
+
                         Quantity = 0,
                         IsAvailable = _product.IsAvailable,
                         IsSalable = _product.IsSalable,
@@ -120,7 +126,7 @@ namespace GravyFoodsApi.MasjidServices
                         CategoryName = _product.Category?.Name,
                         ImageUrl = _product.Images.FirstOrDefault() != null ? _product.Images.FirstOrDefault().ImageUrl : null,
                         UnitId = _product.Unit != null ? _product.Unit.UnitId : null,
-                        UnitName = _product.Unit != null ? _product.Unit.UnitName : null,
+                        UnitType = _product.Unit != null ? _product.Unit.UnitName : null,
                         BranchId = _product.BranchId,
                         BranchName = _product.Branch != null ? _product.Branch.BranchName : null,
                         CompanyId = _product.CompanyId,
@@ -155,11 +161,14 @@ namespace GravyFoodsApi.MasjidServices
                 product.BrandId = _product.BrandId;
                 product.Price = _product.Price;
                 product.DiscountedPrice = _product.DiscountedPrice;
+                product.DiscountAmount = _product.DiscountAmount;
+                product.Cost = _product.Cost;
                 product.IsAvailable = _product.IsAvailable;
                 product.IsSalable = _product.IsSalable;
                 product.UnitId = _product.UnitId;
                 product.BranchId = _product.BranchId;
                 product.CompanyId = _product.CompanyId;
+                
                 
 
                 //product.Quantity = 0,
@@ -208,8 +217,11 @@ namespace GravyFoodsApi.MasjidServices
                         CreatedDateTime = product.CreatedDateTime,
                         Price = product.Price,
                         DiscountedPrice = product.DiscountedPrice,
+                        DiscountAmount = product.DiscountAmount,    
+                        Cost = product.Cost,
                         IsAvailable = product.IsAvailable,
-                        IsSalable = product.IsSalable
+                        IsSalable = product.IsSalable,
+                        
                         
                     };
 

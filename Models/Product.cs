@@ -29,6 +29,12 @@ namespace GravyFoodsApi.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal? DiscountedPrice { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal DiscountAmount { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Cost { get; set; }
+
         [Required]
         public string UnitId { get; set; }
 
@@ -99,9 +105,15 @@ namespace GravyFoodsApi.Models
         public decimal? DiscountedPrice { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal? Quantity { get; set; }
+        public decimal DiscountAmount { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Cost { get; set; }
+
+        //[Column(TypeName = "decimal(18,2)")]
+        public double Quantity { get; set; }
         public string UnitId { get; set; }
-        public string UnitName { get; set; }
+        public string UnitType { get; set; }
 
         public bool IsAvailable { get; set; } = true;
 
