@@ -37,33 +37,47 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<SalesInfoDto> CreateSaleAsync(SalesInfoDto saleDto)
         {
-            string strSalesId = GenerateSalesId();
-            SalesInfo sale = new SalesInfo
+            try
             {
-                SalesId = strSalesId,
-                CustomerId = saleDto.CustomerId,
-                OrderStatus = saleDto.OrderStatus,
-                TotalAmount = saleDto.TotalAmount,
-                TotalDiscountAmount = saleDto.TotalDiscountAmount,
-                TotalPaidAmount = saleDto.TotalPaidAmount,
-                CreatedDateTime = DateTime.UtcNow,
-                
-                SalesDetails = saleDto.SalesDetails.Select(d => new SalesDetails
+                string strSalesId = GenerateSalesId();
+                SalesInfo sale = new SalesInfo
                 {
-                    ProductId = d.ProductId,
-                    Quantity = d.Quantity,
-                    UnitType = d.UnitType,
-                    PricePerUnit = d.PricePerUnit,
-                    DiscountPerUnit = d.DiscountPerUnit,
-                    DiscountType = d.DiscountType,
-                    SalesId = strSalesId // Fix: Set the required SalesId property
-                }).ToList()
-            };
-            _context.SalesInfo.Add(sale);
-            await _context.SaveChangesAsync();
+                    SalesId = strSalesId,
+                    CustomerId = saleDto.CustomerId,
+                    OrderStatus = saleDto.OrderStatus,
+                    TotalAmount = saleDto.TotalAmount,
+                    TotalDiscountAmount = saleDto.TotalDiscountAmount,
+                    TotalPaidAmount = saleDto.TotalPaidAmount,
+                    CreatedDateTime = saleDto.CreatedDateTime,
 
-            saleDto.SalesId = strSalesId;
-            return saleDto;
+                    SalesDetails = saleDto.SalesDetails.Select(d => new SalesDetails
+                    {
+                        ProductId = d.ProductId,
+                        Quantity = d.Quantity,
+                        UnitType = d.UnitType,
+                        PricePerUnit = d.PricePerUnit,
+                        DiscountPerUnit = d.DiscountPerUnit,
+                        DiscountType = d.DiscountType,
+                        TotalDiscount = d.TotalDiscount,
+                        TotalPrice = d.TotalPrice,
+                        VATPerUnit = d.VATPerUnit,
+                        TotalVAT = d.TotalVAT,
+
+                        SalesId = strSalesId // Fix: Set the required SalesId property
+                    }).ToList()
+                };
+                _context.SalesInfo.Add(sale);
+                await _context.SaveChangesAsync();
+
+                saleDto.SalesId = strSalesId;
+                return saleDto;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework here)
+                Console.WriteLine($"Error creating sale: {ex.Message}");
+                throw; // Re-throw the exception after logging it
+            }
         }
 
         private string GenerateSalesId()

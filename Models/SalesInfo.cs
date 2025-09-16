@@ -21,7 +21,7 @@ namespace GravyFoodsApi.Models
         public string? BillingAddress { get; set; } // Nullable in case not applicable
         public string? PaymentMethod { get; set; } // Nullable in case not applicable
         public string? TransactionId { get; set; } // Nullable in case not applicable
-        public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedDateTime { get; set; }
         public DateTime? ModifiedDateTime { get; set; } // Nullable in case not yet modified
 
         public decimal TotalAmount { get; set; }

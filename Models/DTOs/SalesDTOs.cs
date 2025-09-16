@@ -9,6 +9,8 @@
         public decimal TotalDiscountAmount { get; set; }
         public decimal TotalPaidAmount { get; set; }
 
+        public DateTime CreatedDateTime { get; set; } = DateTime.Now;
+
         public List<SalesDetailDto> SalesDetails { get; set; } = new();
     }
 
