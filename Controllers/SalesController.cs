@@ -18,7 +18,7 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SalesInfo>>> GetSales()
+        public async Task<ActionResult<IEnumerable<SalesInfoDto>>> GetSales()
         {
             var sales = await _salesService.GetAllSalesAsync();
             return Ok(sales);

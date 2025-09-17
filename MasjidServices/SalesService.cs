@@ -19,12 +19,70 @@ namespace GravyFoodsApi.MasjidServices
             _context = context;
         }
 
-        public async Task<IEnumerable<SalesInfo>> GetAllSalesAsync()
+        public async Task<IEnumerable<SalesInfoDto>> GetAllSalesAsync()
         {
-            return await _context.SalesInfo
+            try
+            {
+
+
+                //IEnumerable<SalesInfo> sales = await _context.SalesInfo
+                //    .Include(s => s.SalesDetails)
+                //    .Include(s => s.CustomerInfo)
+                //    .ToListAsync();
+
+
+                var salesDtos = await _context.SalesInfo
                 .Include(s => s.SalesDetails)
                 .Include(s => s.CustomerInfo)
+                .Select(s => new SalesInfoDto
+                {
+                    SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                    CustomerId = s.CustomerId.ToString(),
+                    CustomerName = s.CustomerInfo.CustomerName,
+                    UserId = "", //s.UserId.ToString(),
+                    BranchId = "", //s.BranchId.ToString(),
+                    CompanyId = "", // s.CompanyId.ToString(),
+
+                    OrderStatus = s.OrderStatus,
+                    TotalAmount = s.TotalAmount,
+                    TotalDiscountAmount = s.TotalDiscountAmount,
+                    TotalPaidAmount = s.TotalPaidAmount,
+                    CreatedDateTime = s.CreatedDateTime,
+                    
+
+                    SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
+                    {
+                        ProductId = d.ProductId.ToString(),
+                        ProductName = d.Product.Name,   // assumes navigation to Product
+                        Quantity = d.Quantity,
+                        UnitType = d.UnitType,
+                        PricePerUnit = d.PricePerUnit,
+                        DiscountPerUnit = d.DiscountPerUnit,
+                        TotalPrice = d.TotalPrice,
+                        TotalDiscount = d.TotalDiscount,
+                        VATPerUnit = d.VATPerUnit,
+                        TotalVAT = d.TotalVAT,
+                        DiscountType = d.DiscountType,
+                        UserId = "", //d.UserId.ToString(),
+                        BranchId = "", //d.BranchId.ToString(),
+                        CompanyId = "", //d.CompanyId.ToString(),
+                        
+                    }).ToList()
+                })
                 .ToListAsync();
+
+
+
+
+                return salesDtos;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework here)
+                Console.WriteLine($"Error retrieving sales: {ex.Message}");
+                throw; // Re-throw the exception after logging it
+            }
+
         }
 
         public async Task<SalesInfo?> GetSaleByIdAsync(string salesId)

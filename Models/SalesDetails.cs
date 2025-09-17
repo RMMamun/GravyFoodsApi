@@ -17,9 +17,9 @@ namespace GravyFoodsApi.Models
         [Required]
         public double Quantity { get; set; }
         public string UnitType { get; set; }    //PCS,KG,Ltr
-        public decimal PricePerUnit { get; set; }
-        public decimal DiscountPerUnit { get; set; } = 0;
-        public decimal DiscountAmountPerUnit { get; set; } = 0;
+        public double PricePerUnit { get; set; }
+        public double DiscountPerUnit { get; set; } = 0;
+        public double DiscountAmountPerUnit { get; set; } = 0;
 
         public decimal TotalPrice { get; set; }
         public decimal TotalDiscount { get; set; }

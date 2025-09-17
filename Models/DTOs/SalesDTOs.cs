@@ -4,10 +4,15 @@
     {
         public string SalesId { get; set; } = string.Empty;
         public string CustomerId { get; set; } = string.Empty;
+        public string CustomerName { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
+        public string BranchId { get; set; } = string.Empty;
+        public string CompanyId { get; set; } = string.Empty;
+
         public string OrderStatus { get; set; } = "Pending";
-        public decimal TotalAmount { get; set; }
-        public decimal TotalDiscountAmount { get; set; }
-        public decimal TotalPaidAmount { get; set; }
+        public double TotalAmount { get; set; }
+        public double TotalDiscountAmount { get; set; }
+        public double TotalPaidAmount { get; set; }
 
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
 
@@ -20,8 +25,8 @@
         public string ProductName { get; set; } = string.Empty;
         public double Quantity { get; set; }
         public string UnitType { get; set; }
-        public decimal PricePerUnit { get; set; }
-        public decimal DiscountPerUnit { get; set; }
+        public double PricePerUnit { get; set; }
+        public double DiscountPerUnit { get; set; }
 
         public decimal TotalPrice { get; set; }
         public decimal TotalDiscount { get; set; }
@@ -29,6 +34,11 @@
         public decimal TotalVAT { get; set; }
 
         public string DiscountType { get; set; } = "%";
+
+        public string UserId { get; set; } = string.Empty;
+        public string BranchId { get; set; } = string.Empty;
+        public string CompanyId { get; set; } = string.Empty;
+
 
     }
 }
