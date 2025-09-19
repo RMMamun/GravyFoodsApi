@@ -87,10 +87,20 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<SalesInfo?> GetSaleByIdAsync(string salesId)
         {
+            //return await _context.SalesInfo
+            //    .Include(s => s.SalesDetails)
+            //    .ThenInclude(d => d.Product)
+            //    .Include(s => s.CustomerInfo)
+                
+            //    .FirstOrDefaultAsync(s => s.SalesId == salesId);
+
             return await _context.SalesInfo
-                .Include(s => s.SalesDetails)
-                .Include(s => s.CustomerInfo)
-                .FirstOrDefaultAsync(s => s.SalesId == salesId);
+                .Include(s => s.CustomerInfo)            // load customer
+            .Include(s => s.SalesDetails)            // load sales details
+                .ThenInclude(d => d.Product)         // load product for each detail
+            .FirstOrDefaultAsync(s => s.SalesId == salesId);
+
+
         }
 
         public async Task<SalesInfoDto> CreateSaleAsync(SalesInfoDto saleDto)
