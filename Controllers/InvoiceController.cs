@@ -15,9 +15,9 @@ namespace GravyFoodsApi.Controllers
     public class InvoiceController : ControllerBase
     {
 
-        private readonly SalesService _salesService;
+        private readonly ISalesService _salesService;
 
-        public InvoiceController(SalesService salesService)
+        public InvoiceController(ISalesService salesService)
         {
             _salesService = salesService;
         }
