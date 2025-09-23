@@ -23,6 +23,8 @@ namespace GravyFoodsApi.Models
 
         // Navigation Property
         public CompanyInfo Company { get; set; }
+
+        
     }
 
 }

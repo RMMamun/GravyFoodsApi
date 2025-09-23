@@ -30,6 +30,8 @@ namespace GravyFoodsApi.Data
 
         public DbSet<SalesInfo> SalesInfo { get; set; }
         public DbSet<SalesDetails> SalesDetails { get; set; }
+        public DbSet<ExpenseHead> ExpenseHead { get; set; }
+        public DbSet<ExpenseInfo> ExpenseInfo { get; set; }
 
 
 

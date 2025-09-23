@@ -18,6 +18,8 @@ namespace GravyFoodsApi.Models
 
         // Navigation Property (One-to-Many: Company -> Branches)
         public ICollection<BranchInfo> Branches { get; set; } = new List<BranchInfo>();
+
+        public ICollection<ExpenseHead> ExpenseHeads { get; set; } = new List<ExpenseHead>();
     }
 
 }

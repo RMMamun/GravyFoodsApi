@@ -22,18 +22,26 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-
-            .AllowAnyOrigin()
+            .WithOrigins(
+            "https://goooget.com",
+            "https://gravyfoods.goooget.com",
+            "http://gravyfoods.goooget.com",
+            "https://localhost:7065") // frontend origin
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+        ;
     });
 });
 
-            //.WithOrigins(
-            //"https://gravyfoods.goooget.com",
-            //"http://gravyfoods.goooget.com",
+//.AllowAnyOrigin()
+//            .AllowAnyMethod()
+//            .AllowAnyHeader();
 
-            //"https://localhost:7065") // frontend origin
+//.WithOrigins(
+//"https://gravyfoods.goooget.com",
+//"http://gravyfoods.goooget.com",
+
+//"https://localhost:7065") // frontend origin
 
 // Add services to the container.
 
@@ -62,6 +70,8 @@ builder.Services.AddScoped<IProductImageRepository, ProductImageService>();
 
 builder.Services.AddScoped<ICustomerInfoService, CustomerInfoService>();
 builder.Services.AddScoped<ISalesService, SalesService>();
+builder.Services.AddScoped<IExpenseHeadService, ExpenseHeadService>();
+builder.Services.AddScoped<IExpenseInfoService, ExpenseInfoService>();
 
 
 //2028 08 21 <-
