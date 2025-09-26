@@ -29,7 +29,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-                return await _context.ProductCategories.ToListAsync();
+                return await _context.ProductCategory.ToListAsync();
 
             }
             catch (Exception ex)

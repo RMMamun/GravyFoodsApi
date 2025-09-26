@@ -13,9 +13,9 @@ namespace GravyFoodsApi.Data
         public DbSet<Country> Country { get; set; }
         public DbSet<POSSubscription> POSSubscription { get; set; }
         public DbSet<Logging> Logging { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Brand> Brands { get; set; }
-        public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<Product> Product { get; set; }
+        public DbSet<Brand> Brand { get; set; }
+        public DbSet<ProductCategory> ProductCategory { get; set; }
 
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductAttribute> ProductAttributes { get; set; }

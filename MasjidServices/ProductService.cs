@@ -69,7 +69,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-                return await _context.Products
+                return await _context.Product
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
                 .Include(p => p.Images)
@@ -91,7 +91,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                Product _product =  await _context.Products
+                Product _product =  await _context.Product
                                 .Include(p => p.Brand)
                                 .Include(p => p.Category)
                                 .Include(p => p.Images)
@@ -148,7 +148,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-                var product = await _context.Products.FindAsync(_product.ProductId);
+                var product = await _context.Product.FindAsync(_product.ProductId);
                 if (product == null)
                 {
                     return null;
@@ -225,7 +225,7 @@ namespace GravyFoodsApi.MasjidServices
                         
                     };
 
-                    await _context.Products.AddAsync(newProduct);
+                    await _context.Product.AddAsync(newProduct);
                     await _context.SaveChangesAsync();
                 }
 
@@ -242,7 +242,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                var product = await _context.Products.FindAsync(ProductId);
+                var product = await _context.Product.FindAsync(ProductId);
                 if (product == null)
                 {
                     return false;
@@ -256,7 +256,7 @@ namespace GravyFoodsApi.MasjidServices
                 .Where(od => od.ProductId == ProductId)
                 .ExecuteDeleteAsync();
 
-                await _context.Products
+                await _context.Product
                 .Where(od => od.ProductId == ProductId)
                 .ExecuteDeleteAsync();
 

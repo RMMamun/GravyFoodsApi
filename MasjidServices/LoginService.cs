@@ -1,4 +1,5 @@
-﻿using GravyFoodsApi.Data;
+﻿using GravyFoodsApi.Common;
+using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
 
@@ -18,6 +19,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
+                var str = GlobalVariable.ConnString;
 
                 var user = _dbContext.UserInfo.Where(u =>
                     u.UserId.Equals(username) &&

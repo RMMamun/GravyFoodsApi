@@ -17,7 +17,17 @@ var builder = WebApplication.CreateBuilder(args);
 QuestPDF.Settings.License = LicenseType.Community;
 
 
-GlobalVariable.ConnString = builder.Configuration.GetConnectionString("myconn");
+
+if (builder.Environment.IsDevelopment())
+{
+    GlobalVariable.ConnString = builder.Configuration.GetConnectionString("localconn");
+}
+else
+{
+    GlobalVariable.ConnString = builder.Configuration.GetConnectionString("myconn");
+}
+    
+    
 
 
 builder.Services.AddCors();

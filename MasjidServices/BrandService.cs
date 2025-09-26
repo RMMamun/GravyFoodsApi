@@ -21,7 +21,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                var brand = await _context.Brands.ToListAsync();
+                var brand = await _context.Brand.ToListAsync();
 
                 return brand;
             }
@@ -35,7 +35,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                var brand = await _context.Brands.Where(b => b.Id == Id).FirstOrDefaultAsync();
+                var brand = await _context.Brand.Where(b => b.Id == Id).FirstOrDefaultAsync();
 
                 return brand;
             }
