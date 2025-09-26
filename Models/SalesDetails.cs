@@ -39,5 +39,16 @@ namespace GravyFoodsApi.Models
 
         public SalesInfo SalesInfo { get; set; } = null!;
 
+        public string BranchId { get; set; } = string.Empty;
+        public string CompanyId { get; set; } = string.Empty;
+
+
+        // Navigation Properties
+        [ForeignKey(nameof(BranchId))]
+        public BranchInfo BranchInfo { get; set; }
+
+        [ForeignKey(nameof(CompanyId))]
+        public CompanyInfo CompanyInfo { get; set; }
+
     }
 }

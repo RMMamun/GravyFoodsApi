@@ -28,10 +28,18 @@ namespace GravyFoodsApi.Models
         public double TotalDiscountAmount { get; set; }
         public double TotalPaidAmount { get; set; }
 
+
+        public string BranchId { get; set; } = string.Empty;
+        public string CompanyId { get; set; } = string.Empty;
         
+        
+        // Navigation Properties
+        [ForeignKey(nameof(BranchId))]
+        public BranchInfo BranchInfo { get; set; }
 
-        // Navigation
-
+        [ForeignKey(nameof(CompanyId))]
+        public CompanyInfo CompanyInfo { get; set; }
+        
 
         [ForeignKey(nameof(CustomerId))]
         public CustomerInfo CustomerInfo { get; set; } = null!;

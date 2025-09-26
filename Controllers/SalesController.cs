@@ -32,6 +32,16 @@ namespace GravyFoodsApi.Controllers
             return Ok(sale);
         }
 
+        
+        [HttpGet("{fromDate:Datetime}/{toDate:Datetime}/{branchId}/{companyId}")]
+        public async Task<ActionResult<IEnumerable<SalesInfoDto>>> GetSalesByDateRangeAsync(DateTime fromDate, DateTime toDate, string branchId, string companyId)
+        {
+            var sale = await _salesService.GetSalesByDateRangeAsync(fromDate,toDate,branchId,companyId);
+            if (sale == null) return NotFound();
+            return Ok(sale);
+        }
+        
+
         [HttpPost]
         public async Task<ActionResult<SalesInfoDto>> CreateSale(SalesInfoDto sale)
         {

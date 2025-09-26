@@ -5,9 +5,12 @@ using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidServices;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
 using QuestPDF.Infrastructure;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,24 +19,29 @@ QuestPDF.Settings.License = LicenseType.Community;
 
 GlobalVariable.ConnString = builder.Configuration.GetConnectionString("myconn");
 
-//builder.Services.AddCors();
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy
-            .WithOrigins(
-            "https://goooget.com",
-            "https://gravyfoods.goooget.com",
-            "http://gravyfoods.goooget.com",
-            "https://localhost:7065") // frontend origin
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-        ;
-    });
-});
 
-//.AllowAnyOrigin()
+builder.Services.AddCors();
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowFrontend", policy =>
+//    {
+//        policy
+//            .AllowAnyMethod()
+//            .AllowAnyHeader()
+//            .AllowCredentials()
+//            .AllowAnyOrigin();
+
+//        //.WithOrigins(
+//        //"https://goooget.com",
+//        //"https://gravyfoods.goooget.com",
+//        //"http://gravyfoods.goooget.com",
+//        //"https://localhost:7065") // frontend origin
+
+
+//    });
+//});
+
+//              .AllowAnyOrigin()
 //            .AllowAnyMethod()
 //            .AllowAnyHeader();
 
@@ -77,6 +85,27 @@ builder.Services.AddScoped<IExpenseInfoService, ExpenseInfoService>();
 //2028 08 21 <-
 ////Gravy Foods/ POS ingegration <-
 
+////2025 09 26 ->
+//// Add authentication 
+//builder.Services.AddAuthentication("Bearer")
+//    .AddJwtBearer("Bearer", options =>
+//    {
+//        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+//        {
+//            ValidateIssuer = true,
+//            ValidateAudience = true,
+//            ValidateLifetime = true,
+//            ValidateIssuerSigningKey = true,
+//            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+//            ValidAudience = builder.Configuration["Jwt:Audience"],
+//            IssuerSigningKey = new SymmetricSecurityKey(
+//                System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+//        };
+//    });
+
+//builder.Services.AddAuthorization();
+////2025 09 26 <-
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "GravyFoodsApi", Version = "v1" });
@@ -99,16 +128,27 @@ else
 }
 // in general
 
-app.MapGet("/health", () => Results.Ok("Healthy"));
-app.MapGet("/test-cors", (HttpContext context) =>
-{
-    return Results.Ok("CORS works!");
-}).RequireCors("AllowFrontend");
+//app.MapGet("/health", () => Results.Ok("Healthy"));
+//app.MapGet("/test-cors", (HttpContext context) =>
+//{
+//    return Results.Ok("CORS works!");
+//}).RequireCors("AllowFrontend");
 
+
+app.UseCors("AllowFrontend");  // must be before auth & MapControllers
+app.UseCors(builder =>
+{
+    builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader();
+});
 
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+
 
 // Serve ProductImages as static files
 app.UseStaticFiles(new StaticFileOptions
@@ -127,7 +167,7 @@ app.UseStaticFiles(new StaticFileOptions
 //    .AllowAnyHeader();
 //});
 
-app.UseCors("AllowFrontend");  // must be before auth & MapControllers
+//app.UseCors("AllowFrontend");  // must be before auth & MapControllers
 
 //app.UseCors(builder =>
 //{
@@ -143,5 +183,48 @@ app.UseAuthentication();    //2025 08 21
 app.UseAuthorization();
 
 app.MapControllers();
+
+////2025 09 26 ->
+//// Login endpoint -> generate token
+//app.MapPost("/login", async (LoginRequest login, MasjidDBContext db) =>
+//{
+//    var user = await db.UserInfo.FirstOrDefaultAsync(u => u.UserName == login.Username);
+
+//    if (user == null )
+//        return Results.BadRequest(new { error = "Invalid user name or password" });
+
+//    if (login.Username == user.UserName && login.Password == user.Password)
+//    {
+//        var claims = new[]
+//        {
+//            new System.Security.Claims.Claim("name", login.Username),
+//            new System.Security.Claims.Claim("role", "Admin")
+//        };
+
+//        var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
+//            issuer: builder.Configuration["Jwt:Issuer"],
+//            audience: builder.Configuration["Jwt:Audience"],
+//            claims: claims,
+//            expires: DateTime.UtcNow.AddHours(1),
+//            signingCredentials: new SigningCredentials(
+//                new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+//                SecurityAlgorithms.HmacSha256)
+//        );
+
+//        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+//        return Results.Ok(new { token = tokenString });
+//    }
+//    return Results.Unauthorized();
+//});
+
+//// Protected endpoint
+//app.MapGet("/profile", [Authorize] (HttpContext context) =>
+//{
+//    var name = context.User.Identity?.Name ?? "Unknown";
+//    return Results.Ok(new { message = $"Hello {name}, this is a protected resource!" });
+//});
+////2025 09 26 <-
+
 
 app.Run();
