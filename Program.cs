@@ -20,14 +20,16 @@ QuestPDF.Settings.License = LicenseType.Community;
 
 if (builder.Environment.IsDevelopment())
 {
-    GlobalVariable.ConnString = builder.Configuration.GetConnectionString("localconn");
+    GlobalVariable.ConnString = builder.Configuration.GetConnectionString("serverconn");
+    //GlobalVariable.ConnString = builder.Configuration.GetConnectionString("laptopconn");
+    //GlobalVariable.ConnString = builder.Configuration.GetConnectionString("desktopconn");
 }
 else
 {
-    GlobalVariable.ConnString = builder.Configuration.GetConnectionString("myconn");
+    GlobalVariable.ConnString = builder.Configuration.GetConnectionString("serverconn");
 }
-    
-    
+
+
 
 
 builder.Services.AddCors();
@@ -90,6 +92,7 @@ builder.Services.AddScoped<ICustomerInfoService, CustomerInfoService>();
 builder.Services.AddScoped<ISalesService, SalesService>();
 builder.Services.AddScoped<IExpenseHeadService, ExpenseHeadService>();
 builder.Services.AddScoped<IExpenseInfoService, ExpenseInfoService>();
+builder.Services.AddScoped<ISupplierRepository, SupplierService>();
 
 
 //2028 08 21 <-

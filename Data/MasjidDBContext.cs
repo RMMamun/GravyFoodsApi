@@ -33,6 +33,8 @@ namespace GravyFoodsApi.Data
         public DbSet<ExpenseHead> ExpenseHead { get; set; }
         public DbSet<ExpenseInfo> ExpenseInfo { get; set; }
 
+        public DbSet<SupplierInfo> SupplierInfo { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,6 +44,13 @@ namespace GravyFoodsApi.Data
 
             modelBuilder.Entity<Product>()
                 .HasKey(p => p.ProductId);
+
+
+            modelBuilder.Entity<CustomerInfo>()
+                .HasKey(p => p.CustomerId);
+
+            modelBuilder.Entity<SupplierInfo>()
+                .HasKey(p => p.SupplierId);
 
 
             // Relationships

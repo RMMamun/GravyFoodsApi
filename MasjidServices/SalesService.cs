@@ -34,6 +34,10 @@ namespace GravyFoodsApi.MasjidServices
                     TotalDiscountAmount = saleDto.TotalDiscountAmount,
                     TotalPaidAmount = saleDto.TotalPaidAmount,
                     CreatedDateTime = saleDto.CreatedDateTime,
+                    BranchId = saleDto.BranchId,
+                    CompanyId = saleDto.CompanyId,
+                    UserId = saleDto.UserId,
+
 
                     SalesDetails = saleDto.SalesDetails.Select(d => new SalesDetails
                     {
@@ -47,6 +51,9 @@ namespace GravyFoodsApi.MasjidServices
                         TotalPrice = d.TotalPrice,
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
+                        BranchId = d.BranchId,
+                        CompanyId = d.CompanyId,
+
 
                         SalesId = strSalesId // Fix: Set the required SalesId property
                     }).ToList()
