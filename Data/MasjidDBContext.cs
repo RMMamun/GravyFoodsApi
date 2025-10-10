@@ -35,6 +35,8 @@ namespace GravyFoodsApi.Data
 
         public DbSet<SupplierInfo> SupplierInfo { get; set; }
 
+        public DbSet<PurchaseInfo> PurchaseInfo { get; set; }
+        public DbSet<PurchaseDetails> PurchaseDetails { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -94,7 +96,7 @@ namespace GravyFoodsApi.Data
                 .WithMany(u => u.Products)
                 .HasForeignKey(p => p.UnitId);
 
-            // Set custom PK for SalesInfo
+
             modelBuilder.Entity<CustomerInfo>()
                 .HasKey(s => s.CustomerId);
 
@@ -114,6 +116,24 @@ namespace GravyFoodsApi.Data
                 .HasOne(s => s.CustomerInfo)
                 .WithMany() // assuming no navigation collection in CustomerInfo
                 .HasForeignKey(s => s.CustomerId);
+
+
+
+            // Set custom PK for PurchaseInfo
+            modelBuilder.Entity<PurchaseInfo>()
+                .HasKey(s => s.PurchaseId);
+
+            // Relationship: PurchaseInfo (1) -> PurchaseDetails (many)
+            modelBuilder.Entity<PurchaseDetails>()
+                .HasOne(d => d.PurchaseInfo)
+                .WithMany(m => m.PurchaseDetails)
+                .HasForeignKey(d => d.PurchaseId);
+
+            // Optional: Configure Customer relationship if CustomerInfo.CustomerId is the PK
+            modelBuilder.Entity<PurchaseInfo>()
+                .HasOne(s => s.SupplierInfo)
+                .WithMany() // assuming no navigation collection in CustomerInfo
+                .HasForeignKey(s => s.SupplierId);
 
 
 
