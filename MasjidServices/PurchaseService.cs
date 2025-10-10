@@ -206,7 +206,7 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        public async Task<IEnumerable<PurchaseInfoDto>> GetAllPurchaseAsync()
+        public async Task<IEnumerable<PurchaseInfoDto>> GetAllPurchaseAsync(string branchId, string companyId)
         {
             try
             {
@@ -226,9 +226,9 @@ namespace GravyFoodsApi.MasjidServices
                     PurchaseId = s.PurchaseId.ToString(),   // adjust if Id is string
                     SupplierId = s.SupplierId.ToString(),
                     SupplierName = s.SupplierInfo.SupplierName,
-                    UserId = "", //s.UserId.ToString(),
-                    BranchId = "", //s.BranchId.ToString(),
-                    CompanyId = "", // s.CompanyId.ToString(),
+                    UserId = s.UserId.ToString(),
+                    BranchId = s.BranchId.ToString(),
+                    CompanyId = s.CompanyId.ToString(),
 
                     TotalAmount = s.TotalAmount,
                     CreatedDateTime = s.CreatedDateTime,
@@ -245,8 +245,8 @@ namespace GravyFoodsApi.MasjidServices
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
                         UserId = "", //d.UserId.ToString(),
-                        BranchId = "", //d.BranchId.ToString(),
-                        CompanyId = "", //d.CompanyId.ToString(),
+                        BranchId = d.BranchId.ToString(),
+                        CompanyId = d.CompanyId.ToString(),
 
                     }).ToList()
                 })

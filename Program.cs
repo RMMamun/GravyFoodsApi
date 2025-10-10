@@ -93,6 +93,7 @@ builder.Services.AddScoped<ISalesService, SalesService>();
 builder.Services.AddScoped<IExpenseHeadService, ExpenseHeadService>();
 builder.Services.AddScoped<IExpenseInfoService, ExpenseInfoService>();
 builder.Services.AddScoped<ISupplierRepository, SupplierService>();
+builder.Services.AddScoped<IPurchaseRepository, PurchaseService>();
 
 
 //2028 08 21 <-

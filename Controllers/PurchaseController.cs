@@ -17,10 +17,10 @@ namespace GravyFoodsApi.Controllers
             _PurchaseService = PurchaseService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<PurchaseInfoDto>>> GetPurchase()
+        [HttpGet("{branchId}/{companyId}")]
+        public async Task<ActionResult<IEnumerable<PurchaseInfoDto>>> GetPurchase(string branchId, string companyId)
         {
-            var Purchase = await _PurchaseService.GetAllPurchaseAsync();
+            var Purchase = await _PurchaseService.GetAllPurchaseAsync(branchId, companyId);
             return Ok(Purchase);
         }
 
