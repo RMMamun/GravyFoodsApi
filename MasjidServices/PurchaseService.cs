@@ -20,7 +20,7 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<PurchaseInfoDto> CreatePurchaseAsync(PurchaseInfoDto PurchaseDto)
+        public async Task<PurchaseInfoDto> CreatePurchaseAsync(PurchaseInfoDto PurDto)
         {
             try
             {
@@ -28,15 +28,20 @@ namespace GravyFoodsApi.MasjidServices
                 PurchaseInfo Purchase = new PurchaseInfo
                 {
                     PurchaseId = strPurchaseId,
-                    SupplierId = PurchaseDto.SupplierId,
-                    TotalAmount = PurchaseDto.TotalAmount,
-                    CreatedDateTime = PurchaseDto.CreatedDateTime,
-                    BranchId = PurchaseDto.BranchId,
-                    CompanyId = PurchaseDto.CompanyId,
-                    UserId = PurchaseDto.UserId,
+                    SupplierId = PurDto.SupplierId,
+                    TotalAmount = PurDto.TotalAmount,
+                    CreatedDateTime = DateTime.Now,
+                    BranchId = PurDto.BranchId,
+                    CompanyId = PurDto.CompanyId,
+                    UserId = PurDto.UserId,
+                    EditDateTime = null,
+                    PaymentMethod = "",
+                    PurchaseDate = PurDto.CreatedDateTime,
+                    TransactionId = "",
+                    
 
 
-                    PurchaseDetails = PurchaseDto.PurchaseDetails.Select(d => new PurchaseDetails
+                    PurchaseDetails = PurDto.PurchaseDetails.Select(d => new PurchaseDetails
                     {
                         ProductId = d.ProductId,
                         Quantity = d.Quantity,
@@ -45,18 +50,18 @@ namespace GravyFoodsApi.MasjidServices
                         TotalPrice = d.TotalPrice,
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
-                        BranchId = d.BranchId,
-                        CompanyId = d.CompanyId,
-
+                        BranchId = PurDto.BranchId,
+                        CompanyId = PurDto.CompanyId,
+                        
 
                         PurchaseId = strPurchaseId // Fix: Set the required PurchaseId property
                     }).ToList()
-                };
+                }; ;
                 _context.PurchaseInfo.Add(Purchase);
                 await _context.SaveChangesAsync();
 
-                PurchaseDto.PurchaseId = strPurchaseId;
-                return PurchaseDto;
+                PurDto.PurchaseId = strPurchaseId;
+                return PurDto;
             }
             catch (Exception ex)
             {
@@ -79,19 +84,19 @@ namespace GravyFoodsApi.MasjidServices
             return str;
         }
 
-        //public async Task<PurchaseInfo> CreatePurchaseAsync(PurchaseInfoDto PurchaseDto)
+        //public async Task<PurchaseInfo> CreatePurchaseAsync(PurchaseInfoDto PurDto)
         //{
 
         //    PurchaseInfo Purchase = new PurchaseInfo
         //    {
-        //        PurchaseId = PurchaseDto.PurchaseId,
-        //        SupplierId = PurchaseDto.SupplierId,
-        //        OrderStatus = PurchaseDto.OrderStatus,
-        //        TotalAmount = PurchaseDto.TotalAmount,
-        //        TotalDiscountAmount = PurchaseDto.TotalDiscountAmount,
-        //        TotalPaidAmount = PurchaseDto.TotalPaidAmount,
+        //        PurchaseId = PurDto.PurchaseId,
+        //        SupplierId = PurDto.SupplierId,
+        //        OrderStatus = PurDto.OrderStatus,
+        //        TotalAmount = PurDto.TotalAmount,
+        //        TotalDiscountAmount = PurDto.TotalDiscountAmount,
+        //        TotalPaidAmount = PurDto.TotalPaidAmount,
         //        CreatedDateTime = DateTime.UtcNow,
-        //        PurchaseDetails = PurchaseDto.PurchaseDetails.Select(d => new PurchaseDetails
+        //        PurchaseDetails = PurDto.PurchaseDetails.Select(d => new PurchaseDetails
         //        {
         //            ProductId = d.ProductId,
         //            Quantity = d.Quantity,

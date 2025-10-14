@@ -20,12 +20,13 @@ namespace GravyFoodsApi.MasjidServices
             _context = context;
         }
 
-        public async Task<IEnumerable<ProductDto>> GetProductsWithDetailsAsync()
+        public async Task<IEnumerable<ProductDto>> GetProductsWithDetailsAsync(string branchId, string companyId)
         {
             try
             {
 
-                IEnumerable<Product> product = await GetProductsDetailsAsyc();
+
+                IEnumerable<Product> product = await GetProductsDetailsAsyc(branchId,companyId);
                 IEnumerable<ProductDto> productDtos = product.Select(p => new ProductDto
                 {
                     ProductId = p.ProductId,
@@ -63,8 +64,49 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
+        public async Task<ProductDto> GetProductByBarcodeAsync(string Barcode, string branchId, string companyId)
+        {
+            try
+            {
 
-        public async Task<IEnumerable<Product?>> GetProductsDetailsAsyc()
+                Product p = await _context.Product.Where(p => p.ProductId == Barcode && p.BranchId == branchId && p.CompanyId == companyId).FirstOrDefaultAsync();
+                ProductDto productDtos = new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Description = p.Description,
+                    CategoryId = p.CategoryId,
+                    BrandId = p.BrandId,
+                    Price = p.Price,
+                    DiscountedPrice = p.DiscountedPrice,
+                    DiscountAmount = p.DiscountAmount,
+                    Cost = p.Cost,
+
+                    Quantity = 0,
+                    IsAvailable = p.IsAvailable,
+                    IsSalable = p.IsSalable,
+                    BrandName = p.Brand?.Name != null ? p.Brand?.Name : "",
+                    CategoryName = p.Category?.Name,
+                    ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
+                    UnitId = p.Unit != null ? p.Unit.UnitId : null,
+                    UnitType = p.Unit != null ? p.Unit.UnitName : null,
+                    BranchId = p.BranchId,
+                    BranchName = p.Branch != null ? p.Branch.BranchName : null,
+                    CompanyId = p.CompanyId,
+                    CompanyName = p.Company != null ? p.Company.CompanyName : null,
+
+                };
+
+                return productDtos;
+            }
+            catch (Exception ex)
+            {
+                //throw new Exception(ex.Message);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Product?>> GetProductsDetailsAsyc(string branchId, string companyId)
         {
             try
             {
@@ -76,7 +118,7 @@ namespace GravyFoodsApi.MasjidServices
                 .Include(p => p.Branch)
                 .Include(p => p.Company)
                 .Include(p => p.Unit)
-                .Where(w => w.IsAvailable == true && w.IsSalable == true)
+                .Where(w => w.IsAvailable == true && w.IsSalable == true && w.BranchId == branchId && w.CompanyId == companyId)
                 .ToListAsync();
 
             }
@@ -87,7 +129,7 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<ProductDto> GetProductByIdAsync(string ProductId)
+        public async Task<ProductDto> GetProductByIdAsync(string ProductId, string branchId, string companyId)
         {
             try
             {
@@ -238,7 +280,7 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<bool> DeleteProductAsync(string ProductId)
+        public async Task<bool> DeleteProductAsync(string ProductId, string branchId, string companyId)
         {
             try
             {

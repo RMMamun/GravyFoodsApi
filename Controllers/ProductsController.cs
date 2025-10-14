@@ -16,20 +16,32 @@ namespace MasjidWorldwide.Controllers
             _repository = repository;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
+
+
+
+        [HttpGet("{branchId}/{companyId}")]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll(string branchId, string companyId)
         {
-            var products = await _repository.GetProductsWithDetailsAsync();
+            var products = await _repository.GetProductsWithDetailsAsync(branchId, companyId);
             return Ok(products);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDto>> Get(string id)
+        [HttpGet("{id}/{branchId}/{companyId}")]
+        public async Task<ActionResult<ProductDto>> Get(string id, string branchId, string companyId)
         {
-            var product = await _repository.GetProductByIdAsync(id);
+            var product = await _repository.GetProductByIdAsync(id, branchId, companyId);
             if (product == null) return NotFound();
             return Ok(product);
         }
+
+        //[HttpGet("{barcode}/{branchId}/{companyId}")]
+        //public async Task<ActionResult<ProductDto>> Get(string barcode, string branchId, string companyId)
+        //{
+        //    var product = await _repository.GetProductByBarcodeAsync(barcode, branchId, companyId);
+        //    if (product == null) return NotFound();
+        //    return Ok(product);
+        //}
+
 
         [HttpPost]
         public async Task<ActionResult<ProductDto>> Create(ProductDto product)
@@ -47,10 +59,10 @@ namespace MasjidWorldwide.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        [HttpDelete("{id}/{branchId}/{companyId}")]
+        public async Task<IActionResult> Delete(string id, string branchId, string companyId)
         {
-            await _repository.DeleteProductAsync(id);
+            await _repository.DeleteProductAsync(id, branchId, companyId);
             return NoContent();
         }
     }

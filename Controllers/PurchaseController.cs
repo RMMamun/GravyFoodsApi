@@ -46,7 +46,8 @@ namespace GravyFoodsApi.Controllers
         public async Task<ActionResult<PurchaseInfoDto>> CreatePurchase(PurchaseInfoDto Purchase)
         {
             var created = await _PurchaseService.CreatePurchaseAsync(Purchase);
-            return CreatedAtAction(nameof(GetPurchase), new { id = created.PurchaseId }, created);
+            return Ok(created);
+            //return CreatedAtAction(nameof(GetPurchase), new { id = created.PurchaseId }, created);
         }
 
         [HttpPut("{id}")]
