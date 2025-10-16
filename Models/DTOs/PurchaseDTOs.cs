@@ -10,6 +10,8 @@
         public string CompanyId { get; set; } = string.Empty;
 
         public double TotalAmount { get; set; }
+        public double? PaidAmount { get; set; }
+        public double? DueAmount { get; set; }
 
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
 

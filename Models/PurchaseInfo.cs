@@ -35,6 +35,8 @@ namespace GravyFoodsApi.Models
 
         [Required]
         public double TotalAmount { get; set; }
+        public double? PaidAmount { get; set; }
+        public double? DueAmount { get; set; }
 
         [StringLength(255)]
         public string? BranchId { get; set; }

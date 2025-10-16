@@ -30,6 +30,8 @@ namespace GravyFoodsApi.MasjidServices
                     PurchaseId = strPurchaseId,
                     SupplierId = PurDto.SupplierId,
                     TotalAmount = PurDto.TotalAmount,
+                    PaidAmount = PurDto.PaidAmount,
+                    DueAmount = PurDto.DueAmount,
                     CreatedDateTime = DateTime.Now,
                     BranchId = PurDto.BranchId,
                     CompanyId = PurDto.CompanyId,
