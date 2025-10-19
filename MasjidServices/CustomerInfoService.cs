@@ -1,11 +1,14 @@
 ﻿using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System.Collections.Immutable;
 
 namespace GravyFoodsApi.MasjidServices
 {
-    public class CustomerInfoService : IRepository<CustomerInfo>, ICustomerInfoService
+    public class CustomerInfoService : ICustomerInfoService
     {
         private readonly MasjidDBContext _context;
 
@@ -18,7 +21,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             // Implementation to add customer info to database
             // Check if email or phone number already exists
-            bool isExisted = await CheckCustomerByMobileOrEmail(customerInfo.PhoneNo, customerInfo.Email);
+            bool isExisted = await CheckCustomerByMobileOrEmail(customerInfo.PhoneNo, customerInfo.Email, customerInfo.BranchId, customerInfo.CompanyId);
             if (isExisted)
             {
                 //return null;
@@ -32,7 +35,9 @@ namespace GravyFoodsApi.MasjidServices
                 CustomerName = customerInfo.CustomerName,
                 Address = customerInfo.Address,
                 PhoneNo = customerInfo.PhoneNo,
-                Email = customerInfo.Email
+                Email = customerInfo.Email,
+                BranchId = customerInfo.BranchId,
+                CompanyId = customerInfo.CompanyId,
 
             };
 
@@ -41,26 +46,21 @@ namespace GravyFoodsApi.MasjidServices
             return ServiceResultWrapper<CustomerInfo>.Ok(newCustomer);
         }
 
-        public Task<bool> CheckCustomerByMobileOrEmail(string PhoneNo, string email)
+        public Task<bool> CheckCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
         {
-            var isExisted = _context.CustomerInfo.Any(c => c.Email == email || c.PhoneNo == PhoneNo);
+            var isExisted = _context.CustomerInfo.Any(c => c.Email == email || c.PhoneNo == PhoneNo && c.BranchId == branchId && c.CompanyId == companyId);
             return Task.FromResult(isExisted);
         }
 
-        public Task<IEnumerable<CustomerInfo>?> GetAllCustomersAsync()
+        public Task<CustomerInfo?> GetCustomerInfoById(string Id, string branchId, string companyId)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<CustomerInfo?> GetCustomerInfoById(int Id)
-        {
-            var customer = _context.CustomerInfo.FirstOrDefault(c => c.Id == Id);
+            var customer = _context.CustomerInfo.FirstOrDefault(c => c.CustomerId == Id && c.BranchId == branchId && c.CompanyId == companyId);
             return Task.FromResult(customer);
         }
 
-        public Task<CustomerInfo?> GetCustomerByMobileOrEmail(string PhoneNo, string email)
+        public Task<CustomerInfo?> GetCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
         {
-            var customer = _context.CustomerInfo.FirstOrDefault(c => c.Email == email || c.PhoneNo == PhoneNo);
+            var customer = _context.CustomerInfo.FirstOrDefault(c => c.Email == email || c.PhoneNo == PhoneNo && c.BranchId == branchId && c.CompanyId == companyId);
             return Task.FromResult(customer);
         }
 
@@ -70,29 +70,18 @@ namespace GravyFoodsApi.MasjidServices
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<CustomerInfo>> GetAllAsync()
+        public async Task<IEnumerable<CustomerInfo>?> GetAllCustomersAsync(string branchId, string companyId)
         {
-            throw new NotImplementedException();
+            //IEnumerable<CustomerInfo>? customer = _context.CustomerInfo.Where(c => c.BranchId == branchId && c.CompanyId == companyId).ToImmutableList();
+            //return Task.FromResult(customer);
+
+            var customers = await _context.CustomerInfo
+                                .Where(c => c.BranchId == branchId && c.CompanyId == companyId)
+                                .ToListAsync();
+
+            return customers.ToImmutableList();
+
         }
 
-        public Task<CustomerInfo?> GetByIdAsync(object id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateAsync(CustomerInfo entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<CustomerInfo> AddAsync(CustomerInfo entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAsync(object id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

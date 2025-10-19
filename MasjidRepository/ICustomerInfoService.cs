@@ -1,14 +1,15 @@
 ﻿using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 
 namespace GravyFoodsApi.MasjidRepository
 {
-    public interface ICustomerInfoService : IRepository<CustomerInfo>
+    public interface ICustomerInfoService 
     {
         Task<ServiceResultWrapper<CustomerInfo>> Create(CustomerInfoDTO customerInfo);
-        Task<CustomerInfo?> GetCustomerInfoById(int Id);
-        Task<CustomerInfo?> GetCustomerByMobileOrEmail(string PhoneNo, string email);
+        Task<CustomerInfo?> GetCustomerInfoById(string Id,string branchId, string companyId);
+        Task<CustomerInfo?> GetCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId);
 
         Task<bool> UpdateCustomerInfoAsync(CustomerInfo customerInfo);
-        Task<IEnumerable<CustomerInfo>?> GetAllCustomersAsync();
+        Task<IEnumerable<CustomerInfo>?> GetAllCustomersAsync(string branchId, string companyId);
     }
 }

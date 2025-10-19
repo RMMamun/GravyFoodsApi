@@ -259,20 +259,25 @@ namespace GravyFoodsApi.MasjidServices
                         CreatedDateTime = product.CreatedDateTime,
                         Price = product.Price,
                         DiscountedPrice = product.DiscountedPrice,
-                        DiscountAmount = product.DiscountAmount,    
+                        DiscountAmount = product.DiscountAmount,
                         Cost = product.Cost,
                         IsAvailable = product.IsAvailable,
                         IsSalable = product.IsSalable,
-                        
-                        
+
+
                     };
 
                     await _context.Product.AddAsync(newProduct);
                     await _context.SaveChangesAsync();
+
+
+                    return product;
+                }
+                else
+                { 
+                    return new ProductDto();
                 }
 
-
-                    return new ProductDto();
             }
             catch (Exception ex)
             {
