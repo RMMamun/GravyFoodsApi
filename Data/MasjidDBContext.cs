@@ -37,10 +37,19 @@ namespace GravyFoodsApi.Data
 
         public DbSet<PurchaseInfo> PurchaseInfo { get; set; }
         public DbSet<PurchaseDetails> PurchaseDetails { get; set; }
-
+        public DbSet<NavMenuItem> NavMenuItems { get; set; }
+        public DbSet<UserWiseMenuAssignment> UserWiseMenuAssignment { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<NavMenuItem>()
+            .HasMany(x => x.Children)
+            .WithOne(x => x.Parent)
+            .HasForeignKey(x => x.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
             modelBuilder.Entity<UserInfo>()
                 .HasKey(c => new { c.UserId });
 
