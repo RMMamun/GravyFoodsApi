@@ -8,5 +8,7 @@ namespace GravyFoodsApi.MasjidRepository
         Task<List<UserWiseMenuAssignment>> GetUserMenusAsync(string userId, string companyId, string branchId);
         Task AssignMenusAsync(UserMenuAssignmentRequest request);
 
+
+
     }
 }

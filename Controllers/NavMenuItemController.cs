@@ -29,6 +29,13 @@ namespace GravyFoodsApi.Controllers
             return Ok(parents);
         }
 
+        [HttpGet("menuitems/{userId}/{companyId}/{branchId}")]
+        public async Task<ActionResult<IEnumerable<NavMenuItemDto>>> GetMenuItems(string userId, string companyId, string branchId)
+        {
+            var menus = await _repo.GetMenusByUserAsync(userId, companyId, branchId);
+            return Ok(menus);
+        }
+
         [HttpPost]
         public async Task<ActionResult<NavMenuItem>> PostMenuItem(NavMenuItem menuItem)
         {

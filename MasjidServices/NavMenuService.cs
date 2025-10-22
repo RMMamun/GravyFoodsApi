@@ -109,6 +109,131 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
+
+        //Copilot Suggested Implementation
+        public async Task<IEnumerable<NavMenuItemDto>> GetMenusByUserAsync(string userId, string companyId, string branchId)
+        {
+            try
+            {
+                // Query menus by joining to UserWiseMenuAssignment so EF emits a JOIN (no OPENJSON)
+                var menus = await (from m in _context.NavMenuItems
+                                   join a in _context.UserWiseMenuAssignment
+                                      on new { m.MenuId, m.CompanyId, m.BranchId } equals new { MenuId = a.MenuId, a.CompanyId, a.BranchId }
+                                   where a.UserId == userId
+                                         && a.CompanyId == companyId
+                                         && a.BranchId == branchId
+                                         && m.IsActive
+                                   orderby m.DisplayOrder
+                                   select m)
+                                  .AsNoTracking()
+                                  .ToListAsync();
+
+                if (menus == null || menus.Count == 0)
+                    return Enumerable.Empty<NavMenuItemDto>();
+
+                var menuLookup = menus.ToLookup(m => m.ParentId);
+
+                List<NavMenuItemDto> BuildHierarchy(int? parentId)
+                {
+                    return menuLookup[parentId]
+                        .Select(m => new NavMenuItemDto
+                        {
+                            MenuId = m.MenuId,
+                            Title = m.Title,
+                            Url = m.Url,
+                            IconCss = m.IconCss,
+                            IconImagePath = m.IconImagePath,
+                            IsSeparator = m.IsSeparator,
+                            CompanyId = m.CompanyId,
+                            BranchId = m.BranchId,
+                            Children = BuildHierarchy(m.MenuId)
+                        })
+                        .OrderBy(x => menus.FirstOrDefault(mm => mm.MenuId == x.MenuId)?.DisplayOrder ?? 0)
+                        .ToList();
+                }
+
+                var parentMenus = BuildHierarchy(null);
+                return parentMenus;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving menus for user '{userId}': {ex.Message}", ex);
+            }
+        }
+
+
+
+        //Chat GPT Suggested Implementation - commented out for reference
+        //public async Task<IEnumerable<NavMenuItemDto>> GetMenusByUserAsync(string userId, string companyId, string branchId)
+        //{
+        //    try
+        //    {
+        //        // Step 1: Load assigned MenuIds
+        //        var assignedMenuIds = await _context.UserWiseMenuAssignment
+        //            .Where(a => a.UserId == userId && a.CompanyId == companyId && a.BranchId == branchId)
+        //            .Select(a => a.MenuId)
+        //            .ToListAsync();
+
+        //        // Safety: avoid empty list causing SQL JSON translation
+        //        if (assignedMenuIds == null || !assignedMenuIds.Any())
+        //            return Enumerable.Empty<NavMenuItemDto>();
+
+        //        // Step 2: Force EF to generate simple IN clause
+        //        var menus = await _context.NavMenuItems
+        //            .Where(m => assignedMenuIds.Contains(m.MenuId))
+        //            .AsEnumerable() // <— force LINQ-to-Objects after this
+        //            .Where(m => m.IsActive) // <— filtering in memory
+        //            .OrderBy(m => m.DisplayOrder)
+        //            .ToListAsyncSafe(); // custom extension below
+
+
+        //        // Step 3: Build hierarchy
+        //        var parentMenus = menus
+        //            .Where(m => m.ParentId == null)
+        //            .Select(m => new NavMenuItemDto
+        //            {
+        //                MenuId = m.MenuId,
+        //                Title = m.Title,
+        //                Url = m.Url,
+        //                IconCss = m.IconCss,
+        //                IconImagePath = m.IconImagePath,
+        //                IsSeparator = m.IsSeparator,
+        //                CompanyId = m.CompanyId,
+        //                BranchId = m.BranchId,
+        //                Children = menus
+        //                    .Where(c => c.ParentId == m.MenuId)
+        //                    .OrderBy(c => c.DisplayOrder)
+        //                    .Select(c => new NavMenuItemDto
+        //                    {
+        //                        MenuId = c.MenuId,
+        //                        Title = c.Title,
+        //                        Url = c.Url,
+        //                        IconCss = c.IconCss,
+        //                        IconImagePath = c.IconImagePath,
+        //                        IsSeparator = c.IsSeparator,
+        //                        CompanyId = c.CompanyId,
+        //                        BranchId = c.BranchId
+        //                    }).ToList()
+        //            }).ToList();
+
+        //        return parentMenus;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception($"Error retrieving menus for user: {ex.Message}", ex);
+        //    }
+        //}
+
+
+    }
+
+
+    public static class AsyncHelpers
+    {
+        public static Task<List<T>> ToListAsyncSafe<T>(this IEnumerable<T> source)
+        {
+            return Task.FromResult(source.ToList());
+        }
     }
 
 }

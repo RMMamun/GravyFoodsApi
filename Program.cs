@@ -151,6 +151,34 @@ else
 //}).RequireCors("AllowFrontend");
 
 
+// Diagnostic endpoint - add temporarily near the end of Program.cs before app.Run()
+//https://localhost:7065/dbg/menu-query
+//app.MapGet("/dbg/menu-query", async (MasjidDBContext db) =>
+//{
+//    // Use exact inputs from your failing case
+//    var userId = "Mamun";
+//    var companyId = "1";
+//    var branchId = "1";
+
+//    var provider = db.Database.ProviderName;
+//    var assignedMenuIds = await db.UserWiseMenuAssignment
+//        .Where(a => a.UserId == userId && a.CompanyId == companyId && a.BranchId == branchId)
+//        .Select(a => a.MenuId)
+//        .ToListAsync();
+
+//    var q = db.NavMenuItems
+//        .Where(m => assignedMenuIds.Contains(m.MenuId) && m.IsActive)
+//        .OrderBy(m => m.DisplayOrder);
+
+//    // ToQueryString is safe to call in server code to inspect generated SQL text
+//    var sql = q.ToQueryString();
+
+//    return Results.Ok(new { provider, assignedMenuIdsCount = assignedMenuIds.Count, sql });
+//});
+
+
+
+
 app.UseCors("AllowFrontend");  // must be before auth & MapControllers
 app.UseCors(builder =>
 {
