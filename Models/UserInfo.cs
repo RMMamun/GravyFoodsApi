@@ -36,6 +36,9 @@ namespace GravyFoodsApi.Models
 
         public string? Email { get; set; }
 
+        public string? BranchId { get; set; }
+        public string? CompanyId { get; set; }
+
     }
 
     public class UserInfoDTO
@@ -66,6 +69,9 @@ namespace GravyFoodsApi.Models
         public DateTime EntryDateTime { get; set; }
         public string? Email { get; set; }
 
+        public string? BranchId { get; set; }
+        public string? CompanyId { get; set; }
+
         ////[System.ComponentModel.DataAnnotations.Key]
         ////public long Id { get; set; }
         //public string UserId { get; set; }
@@ -73,4 +79,28 @@ namespace GravyFoodsApi.Models
         //public string Password { get; set; }
 
     }
+
+
+    public class UserBasicInfoDTO
+    {
+
+        [Required]
+        [MaxLength(50)]
+        public string UserId { get; set; }
+
+        [MaxLength(300)]
+        public string UserName { get; set; }
+
+        [MaxLength(300)]
+        public string? UserRole { get; set; }
+
+        public DateTime EntryDateTime { get; set; }
+        public string? Email { get; set; }
+
+        public string? BranchId { get; set; }
+        public string? CompanyId { get; set; }
+
+    }
+
+
 }

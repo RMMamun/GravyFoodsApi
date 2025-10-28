@@ -11,6 +11,8 @@ namespace GravyFoodsApi.MasjidRepository
         Task<UserInfo> Create(UserInfo userInfo);
         //Task<UserInfo> Update(UserInfo userInfo);
 
+        Task<List<UserBasicInfoDTO>> GetAllUsersAsync(string branchId, string companyId);
+
 
     }
 }

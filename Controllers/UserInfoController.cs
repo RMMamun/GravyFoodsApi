@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GravyFoodsApi.Controllers
 {
     [ApiController]
-    /*[Route("api/[controller]")]*/
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserInfoController : ControllerBase
     {
         //private readonly MasjidDBContext _context;
@@ -38,8 +37,9 @@ namespace GravyFoodsApi.Controllers
         //}
 
         // GET: api/UserInfo/5
-        [HttpGet("{userid}")]
+
         //public async Task<ActionResult<UserInfoDTO>> GetUserInfo(long userid)
+        [HttpGet("{userid}")]
         public async Task<ActionResult<UserInfoDTO>> GetUserInfo(string userid)
         {
             var userInfo = await _userService.GetUserById(userid);
@@ -51,6 +51,21 @@ namespace GravyFoodsApi.Controllers
 
             return UserToDTO(userInfo);
         }
+
+
+        [HttpGet("{branchId}/{companyId}")]
+        public async Task<ActionResult<List<UserBasicInfoDTO>>> GetAllUserInfoAsync(string branchId, string companyId)
+        {
+            var userInfo = await _userService.GetAllUsersAsync(branchId, companyId);
+
+            if (userInfo == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userInfo);
+        }
+
 
         public class LoginUser
         {

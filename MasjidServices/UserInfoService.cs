@@ -4,6 +4,7 @@ using GravyFoodsApi.DTO;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 
 
 namespace GravyFoodsApi.MasjidServices
@@ -56,6 +57,35 @@ namespace GravyFoodsApi.MasjidServices
                 return null;
             }
         }
+
+
+        public async Task<List<UserBasicInfoDTO>> GetAllUsersAsync(string branchId, string companyId)
+        {
+
+            try
+            {
+                List<UserBasicInfoDTO> result = await _dbContext.UserInfo
+                    .Where(x => x.BranchId == branchId && x.CompanyId == companyId)
+                    .Select(user => new UserBasicInfoDTO
+                    {
+                        UserId = user.UserId,
+                        UserName = user.UserName,
+                        UserRole = user.UserRole,
+                        EntryDateTime = user.EntryDateTime,
+                        BranchId = user.BranchId,
+                        CompanyId = user.CompanyId
+                    })
+                    .ToListAsync();
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
         public async Task<UserInfo> Create(UserInfo user)
         {
             try
