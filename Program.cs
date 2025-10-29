@@ -97,6 +97,7 @@ builder.Services.AddScoped<IPurchaseRepository, PurchaseService>();
 builder.Services.AddScoped<INavMenuRepository, NavMenuService>();
 builder.Services.AddScoped<IUserWiseMenuItemRepository, UserWiseMenuItemService>();
 builder.Services.AddScoped<IUserInfoService, UserInfoService>();
+builder.Services.AddScoped<ICompanyInfoService, CompanyInfoService>();
 
 
 //2028 08 21 <-
