@@ -39,7 +39,13 @@ namespace GravyFoodsApi.MasjidServices
                         IsSeparator = x.IsSeparator,
                         BranchId = x.BranchId,
                         CompanyId = x.CompanyId,
-                        Children = ToDtoTree(x.MenuId)
+                        DisplayOrder = x.DisplayOrder,
+                        IsActive = x.IsActive,
+                        ParentId = x.ParentId,
+                        Children = ToDtoTree(x.MenuId),
+                        
+
+
                     }).ToList();
             }
 

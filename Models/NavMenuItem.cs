@@ -31,7 +31,7 @@ namespace GravyFoodsApi.Models
         [MaxLength(200)]
         public string? IconImagePath { get; set; }
 
-        public int DisplayOrder { get; set; } = 0;
+        public int DisplayOrder { get; set; }
         public bool IsActive { get; set; } = true;
         public bool IsSeparator { get; set; } = false;
 
