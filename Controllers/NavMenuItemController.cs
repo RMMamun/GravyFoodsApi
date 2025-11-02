@@ -1,4 +1,5 @@
 ﻿using GravyFoodsApi.MasjidRepository;
+using GravyFoodsApi.MasjidServices;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -39,9 +40,26 @@ namespace GravyFoodsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<NavMenuItem>> PostMenuItem(NavMenuItem menuItem)
         {
-            var menus = await _repo.CreateAsync(menuItem);
 
-            return Ok(menus);
+            //var menus = await _repo.CreateAsync(menuItem);
+
+            //return Ok(menus);
+
+            try
+            {
+
+                var result = await _repo.CreateAsync(menuItem);
+
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("already exists"))
+                    return Conflict(new { message = ex.Message }); // HTTP 409 Conflict
+
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
 

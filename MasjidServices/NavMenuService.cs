@@ -57,7 +57,20 @@ namespace GravyFoodsApi.MasjidServices
         {
             var parents = await _context.NavMenuItems
             .Where(m => m.ParentId == null && m.BranchId == branchId && m.CompanyId == companyId)
-            .Select(m => new NavMenuItemDto { MenuId = m.MenuId, Title = m.Title })
+            .Select(m => new NavMenuItemDto { 
+                MenuId = m.MenuId, 
+                Title = m.Title,
+                DisplayOrder = m.DisplayOrder,
+                CompanyId = m.CompanyId,
+                BranchId = m.BranchId,
+                IconCss = m.IconCss,
+                IconImagePath = m.IconImagePath,
+                IsActive = m.IsActive,
+                IsSeparator = m.IsSeparator,
+                Url = m.Url,
+                ParentId = m.ParentId
+
+            })
             .ToListAsync();
 
 
@@ -78,6 +91,7 @@ namespace GravyFoodsApi.MasjidServices
                 if (exists)
                 {
                     throw new Exception("Menu item with the same title already exists in this company and branch.");
+                    
                 }
 
                 //create menuid as last menuid + 1
