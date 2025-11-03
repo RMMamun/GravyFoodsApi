@@ -55,8 +55,11 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<List<NavMenuItemDto>> GetParentMenusAsync(string companyId, string branchId)
         {
+            //Initial design was to get only parent menus, but changed to get all menus
+            //.Where(m => m.ParentId == null && m.BranchId == branchId && m.CompanyId == companyId)
+
             var parents = await _context.NavMenuItems
-            .Where(m => m.ParentId == null && m.BranchId == branchId && m.CompanyId == companyId)
+            .Where(m => m.BranchId == branchId && m.CompanyId == companyId)
             .Select(m => new NavMenuItemDto { 
                 MenuId = m.MenuId, 
                 Title = m.Title,
@@ -125,6 +128,35 @@ namespace GravyFoodsApi.MasjidServices
             catch (Exception ex)
             {
                 throw new Exception($"Error creating menu item: {ex.Message}");
+
+            }
+        }
+
+
+        public async Task<NavMenuItem> UpdateAsync(NavMenuItem menuItem)
+        {
+            try
+            {
+                //check the existence
+                var exists = await _context.NavMenuItems
+                    .AnyAsync(m => m.Title == menuItem.Title
+                    && m.CompanyId == menuItem.CompanyId
+                    && m.BranchId == menuItem.BranchId);
+
+                if (exists == false)
+                {
+                    throw new Exception("Menu not found.");
+
+                }
+
+                _context.NavMenuItems.Update(menuItem);
+                await _context.SaveChangesAsync();
+
+                return menuItem;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error updating menu item: {ex.Message}");
 
             }
         }

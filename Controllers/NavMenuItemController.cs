@@ -40,11 +40,6 @@ namespace GravyFoodsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<NavMenuItem>> PostMenuItem(NavMenuItem menuItem)
         {
-
-            //var menus = await _repo.CreateAsync(menuItem);
-
-            //return Ok(menus);
-
             try
             {
 
@@ -58,6 +53,23 @@ namespace GravyFoodsApi.Controllers
                 if (ex.Message.Contains("already exists"))
                     return Conflict(new { message = ex.Message }); // HTTP 409 Conflict
 
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<NavMenuItem>> PuttMenuItem(NavMenuItem menuItem)
+        {
+            try
+            {
+
+                var result = await _repo.UpdateAsync(menuItem);
+
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
                 return BadRequest(new { message = ex.Message });
             }
         }

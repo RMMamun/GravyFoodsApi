@@ -11,6 +11,7 @@ namespace GravyFoodsApi.MasjidRepository
         Task<List<NavMenuItemDto>> GetParentMenusAsync(string companyId, string branchId);
 
         Task<NavMenuItem> CreateAsync(NavMenuItem navMenuItem);
+        Task<NavMenuItem> UpdateAsync(NavMenuItem menuItem);
 
         Task<IEnumerable<NavMenuItemDto>> GetMenusByUserAsync(string userId, string companyId, string branchId);
     }
