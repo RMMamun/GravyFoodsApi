@@ -98,10 +98,11 @@ builder.Services.AddScoped<INavMenuRepository, NavMenuService>();
 builder.Services.AddScoped<IUserWiseMenuItemRepository, UserWiseMenuItemService>();
 builder.Services.AddScoped<IUserInfoService, UserInfoService>();
 builder.Services.AddScoped<ICompanyInfoService, CompanyInfoService>();
+builder.Services.AddScoped<IBranchInfoRepository,  BranchInfoService>();
 
 
 //2028 08 21 <-
-////Gravy Foods/ POS ingegration <-
+//Gravy Foods/ POS ingegration <-
 
 ////2025 09 26 ->
 //// Add authentication 
