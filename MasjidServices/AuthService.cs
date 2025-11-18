@@ -20,7 +20,7 @@ namespace GravyFoodsApi.MasjidServices
 
         public string? Authenticate(LoginRequest request)
         {
-            var user = _loginService.GetUser(request.Username, request.Password);
+            var user = _loginService.GetUser(request.Username, request.Password,request.CompanyCode);
             if (user == null) return null;
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));

@@ -4,6 +4,6 @@ namespace GravyFoodsApi.MasjidRepository
 {
     public interface ILoginService
     {
-        LoginRequest? GetUser(string username, string password);
+        LoginRequest? GetUser(string username, string password, string companyCode);
     }
 }

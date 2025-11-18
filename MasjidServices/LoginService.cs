@@ -15,7 +15,7 @@ namespace GravyFoodsApi.MasjidServices
             _dbContext = dbContext;
         }
         
-        public LoginRequest? GetUser(string username, string password)
+        public LoginRequest? GetUser(string username, string password, string companyCode)
         {
             try
             {
