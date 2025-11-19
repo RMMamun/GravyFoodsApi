@@ -35,6 +35,7 @@ namespace GravyFoodsApi.MasjidServices
             {
                 CompanyId = company.CompanyId,
                 CompanyName = company.CompanyName,
+                CompanyCode = company.CompanyCode,
                 Address = company.Address,
                 Phone = company.Phone,
                 Mobile = company.Mobile,
