@@ -14,7 +14,7 @@ namespace GravyFoodsApi.Models
         public string ProductId { get; set; } = string.Empty;
 
         [MaxLength(200)]
-        public string? Location { get; set; }
+        public string WHId { get; set; }
 
         [Required]
         public int Quantity { get; set; }
