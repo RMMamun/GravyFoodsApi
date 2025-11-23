@@ -21,7 +21,7 @@ namespace GravyFoodsApi.MasjidServices
         public async Task<bool> CreateBranchInfoAsync(BranchInfoDto BranchInfo)
         {
 
-            var branch = new Models.BranchInfo
+            var branch = new BranchInfo
             {
                 BranchId = GenerateBranchId(),
                 BranchName = BranchInfo.BranchName,

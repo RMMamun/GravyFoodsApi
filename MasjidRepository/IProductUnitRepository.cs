@@ -3,14 +3,15 @@ using GravyFoodsApi.Models;
 using GravyFoodsApi.Repositories;
 using GravyFoodsApi.Data;
 using System;
+using GravyFoodsApi.Models.DTOs;
 
 namespace GravyFoodsApi.Repositories
 {
-    public interface IProductUnitRepository : IRepository<ProductUnits>
+    public interface IProductUnitRepository 
     {
-        Task<ProductUnits> CreateAsync(ProductUnits  productUnits);
-        Task<ProductUnits> GetUnitsById(int Id);
-        Task<IEnumerable<ProductUnits>> GetAllUnitsAsync();
+        Task<ProductUnits> CreateUnitAsync(ProductUnitsDto  productUnits);
+        Task<ProductUnitsDto> GetUnitsById(int unitId, string branchId, string companyId);
+        Task<IEnumerable<ProductUnitsDto>> GetAllUnitsAsync(string branchId, string companyId);
     }
 
 

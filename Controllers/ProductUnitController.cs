@@ -1,4 +1,5 @@
 ﻿using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,11 +16,19 @@ namespace GravyFoodsApi.Controllers
             _repository = repository;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductUnits>>> GetAll()
+        [HttpGet("{branchId}/{companyId}")]
+        public async Task<ActionResult<IEnumerable<ProductUnits>>> GetAll(string branchId, string companyId)
         {
-            var units = await _repository.GetAllUnitsAsync();
+            var units = await _repository.GetAllUnitsAsync(branchId, companyId);
             return Ok(units);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<IEnumerable<ProductUnits>>> Save(ProductUnitsDto unit)
+        {
+            var units = await _repository.CreateUnitAsync(unit);
+            return Ok(units);
+        }
+
     }
 }
