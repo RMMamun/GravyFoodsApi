@@ -10,7 +10,8 @@ namespace GravyFoodsApi.Repositories
     public interface IProductUnitRepository 
     {
         Task<ProductUnits> CreateUnitAsync(ProductUnitsDto  productUnits);
-        Task<ProductUnitsDto> GetUnitsById(int unitId, string branchId, string companyId);
+        Task<bool> UpdateUnitAsync(ProductUnitsDto productUnits);
+        Task<ProductUnitsDto?> GetUnitsById(string unitId, string branchId, string companyId);
         Task<IEnumerable<ProductUnitsDto>> GetAllUnitsAsync(string branchId, string companyId);
     }
 

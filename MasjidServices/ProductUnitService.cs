@@ -48,6 +48,20 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
+        public async Task<bool> UpdateUnitAsync(ProductUnitsDto productUnits)
+        {
+            try
+            {
+
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         private string GenerateUniqueId()
         {
             var unitid = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper();
@@ -59,9 +73,34 @@ namespace GravyFoodsApi.MasjidServices
 
                        
         
-        public Task<ProductUnitsDto> GetUnitsById(int unitId , string branchId, string companyId)
+        public async Task<ProductUnitsDto?> GetUnitsById(string unitId , string branchId, string companyId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var p = await _context.ProductUnits.Where(u => u.UnitId == unitId && u.BranchId == branchId && u.CompanyId == companyId).FirstOrDefaultAsync();
+                if (p == null)
+                {
+                    return null;
+                }
+
+                return new ProductUnitsDto
+                {
+                    UnitId = p.UnitId,
+                    UnitName = p.UnitName,
+                    UnitDescription = p.UnitDescription,
+                    UnitSegments = p.UnitSegments,
+                    UnitSegmentsRatio = p.UnitSegmentsRatio,
+                    IsActive = p.IsActive,
+                    BranchId = p.BranchId,
+                    CompanyId = p.CompanyId
+
+                };
+            }
+
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
 
