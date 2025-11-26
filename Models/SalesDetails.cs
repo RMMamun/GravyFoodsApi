@@ -17,6 +17,7 @@ namespace GravyFoodsApi.Models
         [Required]
         public double Quantity { get; set; }
         public string UnitType { get; set; }    //PCS,KG,Ltr
+        public string UnitId { get; set; }    //FK to Unit table
         public double PricePerUnit { get; set; }
         public double DiscountPerUnit { get; set; } = 0;
         public double DiscountAmountPerUnit { get; set; } = 0;

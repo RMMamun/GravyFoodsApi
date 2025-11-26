@@ -31,7 +31,7 @@ namespace GravyFoodsApi.MasjidServices
             CustomerInfo newCustomer = new CustomerInfo
             {
 
-                CustomerId = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper(),
+                CustomerId = GenerateCustomerId(customerInfo.CompanyId),
                 CustomerName = customerInfo.CustomerName,
                 Address = customerInfo.Address,
                 PhoneNo = customerInfo.PhoneNo,
@@ -45,6 +45,13 @@ namespace GravyFoodsApi.MasjidServices
             await _context.SaveChangesAsync();
             return ServiceResultWrapper<CustomerInfo>.Ok(newCustomer);
         }
+
+        private string GenerateCustomerId(string companyCode)
+        {
+            // Generate a unique CustomerId, e.g., using GUID
+            return companyCode + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper();
+        }
+
 
         public Task<bool> CheckCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
         {

@@ -13,6 +13,8 @@ namespace GravyFoodsApi.Repositories
         Task<bool> UpdateUnitAsync(ProductUnitsDto productUnits);
         Task<ProductUnitsDto?> GetUnitsById(string unitId, string branchId, string companyId);
         Task<IEnumerable<ProductUnitsDto>> GetAllUnitsAsync(string branchId, string companyId);
+
+        Task<bool> DeleteUnitAsync(string unitId,  string branchId, string companyId);
     }
 
 

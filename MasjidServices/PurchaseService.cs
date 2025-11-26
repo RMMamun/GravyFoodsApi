@@ -24,7 +24,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                string strPurchaseId = GeneratePurchaseId();
+                string strPurchaseId = GeneratePurchaseId(PurDto.CompanyId);
                 PurchaseInfo Purchase = new PurchaseInfo
                 {
                     PurchaseId = strPurchaseId,
@@ -73,15 +73,15 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        private string GeneratePurchaseId()
+        private string GeneratePurchaseId(string companyCode)
         {
-            string str = Guid.NewGuid().ToString("N").Substring(0, 30).ToUpper();
+            string str = companyCode + Guid.NewGuid().ToString("N").Substring(0, 30).ToUpper();
             //check if already exists, 
             var isExist = _context.PurchaseInfo.Any(c => c.PurchaseId == str);
             if (isExist)
             {
                 //recursively call the function until a unique ID is found
-                return GeneratePurchaseId();
+                return GeneratePurchaseId(companyCode);
             }
             return str;
         }

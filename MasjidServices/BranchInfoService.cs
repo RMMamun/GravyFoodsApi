@@ -23,7 +23,7 @@ namespace GravyFoodsApi.MasjidServices
 
             var branch = new BranchInfo
             {
-                BranchId = GenerateBranchId(),
+                BranchId = GenerateBranchId(BranchInfo.CompanyId),
                 BranchName = BranchInfo.BranchName,
                 Address = BranchInfo.Address,
                 Phone = BranchInfo.Phone,
@@ -38,10 +38,10 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        private string GenerateBranchId()
+        private string GenerateBranchId(string companyCode)
         {
             // Generate a unique BranchId, e.g., using GUID
-            return Guid.NewGuid().ToString();
+            return companyCode + Guid.NewGuid().ToString();
         }
 
         public async Task<BranchInfoDto> GetBranchInfoAsync(string BranchId, string companyId)

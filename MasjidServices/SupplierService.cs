@@ -38,7 +38,7 @@ namespace GravyFoodsApi.MasjidServices
                 SupplierInfo newSupplier = new SupplierInfo
                 {
 
-                    SupplierId = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper(),
+                    SupplierId = GenerateSupplierId(supplierInfo.CompanyId),
                     SupplierName = supplierInfo.SupplierName,
                     Address = supplierInfo.Address,
                     PhoneNo = supplierInfo.PhoneNo,
@@ -58,6 +58,19 @@ namespace GravyFoodsApi.MasjidServices
             {
                 return null;
             }
+        }
+
+        private string GenerateSupplierId(string companyCode)
+        {
+            string str = companyCode + Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
+            //check if already exists, 
+            var isExist = _context.SupplierInfo.Any(c => c.SupplierId == str);
+            if (isExist)
+            {
+                //recursively call the function until a unique ID is found
+                return GenerateSupplierId(companyCode);
+            }
+            return str;
         }
 
         public Task<bool> CheckSupplierByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)

@@ -5,7 +5,9 @@ using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Repositories;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
 using System.Collections.Immutable;
+using System.ComponentModel.Design;
 using System.Reflection.Metadata.Ecma335;
 
 namespace GravyFoodsApi.MasjidServices
@@ -21,20 +23,20 @@ namespace GravyFoodsApi.MasjidServices
 
 
 
-        public async Task<ProductUnits> CreateUnitAsync(ProductUnitsDto unitdto)
+        public async Task<ProductUnits> CreateUnitAsync(ProductUnitsDto unitDto)
         {
             try
             {
                 var newUnit = new ProductUnits
                 {
-                    UnitId = GenerateUniqueId(),
-                    UnitName = unitdto.UnitName,
-                    UnitDescription = unitdto.UnitDescription,
-                    UnitSegments = unitdto.UnitSegments,
-                    UnitSegmentsRatio = unitdto.UnitSegmentsRatio,
-                    IsActive = unitdto.IsActive,
-                    BranchId = unitdto.BranchId,
-                    CompanyId = unitdto.CompanyId
+                    UnitId = GenerateUnitId(unitDto.CompanyId),
+                    UnitName = unitDto.UnitName,
+                    UnitDescription = unitDto.UnitDescription,
+                    UnitSegments = unitDto.UnitSegments,
+                    UnitSegmentsRatio = unitDto.UnitSegmentsRatio,
+                    IsActive = unitDto.IsActive,
+                    BranchId = unitDto.BranchId,
+                    CompanyId = unitDto.CompanyId
                 };
                 _context.ProductUnits.Add(newUnit);
                 await _context.SaveChangesAsync();
@@ -48,12 +50,35 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<bool> UpdateUnitAsync(ProductUnitsDto productUnits)
+        private string GenerateUnitId(string companyCode)
+        {
+            var unitid = companyCode + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper();
+            //check the generated id in the database, if exists create new and check again 
+            return unitid;
+        }
+
+        public async Task<bool> UpdateUnitAsync(ProductUnitsDto unitdto)
         {
             try
             {
 
+                var unit = await _context.ProductUnits.Where(b => b.UnitId == unitdto.UnitId && b.CompanyId == unitdto.CompanyId && b.BranchId == unitdto.BranchId).FirstOrDefaultAsync();
+                if (unit == null)
+                {
+                    return false;
+                }
 
+                unit.UnitId = unitdto.UnitId;
+                unit.UnitName = unitdto.UnitName;
+                unit.UnitDescription = unitdto.UnitDescription;
+                unit.UnitSegments = unitdto.UnitSegments;
+                unit.UnitSegmentsRatio = unitdto.UnitSegmentsRatio;
+                unit.IsActive = unitdto.IsActive;
+                unit.BranchId = unitdto.BranchId;
+                unit.CompanyId = unitdto.CompanyId;
+
+                _context.ProductUnits.Update(unit);
+                await _context.SaveChangesAsync();
 
                 return true;
             }
@@ -62,18 +87,18 @@ namespace GravyFoodsApi.MasjidServices
                 return false;
             }
         }
-        private string GenerateUniqueId()
+        private string GenerateUniqueId(string companyCode)
         {
-            var unitid = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper();
+            var unitid = companyCode + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper();
 
             //check the generated id in the database, if exists create new and check again 
 
             return unitid;
         }
 
-                       
-        
-        public async Task<ProductUnitsDto?> GetUnitsById(string unitId , string branchId, string companyId)
+
+
+        public async Task<ProductUnitsDto?> GetUnitsById(string unitId, string branchId, string companyId)
         {
             try
             {
@@ -131,5 +156,26 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
+        public async Task<bool> DeleteUnitAsync(string unitId, string branchId, string companyId)
+        {
+            try
+            {
+                var unit = await _context.ProductUnits.Where(b => b.UnitId == unitId && b.CompanyId == companyId && b.BranchId == branchId).FirstOrDefaultAsync();
+                if (unit == null)
+                {
+                    return false;
+                }
+                _context.ProductUnits.Remove(unit);
+                await _context.SaveChangesAsync();
+                return true;
+
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
     }
 }

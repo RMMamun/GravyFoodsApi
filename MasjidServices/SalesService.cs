@@ -24,7 +24,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                string strSalesId = GenerateSalesId();
+                string strSalesId = GenerateSalesId(saleDto.CompanyId);
                 SalesInfo sale = new SalesInfo
                 {
                     SalesId = strSalesId,
@@ -72,15 +72,15 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        private string GenerateSalesId()
+        private string GenerateSalesId(string companyCode)
         {
-            string str = Guid.NewGuid().ToString("N").Substring(0, 30).ToUpper();
+            string str = companyCode + Guid.NewGuid().ToString("N").Substring(0, 30).ToUpper();
             //check if already exists, 
             var isExist = _context.SalesInfo.Any(c => c.SalesId == str);
             if (isExist)
             {
                 //recursively call the function until a unique ID is found
-                return GenerateSalesId();
+                return GenerateSalesId(companyCode);
             }
             return str;
         }
@@ -189,6 +189,7 @@ namespace GravyFoodsApi.MasjidServices
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
                         UnitType = d.UnitType,
+                        UnitId = d.UnitId,
                         PricePerUnit = d.PricePerUnit,
                         DiscountPerUnit = d.DiscountPerUnit,
                         TotalPrice = d.TotalPrice,
@@ -255,6 +256,7 @@ namespace GravyFoodsApi.MasjidServices
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
                         UnitType = d.UnitType,
+                        UnitId = d.UnitId,
                         PricePerUnit = d.PricePerUnit,
                         DiscountPerUnit = d.DiscountPerUnit,
                         TotalPrice = d.TotalPrice,

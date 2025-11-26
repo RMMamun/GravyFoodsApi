@@ -54,6 +54,19 @@ namespace GravyFoodsApi.Controllers
             return Ok(success);
         }
 
+        [HttpDelete("{unitId}/{branchId}/{companyId}")]
+        public async Task<ActionResult<bool>> Delete(string unitId, string branchId, string companyId)
+        {
+            var isExisted = await _repository.GetUnitsById(unitId, branchId, companyId);
+            if (isExisted == null)
+            {
+                return NotFound("Unit not found");
+            }
+            var units = await _repository.DeleteUnitAsync(unitId, branchId, companyId);
+            return Ok(units);
+        }
+
+
 
 
 

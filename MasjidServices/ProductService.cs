@@ -248,7 +248,7 @@ namespace GravyFoodsApi.MasjidServices
                 {
                     var newProduct = new Product
                     {
-                        ProductId = product.ProductId,
+                        ProductId = GenerateProductId(product.CompanyId),
                         Name = product.Name,
                         Description = product.Description,
                         BrandId = product.BrandId,
@@ -284,6 +284,13 @@ namespace GravyFoodsApi.MasjidServices
                 return new ProductDto();
             }
         }
+
+        private string GenerateProductId(string companyCode)
+        {
+            string productId = companyCode + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper();
+            return productId;
+        }
+
 
         public async Task<bool> DeleteProductAsync(string ProductId, string branchId, string companyId)
         {
