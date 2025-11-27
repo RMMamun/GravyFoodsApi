@@ -1,5 +1,6 @@
 ﻿using GravyFoodsApi.Data;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Repositories;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -46,7 +47,9 @@ namespace GravyFoodsApi.MasjidServices
                     CategoryName = p.Category?.Name,
                     ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
                     UnitId = p.Unit != null ? p.Unit.UnitId : null,
-                    UnitType = p.Unit != null ? p.Unit.UnitName : null,
+                    DefaultUnit = p.DefaultUnit,
+                    ProductCode = p.ProductCode,
+                    SKUCode = p.SKUCode,
                     BranchId = p.BranchId,
                     BranchName = p.Branch != null ? p.Branch.BranchName : null,
                     CompanyId = p.CompanyId,
@@ -89,7 +92,10 @@ namespace GravyFoodsApi.MasjidServices
                     CategoryName = p.Category?.Name,
                     ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
                     UnitId = p.Unit != null ? p.Unit.UnitId : null,
-                    UnitType = p.Unit != null ? p.Unit.UnitName : null,
+                    DefaultUnit = p.DefaultUnit,
+                    ProductCode = p.ProductCode,
+                    SKUCode = p.SKUCode,
+
                     BranchId = p.BranchId,
                     BranchName = p.Branch != null ? p.Branch.BranchName : null,
                     CompanyId = p.CompanyId,
@@ -118,8 +124,10 @@ namespace GravyFoodsApi.MasjidServices
                 .Include(p => p.Branch)
                 .Include(p => p.Company)
                 .Include(p => p.Unit)
-                .Where(w => w.IsAvailable == true && w.IsSalable == true && w.BranchId == branchId && w.CompanyId == companyId)
+                .Where(w =>  w.BranchId == branchId && w.CompanyId == companyId)
                 .ToListAsync();
+
+                //w.IsAvailable == true && w.IsSalable == true &&
 
             }
             catch (Exception ex)
@@ -140,7 +148,7 @@ namespace GravyFoodsApi.MasjidServices
                                 .Include(p => p.Branch)
                                 .Include(p => p.Company)
                                 .Include(p => p.Unit)
-                                .Where(w => w.IsAvailable == true && w.IsSalable == true && w.ProductId == ProductId)
+                                .Where(w => w.BranchId == branchId && w.CompanyId == companyId && w.ProductId == ProductId)
                                 .FirstOrDefaultAsync();
 
                 if (_product == null)
@@ -168,7 +176,9 @@ namespace GravyFoodsApi.MasjidServices
                         CategoryName = _product.Category?.Name,
                         ImageUrl = _product.Images.FirstOrDefault() != null ? _product.Images.FirstOrDefault().ImageUrl : null,
                         UnitId = _product.Unit != null ? _product.Unit.UnitId : null,
-                        UnitType = _product.Unit != null ? _product.Unit.UnitName : null,
+                        DefaultUnit = _product.DefaultUnit,
+                        ProductCode = _product.ProductCode,
+                        SKUCode = _product.SKUCode,
                         BranchId = _product.BranchId,
                         BranchName = _product.Branch != null ? _product.Branch.BranchName : null,
                         CompanyId = _product.CompanyId,
@@ -185,7 +195,7 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<ProductDto> UpdateProductByIdAsync(ProductDto _product)
+        public async Task<bool> UpdateProductByIdAsync(ProductDto _product)
         {
             try
             {
@@ -193,7 +203,7 @@ namespace GravyFoodsApi.MasjidServices
                 var product = await _context.Product.FindAsync(_product.ProductId);
                 if (product == null)
                 {
-                    return null;
+                    return false;
                 }
 
                 //product.ProductId = _product.ProductId;
@@ -208,6 +218,9 @@ namespace GravyFoodsApi.MasjidServices
                 product.IsAvailable = _product.IsAvailable;
                 product.IsSalable = _product.IsSalable;
                 product.UnitId = _product.UnitId;
+                product.DefaultUnit = _product.DefaultUnit;
+                product.ProductCode = _product.ProductCode;
+                product.SKUCode = _product.SKUCode;
                 product.BranchId = _product.BranchId;
                 product.CompanyId = _product.CompanyId;
                 
@@ -226,26 +239,25 @@ namespace GravyFoodsApi.MasjidServices
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return null;
+                    return true;
                 }
                 catch (Exception ex)
                 {
-                    return null;
+                    return false;
                 }
             }
             catch (Exception ex)
             {
-                return new ProductDto();
+                return false;
             }
 
         }
 
-        public async Task<ProductDto> AddProductAsync(ProductDto product)
+        public async Task<ApiResponse<ProductDto>> AddProductAsync(ProductDto product)
         {
             try
             {
-                if (product != null)
-                {
+
                     var newProduct = new Product
                     {
                         ProductId = GenerateProductId(product.CompanyId),
@@ -263,6 +275,9 @@ namespace GravyFoodsApi.MasjidServices
                         Cost = product.Cost,
                         IsAvailable = product.IsAvailable,
                         IsSalable = product.IsSalable,
+                        DefaultUnit = product.DefaultUnit,
+                        ProductCode = product.ProductCode,
+                        SKUCode = product.SKUCode,
 
 
                     };
@@ -270,18 +285,30 @@ namespace GravyFoodsApi.MasjidServices
                     await _context.Product.AddAsync(newProduct);
                     await _context.SaveChangesAsync();
 
+                    product.ProductId = newProduct.ProductId;
 
-                    return product;
-                }
-                else
-                { 
-                    return new ProductDto();
-                }
+                    //return product;
+                    return new ApiResponse<ProductDto>
+                    {
+                        Success = true,
+                        Message = "Product saved successfully.",
+                        Data = product,
+                        Errors = null
+                    };
 
             }
             catch (Exception ex)
             {
-                return new ProductDto();
+                //return new ProductDto();
+                return new ApiResponse<ProductDto>
+                {
+                    Success = false,
+                    Message = "Product could not be saved!!",
+                    Data = null,
+                    Errors = new List<string> { ex.Message }
+
+                };
+
             }
         }
 

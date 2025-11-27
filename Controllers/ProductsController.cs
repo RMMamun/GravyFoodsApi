@@ -1,7 +1,9 @@
 ﻿using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace MasjidWorldwide.Controllers
 {
@@ -49,8 +51,17 @@ namespace MasjidWorldwide.Controllers
             var created = await _repository.AddProductAsync(product);
             //return CreatedAtAction(nameof(Get), new { id = created.ProductId }, created);
 
-            if (created.ProductId == null) return NotFound();
+            if (created.Success == false)
+            {
+                //return NotFound();
+                return BadRequest(created);
+
+            }
+
+            //return Ok(created);
             return Ok(created);
+
+
         }
 
         [HttpPut("{id}")]
@@ -58,8 +69,13 @@ namespace MasjidWorldwide.Controllers
         {
             if (id != product.ProductId) return BadRequest();
 
-            await _repository.UpdateProductByIdAsync(product);
-            return NoContent();
+            bool updated = await _repository.UpdateProductByIdAsync(product);
+            if (updated == true)
+                return Ok(updated);
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpDelete("{id}/{branchId}/{companyId}")]

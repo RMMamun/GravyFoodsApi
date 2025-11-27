@@ -16,6 +16,10 @@ namespace GravyFoodsApi.Models
         [MaxLength(200)]
         public string Name { get; set; } = string.Empty;
 
+        [Required]
+        public string ProductCode { get; set; } = string.Empty;
+        public string? SKUCode { get; set; } = string.Empty;
+
         public string? Description { get; set; }
 
         [Required]
@@ -37,6 +41,10 @@ namespace GravyFoodsApi.Models
 
         [Required]
         public string UnitId { get; set; }
+
+        [Required]
+        public string DefaultUnit { get; set; } = string.Empty;
+
 
         [Required]
         public bool IsAvailable { get; set; } = true;
@@ -90,6 +98,9 @@ namespace GravyFoodsApi.Models
 
         public string Name { get; set; } = string.Empty;
 
+        public string ProductCode { get; set; } = string.Empty;
+        public string? SKUCode { get; set; } = string.Empty;
+
         public string? Description { get; set; }
 
         public int CategoryId { get; set; }
@@ -113,7 +124,8 @@ namespace GravyFoodsApi.Models
         //[Column(TypeName = "decimal(18,2)")]
         public double Quantity { get; set; }
         public string UnitId { get; set; }
-        public string UnitType { get; set; }
+
+        public string DefaultUnit { get; set; } = string.Empty;
 
         public bool IsAvailable { get; set; } = true;
 
