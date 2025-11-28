@@ -19,8 +19,16 @@ namespace GravyFoodsApi.Models
         [Required]
         public int Quantity { get; set; }
 
-        public required string SmallUnit { get; set; }
+        [Required]
+        public string SmallUnit { get; set; }
 
+        [Required]
+        [StringLength(255)]
+        public string BranchId { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(255)]
+        public string CompanyId { get; set; } = string.Empty;
 
         // Navigation
         [ForeignKey(nameof(ProductId))]

@@ -16,7 +16,16 @@ namespace GravyFoodsApi.Models.DTOs
         [Required]
         public int Quantity { get; set; }
 
-        public required string SmallUnit { get; set; }
+        [Required]
+        public string SmallUnit { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string BranchId { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(255)]
+        public string CompanyId { get; set; } = string.Empty;
 
 
     }
