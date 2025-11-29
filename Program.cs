@@ -1,6 +1,7 @@
 
 using GravyFoodsApi.Common;
 using GravyFoodsApi.Data;
+using GravyFoodsApi.Mappings;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidServices;
 using GravyFoodsApi.Models;
@@ -73,21 +74,20 @@ builder.Services.AddDbContext<MasjidDBContext>(options =>
 options.UseSqlServer(GlobalVariable.ConnString,
     builder => builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(60), null)));
 
-builder.Services.AddScoped<IUserInfoService, UserInfoService>();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
+
+builder.Services.AddScoped<IUserInfoService, UserInfoService>();
 builder.Services.AddScoped<IPOSSubscription, POSSubscriptionService>();
 builder.Services.AddScoped<ILoggingService, LoggingService>();
-
 ////Gravy Foods/ POS ingegration ->
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
 builder.Services.AddScoped<IProductRepository, ProductService>();
 builder.Services.AddScoped<IBrandRepository, BrandService>();
 builder.Services.AddScoped<IProductUnitRepository, ProductUnitService>();
 builder.Services.AddScoped<IProductCategoryRepository,  ProductCategoryService>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageService>();
-
 builder.Services.AddScoped<ICustomerInfoService, CustomerInfoService>();
 builder.Services.AddScoped<ISalesService, SalesService>();
 builder.Services.AddScoped<IExpenseHeadService, ExpenseHeadService>();
@@ -99,6 +99,9 @@ builder.Services.AddScoped<IUserWiseMenuItemRepository, UserWiseMenuItemService>
 builder.Services.AddScoped<IUserInfoService, UserInfoService>();
 builder.Services.AddScoped<ICompanyInfoService, CompanyInfoService>();
 builder.Services.AddScoped<IBranchInfoRepository,  BranchInfoService>();
+
+
+
 
 
 //2028 08 21 <-

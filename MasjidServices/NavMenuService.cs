@@ -139,7 +139,7 @@ namespace GravyFoodsApi.MasjidServices
             {
                 //check the existence
                 var exists = await _context.NavMenuItems
-                    .AnyAsync(m => m.Title == menuItem.Title
+                    .AnyAsync(m => m.MenuId == menuItem.MenuId
                     && m.CompanyId == menuItem.CompanyId
                     && m.BranchId == menuItem.BranchId);
 

@@ -1,4 +1,5 @@
-﻿using GravyFoodsApi.Data;
+﻿using AutoMapper;
+using GravyFoodsApi.Data;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Repositories;
@@ -15,10 +16,12 @@ namespace GravyFoodsApi.MasjidServices
     public class ProductService : Repository<Product>, IProductRepository
     {
         private readonly MasjidDBContext _context;
+        private readonly IMapper _mapper;
 
-        public ProductService(MasjidDBContext context) : base(context)
+        public ProductService(MasjidDBContext context, IMapper mapper) : base(context)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<ProductDto>> GetProductsWithDetailsAsync(string branchId, string companyId)
@@ -27,35 +30,38 @@ namespace GravyFoodsApi.MasjidServices
             {
 
 
-                IEnumerable<Product> product = await GetProductsDetailsAsyc(branchId,companyId);
-                IEnumerable<ProductDto> productDtos = product.Select(p => new ProductDto
-                {
-                    ProductId = p.ProductId,
-                    Name = p.Name,
-                    Description = p.Description,
-                    CategoryId = p.CategoryId,
-                    BrandId = p.BrandId,
-                    Price = p.Price,
-                    DiscountedPrice = p.DiscountedPrice,
-                    DiscountAmount = p.DiscountAmount,
-                    Cost = p.Cost,
+                //IEnumerable<Product> product = await GetProductsDetailsAsyc(branchId,companyId);
+                //IEnumerable<ProductDto> productDtos = product.Select(p => new ProductDto
+                //{
+                //    ProductId = p.ProductId,
+                //    Name = p.Name,
+                //    Description = p.Description,
+                //    CategoryId = p.CategoryId,
+                //    BrandId = p.BrandId,
+                //    Price = p.Price,
+                //    DiscountedPrice = p.DiscountedPrice,
+                //    DiscountAmount = p.DiscountAmount,
+                //    Cost = p.Cost,
 
-                    Quantity = 0,
-                    IsAvailable = p.IsAvailable,
-                    IsSalable = p.IsSalable,
-                    BrandName = p.Brand?.Name,
-                    CategoryName = p.Category?.Name,
-                    ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
-                    UnitId = p.Unit != null ? p.Unit.UnitId : null,
-                    DefaultUnit = p.DefaultUnit,
-                    ProductCode = p.ProductCode,
-                    SKUCode = p.SKUCode,
-                    BranchId = p.BranchId,
-                    BranchName = p.Branch != null ? p.Branch.BranchName : null,
-                    CompanyId = p.CompanyId,
-                    CompanyName = p.Company != null ? p.Company.CompanyName : null,
+                //    Quantity = 0,
+                //    IsAvailable = p.IsAvailable,
+                //    IsSalable = p.IsSalable,
+                //    BrandName = p.Brand?.Name,
+                //    CategoryName = p.Category?.Name,
+                //    ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
+                //    UnitId = p.Unit != null ? p.Unit.UnitId : null,
+                //    DefaultUnit = p.DefaultUnit,
+                //    ProductCode = p.ProductCode,
+                //    SKUCode = p.SKUCode,
+                //    BranchId = p.BranchId,
+                //    BranchName = p.Branch != null ? p.Branch.BranchName : null,
+                //    CompanyId = p.CompanyId,
+                //    CompanyName = p.Company != null ? p.Company.CompanyName : null,
 
-                });
+                //});
+
+                var products = await GetProductsDetailsAsyc(branchId, companyId);
+                var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
 
                 return productDtos;
             }
