@@ -36,6 +36,8 @@
 
         public string DiscountType { get; set; } = "%";
 
+        public string WHId { get; set; } = string.Empty;
+
         public string UserId { get; set; } = string.Empty;
         public string BranchId { get; set; } = string.Empty;
         public string CompanyId { get; set; } = string.Empty;

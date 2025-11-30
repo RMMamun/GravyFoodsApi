@@ -3,6 +3,7 @@
     using AutoMapper;
     using GravyFoodsApi.Models;        // Your entity namespace
     using GravyFoodsApi.DTOs;          // Your DTO namespace
+    using GravyFoodsApi.Models.DTOs;
 
     public class AutoMapperProfile : Profile
     {
@@ -31,6 +32,10 @@
 
 
 
+            // Entity → DTO
+            CreateMap<ProductStock, ProductStockDto>();
+            // DTO → Entity
+            CreateMap<ProductStockDto, ProductStock>();
 
         }
     }

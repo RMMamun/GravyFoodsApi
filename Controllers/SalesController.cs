@@ -1,7 +1,9 @@
 ﻿using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace GravyFoodsApi.Controllers
 {
@@ -11,10 +13,13 @@ namespace GravyFoodsApi.Controllers
     public class SalesController : ControllerBase
     {
         private readonly ISalesService _salesService;
-
-        public SalesController(ISalesService salesService)
+        private readonly IProductStockRepository _StockRepo;
+        private readonly IUnitConversionRepository _unitConvRepo;
+        public SalesController(ISalesService salesService, IProductStockRepository stockRepo, IUnitConversionRepository unitConvRepo)
         {
             _salesService = salesService;
+            _StockRepo = stockRepo;
+            _unitConvRepo = unitConvRepo;
         }
 
         [HttpGet]
@@ -46,8 +51,40 @@ namespace GravyFoodsApi.Controllers
         public async Task<ActionResult<SalesInfoDto>> CreateSale(SalesInfoDto sale)
         {
             var created = await _salesService.CreateSaleAsync(sale);
+
+            
+
             return CreatedAtAction(nameof(GetSale), new { id = created.SalesId }, created);
         }
+
+        private async Task<APIResponseDto> StockUpdate(SalesInfoDto sale)
+        { 
+            APIResponseDto response = new APIResponseDto();
+            try   
+            {
+                ProductStockDto stock = new ProductStockDto();
+                foreach (var item in sale.SalesDetails)
+                {
+                    stock.ProductId = item.ProductId;
+                    stock.BranchId = sale.BranchId;
+                    stock.CompanyId = sale.CompanyId;
+                    stock.Quantity = _unitConvRepo.Convert(item.Quantity);
+                    stock.SmallUnit = item.UnitType;
+                    stock.WHId = item.WHId;
+                    
+                    response = await _StockRepo.UpdateProductStockAsync(item);
+                }
+
+                // Your stock update logic here
+                
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+            }   
+        }
+
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult<SalesInfo>> UpdateSale(string id, SalesInfo sale)
