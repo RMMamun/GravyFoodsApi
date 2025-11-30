@@ -78,36 +78,40 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-                Product p = await _context.Product.Where(p => p.ProductId == Barcode && p.BranchId == branchId && p.CompanyId == companyId).FirstOrDefaultAsync();
-                ProductDto productDtos = new ProductDto
-                {
-                    ProductId = p.ProductId,
-                    Name = p.Name,
-                    Description = p.Description,
-                    CategoryId = p.CategoryId,
-                    BrandId = p.BrandId,
-                    Price = p.Price,
-                    DiscountedPrice = p.DiscountedPrice,
-                    DiscountAmount = p.DiscountAmount,
-                    Cost = p.Cost,
+                //Product p = await _context.Product.Where(p => p.ProductId == Barcode && p.BranchId == branchId && p.CompanyId == companyId).FirstOrDefaultAsync();
+                //ProductDto productDtos = new ProductDto
+                //{
+                //    ProductId = p.ProductId,
+                //    Name = p.Name,
+                //    Description = p.Description,
+                //    CategoryId = p.CategoryId,
+                //    BrandId = p.BrandId,
+                //    Price = p.Price,
+                //    DiscountedPrice = p.DiscountedPrice,
+                //    DiscountAmount = p.DiscountAmount,
+                //    Cost = p.Cost,
 
-                    Quantity = 0,
-                    IsAvailable = p.IsAvailable,
-                    IsSalable = p.IsSalable,
-                    BrandName = p.Brand?.Name != null ? p.Brand?.Name : "",
-                    CategoryName = p.Category?.Name,
-                    ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
-                    UnitId = p.Unit != null ? p.Unit.UnitId : null,
-                    DefaultUnit = p.DefaultUnit,
-                    ProductCode = p.ProductCode,
-                    SKUCode = p.SKUCode,
+                //    Quantity = 0,
+                //    IsAvailable = p.IsAvailable,
+                //    IsSalable = p.IsSalable,
+                //    BrandName = p.Brand?.Name != null ? p.Brand?.Name : "",
+                //    CategoryName = p.Category?.Name,
+                //    ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
+                //    UnitId = p.Unit != null ? p.Unit.UnitId : null,
+                //    DefaultUnit = p.DefaultUnit,
+                //    ProductCode = p.ProductCode,
+                //    SKUCode = p.SKUCode,
 
-                    BranchId = p.BranchId,
-                    BranchName = p.Branch != null ? p.Branch.BranchName : null,
-                    CompanyId = p.CompanyId,
-                    CompanyName = p.Company != null ? p.Company.CompanyName : null,
+                //    BranchId = p.BranchId,
+                //    BranchName = p.Branch != null ? p.Branch.BranchName : null,
+                //    CompanyId = p.CompanyId,
+                //    CompanyName = p.Company != null ? p.Company.CompanyName : null,
 
-                };
+                //};
+
+                Product? products = await _context.Product.Where(p => p.ProductId == Barcode && p.BranchId == branchId && p.CompanyId == companyId).FirstOrDefaultAsync();
+                var productDtos = _mapper.Map<ProductDto>(products);
+
 
                 return productDtos;
             }

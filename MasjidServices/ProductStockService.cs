@@ -25,7 +25,15 @@ namespace GravyFoodsApi.MasjidServices
 
         public Task<ApiResponse<ProductStockDto>> UpdateProductStockAsync(ProductStockDto stockDto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
         }
     }
 }
