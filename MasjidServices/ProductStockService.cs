@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Azure;
 using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
+using GravyFoodsApi.Repositories;
 
 namespace GravyFoodsApi.MasjidServices
 {
@@ -10,10 +12,13 @@ namespace GravyFoodsApi.MasjidServices
     {
         private readonly MasjidDBContext _context;
         private readonly IMapper _mapper;
-        public ProductStockService(MasjidDBContext context, IMapper mapper)
+        private  readonly IProductUnitRepository _UnitRepo;
+        private readonly IUnitConversionRepository _unitConvRepo;
+        public ProductStockService(MasjidDBContext context, IMapper mapper, IProductUnitRepository UnitRepo)
         {
             _context = context;
             _mapper = mapper;
+            _UnitRepo = UnitRepo;
         }
 
         public Task<ApiResponse<IEnumerable<ProductStockDto>>> GetAllProductStockAsync(string branchId, string companyId)
@@ -107,19 +112,63 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        public Task<APIResponseDto> UpdateProductStockAsync(ProductStockDto stockDto)
+        public async Task<int> ConvertToSmallUnit(double Quantity, string Unit, string BranchId, string CompanyId)
+        {
+            try
+            {
+                var unitInfo = _UnitRepo.GetUnitsById(Unit, BranchId, CompanyId).Result;
+                if (unitInfo != null)
+                {
+                    //response.Success = false;
+                    //response.Message = "Stock update failed!! Unit details not found for unit: " + Unit;
+                    //return response;
+                }
+                else
+                {
+                    //Convert quantity to small unit
+                    string unitSegments = unitInfo.UnitSegments;
+                    string unitSegmentsRatio = unitInfo.UnitSegmentsRatio;
+
+                    string[] units = unitSegments.Split('\\');
+                    //unitsegmantration values are like - 1\1000\1000\1000
+                    double[] segments = unitSegmentsRatio.Split('\\')
+                        .Select(s =>
+                        {
+                            double val = 1;
+                            double.TryParse(s, out val);
+                            return val;
+                        }).ToArray();
+
+
+                    var convert = _unitConvRepo.Convert(Quantity,Unit,"",unitSegments,unitSegmentsRatio);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+        public async Task<APIResponseDto> UpdateProductStockAsync(string ProductId, double Quantity, string Unit,string WHId, string BranchId, string CompanyId)
         {
             APIResponseDto response = new APIResponseDto();
 
+
+           
+            
+
+
             try
             {
-                
+
+                //convert to small unit before updating stock
+                int qty = await ConvertToSmallUnit(Unit, BranchId, CompanyId);
 
                 //Check the product stock exists
                 var existingStock = _context.Set<ProductStock>()
-                    .FirstOrDefault(ps => ps.ProductId == stockDto.ProductId
-                                       && ps.BranchId == stockDto.BranchId
-                                       && ps.CompanyId == stockDto.CompanyId);
+                    .FirstOrDefault(ps => ps.ProductId == ProductId
+                                       && ps.BranchId == BranchId
+                                       && ps.CompanyId == CompanyId);
 
 
                 if (existingStock == null)
@@ -127,12 +176,12 @@ namespace GravyFoodsApi.MasjidServices
                     //***** Create new stock entry ***********************
                     ProductStock newStock = new ProductStock
                     {
-                        ProductId = stockDto.ProductId,
-                        BranchId = stockDto.BranchId,
-                        CompanyId = stockDto.CompanyId,
-                        Quantity = stockDto.Quantity,
-                        SmallUnit = stockDto.SmallUnit,
-                        WHId = stockDto.WHId
+                        ProductId = ProductId,
+                        BranchId = BranchId,
+                        CompanyId = CompanyId,
+                        Quantity = qty,
+                        SmallUnit = Unit,
+                        WHId = WHId
                     };
 
                     _context.Set<ProductStock>().Add(newStock);
@@ -141,21 +190,21 @@ namespace GravyFoodsApi.MasjidServices
                     response.Success = true;
                     response.Message = "Product stock created successfully.";
 
-                    return Task.FromResult(response);
+                    return response;
                 }
 
                 else
                 {
                     //Update the existing stock
-                    existingStock.Quantity = existingStock.Quantity + stockDto.Quantity;
-                    existingStock.SmallUnit = stockDto.SmallUnit;
-                    existingStock.WHId = stockDto.WHId;
+                    existingStock.Quantity = existingStock.Quantity + qty;
+                    existingStock.SmallUnit = Unit;
+                    existingStock.WHId = WHId;
                     _context.SaveChanges();
 
                     response.Success = true;
                     response.Message = "Product stock updated successfully.";
                     
-                    return Task.FromResult(response);
+                    return response;
 
                 }
             }
@@ -164,7 +213,7 @@ namespace GravyFoodsApi.MasjidServices
                 response.Success = false;
                 response.Message = "An error occurred while updating product stock." + Environment.NewLine + ex.Message.ToString();
 
-                throw;
+                return response;
             }
 
         }

@@ -118,20 +118,20 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        public async Task<double> UnitConvert(UnitConversionDto dto)
-        {
+        //public async Task<double> UnitConvert(UnitConversionDto dto)
+        //{
 
-            int from = Array.IndexOf(units, fromUnit);
-            int to = Array.IndexOf(units, toUnit);
+        //    int from = Array.IndexOf(units, fromUnit);
+        //    int to = Array.IndexOf(units, toUnit);
 
-            // 1. Convert from any unit → base unit (smallest)
-            double baseValue = await ToBase(value, from, segments);
+        //    // 1. Convert from any unit → base unit (smallest)
+        //    double baseValue = await ToBase(value, from, segments);
 
-            // 2. Convert from base unit → desired unit
+        //    // 2. Convert from base unit → desired unit
 
-            return await FromBase(baseValue, to, segments);
+        //    return await FromBase(baseValue, to, segments);
 
-        }
+        //}
 
 
 

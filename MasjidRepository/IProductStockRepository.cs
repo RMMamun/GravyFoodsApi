@@ -11,7 +11,7 @@ namespace GravyFoodsApi.MasjidRepository
         Task<ApiResponse<ProductStockDto>> GetProductStockByIdAsync(string productId,string branchId, string companyId);
         Task<ApiResponse<IEnumerable<ProductStockDto>>> GetAllProductStockAsync(string branchId, string companyId);
 
-        Task<APIResponseDto> UpdateProductStockAsync(ProductStockDto stockDto);
+        Task<APIResponseDto> UpdateProductStockAsync(string ProductId, double Quantity, string Unit, string WHId, string BranchId, string CompanyId);
 
     }
 }
