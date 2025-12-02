@@ -27,7 +27,6 @@ namespace GravyFoodsApi.MasjidServices
         {
             ApiResponse<SalesInfoDto> apiRes = new ApiResponse<SalesInfoDto>();
 
-
             // Get execution strategy (required for SQL Azure / retry logic)
             var strategy = _context.Database.CreateExecutionStrategy();
 

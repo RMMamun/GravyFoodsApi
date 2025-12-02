@@ -13,6 +13,7 @@
         public double? PaidAmount { get; set; }
         public double? DueAmount { get; set; }
 
+
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
 
         public List<PurchaseDetailDto> PurchaseDetails { get; set; } = new();
@@ -24,6 +25,10 @@
         public string ProductName { get; set; } = string.Empty;
         public double Quantity { get; set; }
         public string UnitType { get; set; }
+
+        public string UnitId { get; set; }
+        public string WHId { get; set; }
+
         public double PricePerUnit { get; set; }
         public decimal TotalPrice { get; set; }
         public decimal VATPerUnit { get; set; }

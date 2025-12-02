@@ -22,56 +22,109 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<PurchaseInfoDto> CreatePurchaseAsync(PurchaseInfoDto PurDto)
+        public async Task<ApiResponse<PurchaseInfoDto>> CreatePurchaseAsync(PurchaseInfoDto PurDto)
         {
+
+            ApiResponse<PurchaseInfoDto> apiRes = new ApiResponse<PurchaseInfoDto>();
+
+            // Get execution strategy (required for SQL Azure / retry logic)
+            var strategy = _context.Database.CreateExecutionStrategy();
+
             try
             {
-                string strPurchaseId = GeneratePurchaseId(PurDto.CompanyId);
-                PurchaseInfo Purchase = new PurchaseInfo
+                await strategy.ExecuteAsync(async () =>
                 {
-                    PurchaseId = strPurchaseId,
-                    SupplierId = PurDto.SupplierId,
-                    TotalAmount = PurDto.TotalAmount,
-                    PaidAmount = PurDto.PaidAmount,
-                    DueAmount = PurDto.DueAmount,
-                    CreatedDateTime = DateTime.Now,
-                    BranchId = PurDto.BranchId,
-                    CompanyId = PurDto.CompanyId,
-                    UserId = PurDto.UserId,
-                    EditDateTime = null,
-                    PaymentMethod = "",
-                    PurchaseDate = PurDto.CreatedDateTime,
-                    TransactionId = "",
-                    
+                    // START TRANSACTION INSIDE RETRY STRATEGY
+                    await using var transaction = await _context.Database.BeginTransactionAsync();
 
 
-                    PurchaseDetails = PurDto.PurchaseDetails.Select(d => new PurchaseDetails
+                    try
                     {
-                        ProductId = d.ProductId,
-                        Quantity = d.Quantity,
-                        UnitType = d.UnitType,
-                        PricePerUnit = d.PricePerUnit,
-                        TotalPrice = d.TotalPrice,
-                        VATPerUnit = d.VATPerUnit,
-                        TotalVAT = d.TotalVAT,
-                        BranchId = PurDto.BranchId,
-                        CompanyId = PurDto.CompanyId,
-                        
+                        string strPurchaseId = GeneratePurchaseId(PurDto.CompanyId);
+                        PurchaseInfo Purchase = new PurchaseInfo
+                        {
+                            PurchaseId = strPurchaseId,
+                            SupplierId = PurDto.SupplierId,
+                            TotalAmount = PurDto.TotalAmount,
+                            PaidAmount = PurDto.PaidAmount,
+                            DueAmount = PurDto.DueAmount,
+                            CreatedDateTime = DateTime.Now,
+                            BranchId = PurDto.BranchId,
+                            CompanyId = PurDto.CompanyId,
+                            UserId = PurDto.UserId,
+                            EditDateTime = null,
+                            PaymentMethod = "",
+                            PurchaseDate = PurDto.CreatedDateTime,
+                            TransactionId = "",
 
-                        PurchaseId = strPurchaseId // Fix: Set the required PurchaseId property
-                    }).ToList()
-                }; ;
-                _context.PurchaseInfo.Add(Purchase);
-                await _context.SaveChangesAsync();
 
-                PurDto.PurchaseId = strPurchaseId;
-                return PurDto;
+
+                            PurchaseDetails = PurDto.PurchaseDetails.Select(d => new PurchaseDetails
+                            {
+                                ProductId = d.ProductId,
+                                Quantity = d.Quantity,
+                                UnitType = d.UnitType,
+                                UnitId = d.UnitId,
+                                WHId = d.WHId,
+                                PricePerUnit = d.PricePerUnit,
+                                TotalPrice = d.TotalPrice,
+                                VATPerUnit = d.VATPerUnit,
+                                TotalVAT = d.TotalVAT,
+                                BranchId = PurDto.BranchId,
+                                CompanyId = PurDto.CompanyId,
+
+
+                                PurchaseId = strPurchaseId // Fix: Set the required PurchaseId property
+                            }).ToList()
+                        }; ;
+                        _context.PurchaseInfo.Add(Purchase);
+                        await _context.SaveChangesAsync();
+
+                        //Update Stock after creating Sale
+                        var stockUpdate = await StockUpdate(PurDto);
+                        if (!stockUpdate.Success)
+                        {
+
+                            apiRes.Success = false;
+                            apiRes.Message = "Sale created but stock update failed: " + stockUpdate.Message;
+
+                            await transaction.RollbackAsync();
+                            return apiRes;
+                        }
+
+
+                        await transaction.CommitAsync();
+
+
+                        PurDto.PurchaseId = strPurchaseId;
+
+                        apiRes.Success = true;
+                        apiRes.Message = "Purchase created successfully.";
+                        apiRes.Data = PurDto;
+
+                        return apiRes;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback transaction if any error occurs
+                        await transaction.RollbackAsync();
+                        throw; // Re-throw the exception to be handled by outer catch
+                    }
+                });
+                
+
+                return apiRes;
             }
             catch (Exception ex)
             {
                 // Log the exception (you can use a logging framework here)
-                Console.WriteLine($"Error creating Purchase: {ex.Message}");
-                throw; // Re-throw the exception after logging it
+                //Console.WriteLine($"Error creating Purchase: {ex.Message}");
+                //throw; // Re-throw the exception after logging it
+
+                apiRes.Success = false;
+                apiRes.Message = "Error creating Purchase: " + ex.Message;
+
+                return apiRes;
             }
         }
 
@@ -216,6 +269,8 @@ namespace GravyFoodsApi.MasjidServices
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
                         UnitType = d.UnitType,
+                        UnitId = d.UnitId,
+                        WHId = d.WHId,
                         PricePerUnit = d.PricePerUnit,
                         TotalPrice = d.TotalPrice,
                         VATPerUnit = d.VATPerUnit,
@@ -276,6 +331,8 @@ namespace GravyFoodsApi.MasjidServices
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
                         UnitType = d.UnitType,
+                        UnitId = d.UnitId,
+                        WHId = d.WHId,
                         PricePerUnit = d.PricePerUnit,
                         TotalPrice = d.TotalPrice,
                         VATPerUnit = d.VATPerUnit,

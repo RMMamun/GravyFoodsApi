@@ -7,7 +7,7 @@ namespace GravyFoodsApi.MasjidRepository
     {
         Task<IEnumerable<PurchaseInfoDto>> GetAllPurchaseAsync(string branchId, string companyId);
         Task<PurchaseInfo?> GetPurchaseByIdAsync(string PurchaseId, string branchId, string companyId);
-        Task<PurchaseInfoDto> CreatePurchaseAsync(PurchaseInfoDto Purchase);
+        Task<ApiResponse<PurchaseInfoDto>> CreatePurchaseAsync(PurchaseInfoDto Purchase);
         Task<PurchaseInfo?> UpdatePurchaseAsync(string PurchaseId, PurchaseInfo Purchase);
         Task<bool> DeletePurchaseAsync(string PurchaseId, string branchId, string companyId);
 

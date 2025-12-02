@@ -43,10 +43,18 @@ namespace GravyFoodsApi.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<PurchaseInfoDto>> CreatePurchase(PurchaseInfoDto Purchase)
+        public async Task<ActionResult<ApiResponse<PurchaseInfoDto>>> CreatePurchase(PurchaseInfoDto Purchase)
         {
-            var created = await _PurchaseService.CreatePurchaseAsync(Purchase);
-            return Ok(created);
+            var apiResponse = await _PurchaseService.CreatePurchaseAsync(Purchase);
+
+            if (apiResponse.Success == false)
+            {
+                return BadRequest(apiResponse);
+            }
+
+            //return CreatedAtAction(nameof(GetSale), new { id = created.SalesId }, created);
+            return Ok(apiResponse);
+
             //return CreatedAtAction(nameof(GetPurchase), new { id = created.PurchaseId }, created);
         }
 

@@ -26,6 +26,9 @@ namespace GravyFoodsApi.Models
         [StringLength(20)]
         public string UnitType { get; set; } = string.Empty;
 
+        public required string UnitId { get; set; } = string.Empty;
+        public required string WHId { get; set; } = string.Empty;
+
         [Required]
         public double PricePerUnit { get; set; }
 
