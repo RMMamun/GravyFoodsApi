@@ -13,10 +13,12 @@ namespace GravyFoodsApi.MasjidServices
     public class PurchaseService : IPurchaseRepository
     {
         private readonly MasjidDBContext _context;
+        private readonly IProductStockRepository _StockRepo;
 
-        public PurchaseService(MasjidDBContext context)
+        public PurchaseService(MasjidDBContext context, IProductStockRepository stockRepo   )
         {
             _context = context;
+            _StockRepo = stockRepo;
         }
 
 
@@ -70,6 +72,33 @@ namespace GravyFoodsApi.MasjidServices
                 // Log the exception (you can use a logging framework here)
                 Console.WriteLine($"Error creating Purchase: {ex.Message}");
                 throw; // Re-throw the exception after logging it
+            }
+        }
+
+        private async Task<APIResponseDto> StockUpdate(PurchaseInfoDto purDto)
+        {
+            APIResponseDto response = new APIResponseDto();
+
+            try
+            {
+                ProductStockDto stock = new ProductStockDto();
+                foreach (var item in purDto.PurchaseDetails)
+                {
+
+                    response = await _StockRepo.UpdateProductStockAsync(true, item.ProductId, item.Quantity, item.UnitType, item.UnitId, item.WHId, item.BranchId, item.CompanyId);
+                }
+
+                response.Success = true;
+                response.Message = "Stock updated successfully.";
+                return response;
+                // Your stock update logic here
+
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "An error occurred while updating stock." + Environment.NewLine + ex.Message;
+                return response;
             }
         }
 

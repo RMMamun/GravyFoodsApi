@@ -5,9 +5,12 @@ namespace GravyFoodsApi.MasjidRepository
 {
     public interface ISalesService
     {
+
+        Task<ApiResponse<SalesInfoDto>> CreateSalesAsync(SalesInfoDto sale);
+
         Task<IEnumerable<SalesInfoDto>> GetAllSalesAsync();
         Task<SalesInfo?> GetSaleByIdAsync(string salesId);
-        Task<SalesInfoDto> CreateSaleAsync(SalesInfoDto sale);
+        
         Task<SalesInfo?> UpdateSaleAsync(string salesId, SalesInfo sale);
         Task<bool> DeleteSaleAsync(string salesId);
 

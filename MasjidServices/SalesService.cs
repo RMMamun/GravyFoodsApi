@@ -13,62 +13,147 @@ namespace GravyFoodsApi.MasjidServices
     public class SalesService : ISalesService
     {
         private readonly MasjidDBContext _context;
+        private readonly IProductStockRepository _StockRepo;
 
-        public SalesService(MasjidDBContext context)
+
+        public SalesService(MasjidDBContext context, IProductStockRepository stockRepo)
         {
             _context = context;
+            _StockRepo = stockRepo;
         }
 
-        
-        public async Task<SalesInfoDto> CreateSaleAsync(SalesInfoDto saleDto)
+
+        public async Task<ApiResponse<SalesInfoDto>> CreateSalesAsync(SalesInfoDto saleDto)
         {
+            ApiResponse<SalesInfoDto> apiRes = new ApiResponse<SalesInfoDto>();
+
+
+            // Get execution strategy (required for SQL Azure / retry logic)
+            var strategy = _context.Database.CreateExecutionStrategy();
+
             try
             {
-                string strSalesId = GenerateSalesId(saleDto.CompanyId);
-                SalesInfo sale = new SalesInfo
+                await strategy.ExecuteAsync(async () =>
                 {
-                    SalesId = strSalesId,
-                    CustomerId = saleDto.CustomerId,
-                    OrderStatus = saleDto.OrderStatus,
-                    TotalAmount = saleDto.TotalAmount,
-                    TotalDiscountAmount = saleDto.TotalDiscountAmount,
-                    TotalPaidAmount = saleDto.TotalPaidAmount,
-                    CreatedDateTime = saleDto.CreatedDateTime,
-                    BranchId = saleDto.BranchId,
-                    CompanyId = saleDto.CompanyId,
-                    UserId = saleDto.UserId,
+                    // START TRANSACTION INSIDE RETRY STRATEGY
+                    await using var transaction = await _context.Database.BeginTransactionAsync();
 
-
-                    SalesDetails = saleDto.SalesDetails.Select(d => new SalesDetails
+                    try
                     {
-                        ProductId = d.ProductId,
-                        Quantity = d.Quantity,
-                        UnitType = d.UnitType,
-                        PricePerUnit = d.PricePerUnit,
-                        DiscountPerUnit = d.DiscountPerUnit,
-                        DiscountType = d.DiscountType,
-                        TotalDiscount = d.TotalDiscount,
-                        TotalPrice = d.TotalPrice,
-                        VATPerUnit = d.VATPerUnit,
-                        TotalVAT = d.TotalVAT,
-                        BranchId = d.BranchId,
-                        CompanyId = d.CompanyId,
+                        string strSalesId = GenerateSalesId(saleDto.CompanyId);
 
 
-                        SalesId = strSalesId // Fix: Set the required SalesId property
-                    }).ToList()
-                };
-                _context.SalesInfo.Add(sale);
-                await _context.SaveChangesAsync();
+                        SalesInfo sale = new SalesInfo
+                        {
+                            SalesId = strSalesId,
+                            CustomerId = saleDto.CustomerId,
+                            OrderStatus = saleDto.OrderStatus,
+                            TotalAmount = saleDto.TotalAmount,
+                            TotalDiscountAmount = saleDto.TotalDiscountAmount,
+                            TotalPaidAmount = saleDto.TotalPaidAmount,
+                            CreatedDateTime = saleDto.CreatedDateTime,
+                            BranchId = saleDto.BranchId,
+                            CompanyId = saleDto.CompanyId,
+                            UserId = saleDto.UserId,
 
-                saleDto.SalesId = strSalesId;
-                return saleDto;
+
+                            SalesDetails = saleDto.SalesDetails.Select(d => new SalesDetails
+                            {
+                                ProductId = d.ProductId,
+                                Quantity = d.Quantity,
+                                UnitType = d.UnitType,
+                                PricePerUnit = d.PricePerUnit,
+                                DiscountPerUnit = d.DiscountPerUnit,
+                                DiscountType = d.DiscountType,
+                                TotalDiscount = d.TotalDiscount,
+                                TotalPrice = d.TotalPrice,
+                                VATPerUnit = d.VATPerUnit,
+                                TotalVAT = d.TotalVAT,
+                                BranchId = d.BranchId,
+                                CompanyId = d.CompanyId,
+
+
+                                SalesId = strSalesId // Fix: Set the required SalesId property
+                            }).ToList()
+                        };
+                        _context.SalesInfo.Add(sale);
+                        await _context.SaveChangesAsync();
+
+
+                        //Update Stock after creating Sale
+                        var stockUpdate = await StockUpdate(saleDto);
+                        if (!stockUpdate.Success)
+                        {
+
+                            apiRes.Success = false;
+                            apiRes.Message = "Sale created but stock update failed: " + stockUpdate.Message;
+
+                            await transaction.RollbackAsync();
+                            return apiRes;
+                        }
+
+
+                        await transaction.CommitAsync();
+
+
+
+                        saleDto.SalesId = strSalesId;
+
+                        apiRes.Success = true;
+                        apiRes.Data = saleDto;
+                        apiRes.Message = "Sale created successfully.";
+
+                        return apiRes;
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        throw; // This will be caught by the outer catch
+                        
+                    }
+                });
+
+                
             }
             catch (Exception ex)
             {
                 // Log the exception (you can use a logging framework here)
-                Console.WriteLine($"Error creating sale: {ex.Message}");
-                throw; // Re-throw the exception after logging it
+                //Console.WriteLine($"Error creating sale: {ex.Message}");
+                //throw; // Re-throw the exception after logging it
+                apiRes.Success = false;
+                apiRes.Message = "Error creating sale: " + ex.Message;
+
+                return apiRes;
+
+            }
+
+            return apiRes;
+        }
+
+        private async Task<APIResponseDto> StockUpdate(SalesInfoDto sale)
+        {
+            APIResponseDto response = new APIResponseDto();
+
+            try
+            {
+                ProductStockDto stock = new ProductStockDto();
+                foreach (var item in sale.SalesDetails)
+                {
+
+                    response = await _StockRepo.UpdateProductStockAsync(false,item.ProductId, item.Quantity, item.UnitType, item.UnitId, item.WHId, item.BranchId, item.CompanyId);
+                }
+
+                response.Success = true;
+                response.Message = "Stock updated successfully.";
+                return response;
+                // Your stock update logic here
+
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = "An error occurred while updating stock." + Environment.NewLine + ex.Message;
+                return response;
             }
         }
 

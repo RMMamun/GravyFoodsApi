@@ -14,11 +14,12 @@ namespace GravyFoodsApi.MasjidServices
         private readonly IMapper _mapper;
         private  readonly IProductUnitRepository _UnitRepo;
         private readonly IUnitConversionRepository _unitConvRepo;
-        public ProductStockService(MasjidDBContext context, IMapper mapper, IProductUnitRepository UnitRepo)
+        public ProductStockService(MasjidDBContext context, IMapper mapper, IProductUnitRepository UnitRepo, IUnitConversionRepository unitConvRepo)
         {
             _context = context;
             _mapper = mapper;
             _UnitRepo = UnitRepo;
+            _unitConvRepo = unitConvRepo;
         }
 
         public Task<ApiResponse<IEnumerable<ProductStockDto>>> GetAllProductStockAsync(string branchId, string companyId)
@@ -112,16 +113,18 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        public async Task<int> ConvertToSmallUnit(double Quantity, string Unit, string BranchId, string CompanyId)
+        public async Task<int> ConvertToSmallUnit(double Quantity, string Unit,string UnitId, string BranchId, string CompanyId)
         {
             try
             {
-                var unitInfo = _UnitRepo.GetUnitsById(Unit, BranchId, CompanyId).Result;
-                if (unitInfo != null)
+                var unitInfo = _UnitRepo.GetUnitsById(UnitId, BranchId, CompanyId).Result;
+                if (unitInfo == null)
                 {
                     //response.Success = false;
                     //response.Message = "Stock update failed!! Unit details not found for unit: " + Unit;
                     //return response;
+
+                    return 0;
                 }
                 else
                 {
@@ -139,8 +142,11 @@ namespace GravyFoodsApi.MasjidServices
                             return val;
                         }).ToArray();
 
+                    string smallUnit = units[units.Length - 1];
 
-                    var convert = _unitConvRepo.Convert(Quantity,Unit,"",unitSegments,unitSegmentsRatio);
+                    double convert = await _unitConvRepo.Convert(Quantity,Unit, smallUnit, units, segments);
+
+                    return (int)convert;
 
                 }
             }
@@ -149,20 +155,15 @@ namespace GravyFoodsApi.MasjidServices
                 return 0;
             }
         }
-        public async Task<APIResponseDto> UpdateProductStockAsync(string ProductId, double Quantity, string Unit,string WHId, string BranchId, string CompanyId)
+        public async Task<APIResponseDto> UpdateProductStockAsync(bool isAdd, string ProductId, double Quantity, string Unit,string UnitId,string WHId, string BranchId, string CompanyId)
         {
             APIResponseDto response = new APIResponseDto();
-
-
-           
-            
-
 
             try
             {
 
                 //convert to small unit before updating stock
-                int qty = await ConvertToSmallUnit(Unit, BranchId, CompanyId);
+                int qty = await ConvertToSmallUnit(Quantity, Unit,UnitId, BranchId, CompanyId);
 
                 //Check the product stock exists
                 var existingStock = _context.Set<ProductStock>()
@@ -171,15 +172,16 @@ namespace GravyFoodsApi.MasjidServices
                                        && ps.CompanyId == CompanyId);
 
 
-                if (existingStock == null)
+                //***** Create new stock entry ***********************
+                if (existingStock == null)  
                 {
-                    //***** Create new stock entry ***********************
+                    
                     ProductStock newStock = new ProductStock
                     {
                         ProductId = ProductId,
                         BranchId = BranchId,
                         CompanyId = CompanyId,
-                        Quantity = qty,
+                        Quantity = isAdd ? qty : -qty,
                         SmallUnit = Unit,
                         WHId = WHId
                     };
@@ -193,10 +195,12 @@ namespace GravyFoodsApi.MasjidServices
                     return response;
                 }
 
+                //Update the existing stock
                 else
                 {
-                    //Update the existing stock
-                    existingStock.Quantity = existingStock.Quantity + qty;
+                    existingStock.Quantity += isAdd ? qty : -qty;
+
+
                     existingStock.SmallUnit = Unit;
                     existingStock.WHId = WHId;
                     _context.SaveChanges();

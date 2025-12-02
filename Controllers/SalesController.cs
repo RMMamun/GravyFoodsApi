@@ -14,13 +14,11 @@ namespace GravyFoodsApi.Controllers
     public class SalesController : ControllerBase
     {
         private readonly ISalesService _salesService;
-        private readonly IProductStockRepository _StockRepo;
-        private readonly IUnitConversionRepository _unitConvRepo;
-        public SalesController(ISalesService salesService, IProductStockRepository stockRepo, IUnitConversionRepository unitConvRepo)
+
+        public SalesController(ISalesService salesService)
         {
             _salesService = salesService;
-            _StockRepo = stockRepo;
-            _unitConvRepo = unitConvRepo;
+
         }
 
         [HttpGet]
@@ -49,47 +47,23 @@ namespace GravyFoodsApi.Controllers
         
 
         [HttpPost]
-        public async Task<ActionResult<SalesInfoDto>> CreateSale(SalesInfoDto sale)
+        public async Task<ActionResult<ApiResponse<SalesInfoDto>>> CreateSale(SalesInfoDto sale)
         {
-            var created = await _salesService.CreateSaleAsync(sale);
 
-            //Update Stock after creating Sale
-            var stockUpdate = await StockUpdate(sale);
-            if (!stockUpdate.Success)
+            var apiResponse = await _salesService.CreateSalesAsync(sale);
+
+            if (apiResponse.Success == false)
             {
-                //return BadRequest(stockUpdate.Message);
+                return BadRequest(apiResponse);
             }
 
-            return CreatedAtAction(nameof(GetSale), new { id = created.SalesId }, created);
+            //return CreatedAtAction(nameof(GetSale), new { id = created.SalesId }, created);
+            return Ok(apiResponse);
+
         }
 
 
-        private async Task<APIResponseDto> StockUpdate(SalesInfoDto sale)
-        { 
-            APIResponseDto response = new APIResponseDto();
-
-            try   
-            {
-                ProductStockDto stock = new ProductStockDto();
-                foreach (var item in sale.SalesDetails)
-                {
-                    
-                    response = await _StockRepo.UpdateProductStockAsync(item.ProductId, item.Quantity,item.UnitType,item.WHId,item.BranchId,item.CompanyId);
-                }
-
-                response.Success = true;
-                response.Message = "Stock updated successfully.";
-                return response;
-                // Your stock update logic here
-
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = "An error occurred while updating stock." + Environment.NewLine + ex.Message;
-                return response;
-            }   
-        }
+        
 
 
 
