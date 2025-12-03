@@ -5,6 +5,7 @@ using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Repositories;
+using System;
 
 namespace GravyFoodsApi.MasjidServices
 {
@@ -113,7 +114,14 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        public async Task<int> ConvertToSmallUnit(double Quantity, string Unit,string UnitId, string BranchId, string CompanyId)
+        public class SmallUnitQtyDto
+        { 
+            public string Unit { get ; set; } 
+            public int Qty { get; set; }
+
+        }
+
+        public async Task<SmallUnitQtyDto> ConvertToSmallUnit(double Quantity, string Unit,string UnitId, string BranchId, string CompanyId)
         {
             try
             {
@@ -123,8 +131,11 @@ namespace GravyFoodsApi.MasjidServices
                     //response.Success = false;
                     //response.Message = "Stock update failed!! Unit details not found for unit: " + Unit;
                     //return response;
-
-                    return 0;
+                    SmallUnitQtyDto dto = new SmallUnitQtyDto();
+                    dto.Unit = Unit;
+                    dto.Qty = 0;
+                    
+                    return dto;
                 }
                 else
                 {
@@ -146,13 +157,19 @@ namespace GravyFoodsApi.MasjidServices
 
                     double convert = await _unitConvRepo.Convert(Quantity,Unit, smallUnit, units, segments);
 
-                    return (int)convert;
+                    SmallUnitQtyDto dto = new SmallUnitQtyDto();
+                    dto.Unit = smallUnit;
+                    dto.Qty = (int)convert;
+                    return dto;
 
                 }
             }
             catch (Exception ex)
             {
-                return 0;
+                SmallUnitQtyDto dto = new SmallUnitQtyDto();
+                dto.Unit = "";
+                dto.Qty = 0;
+                return dto;
             }
         }
         public async Task<APIResponseDto> UpdateProductStockAsync(bool isAdd, string ProductId, double Quantity, string Unit,string UnitId,string WHId, string BranchId, string CompanyId)
@@ -163,7 +180,10 @@ namespace GravyFoodsApi.MasjidServices
             {
 
                 //convert to small unit before updating stock
-                int qty = await ConvertToSmallUnit(Quantity, Unit,UnitId, BranchId, CompanyId);
+                var result = await ConvertToSmallUnit(Quantity, Unit,UnitId, BranchId, CompanyId);
+
+                int qty = result.Qty;
+                string smallUnit = result.Unit;
 
                 //Check the product stock exists
                 var existingStock = _context.Set<ProductStock>()
@@ -182,7 +202,7 @@ namespace GravyFoodsApi.MasjidServices
                         BranchId = BranchId,
                         CompanyId = CompanyId,
                         Quantity = isAdd ? qty : -qty,
-                        SmallUnit = Unit,
+                        SmallUnit = smallUnit,
                         WHId = WHId
                     };
 
@@ -201,7 +221,7 @@ namespace GravyFoodsApi.MasjidServices
                     existingStock.Quantity += isAdd ? qty : -qty;
 
 
-                    existingStock.SmallUnit = Unit;
+                    existingStock.SmallUnit = smallUnit;
                     existingStock.WHId = WHId;
                     _context.SaveChanges();
 
