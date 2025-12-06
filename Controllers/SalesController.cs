@@ -28,10 +28,10 @@ namespace GravyFoodsApi.Controllers
             return Ok(sales);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SalesInfo>> GetSale(string id)
+        [HttpGet("{id}/{branchId}/{companyId}")]
+        public async Task<ActionResult<SalesInfoDto>> GetSale(string id, string branchId, string companyId)
         {
-            var sale = await _salesService.GetSaleByIdAsync(id);
+            var sale = await _salesService.GetSaleByIdAsync(id, branchId, companyId);
             if (sale == null) return NotFound();
             return Ok(sale);
         }

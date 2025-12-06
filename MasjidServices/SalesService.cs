@@ -158,7 +158,7 @@ namespace GravyFoodsApi.MasjidServices
 
         private string GenerateSalesId(string companyCode)
         {
-            string str = companyCode + Guid.NewGuid().ToString("N").Substring(0, 30).ToUpper();
+            string str = companyCode + Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
             //check if already exists, 
             var isExist = _context.SalesInfo.Any(c => c.SalesId == str);
             if (isExist)
@@ -370,8 +370,62 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        public async Task<SalesInfo?> GetSaleByIdAsync(string salesId)
+        public async Task<SalesInfoDto?> GetSaleByIdAsync(string salesId, string branchId, string companyId)
         {
+            try
+            {
+                var salesDtos = await _context.SalesInfo
+                .Include(s => s.SalesDetails)
+                .Include(s => s.CustomerInfo)
+                .Select(s => new SalesInfoDto
+                {
+                    SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                    CustomerId = s.CustomerId.ToString(),
+                    CustomerName = s.CustomerInfo.CustomerName,
+                    UserId = "", //s.UserId.ToString(),
+                    BranchId = "", //s.BranchId.ToString(),
+                    CompanyId = "", // s.CompanyId.ToString(),
+
+                    OrderStatus = s.OrderStatus,
+                    TotalAmount = s.TotalAmount,
+                    TotalDiscountAmount = s.TotalDiscountAmount,
+                    TotalPaidAmount = s.TotalPaidAmount,
+                    CreatedDateTime = s.CreatedDateTime,
+
+
+                    SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
+                    {
+                        ProductId = d.ProductId.ToString(),
+                        ProductName = d.Product.Name,   // assumes navigation to Product
+                        Quantity = d.Quantity,
+                        UnitType = d.UnitType,
+                        UnitId = d.UnitId,
+                        PricePerUnit = d.PricePerUnit,
+                        DiscountPerUnit = d.DiscountPerUnit,
+                        TotalPrice = d.TotalPrice,
+                        TotalDiscount = d.TotalDiscount,
+                        VATPerUnit = d.VATPerUnit,
+                        TotalVAT = d.TotalVAT,
+                        DiscountType = d.DiscountType,
+                        UserId = "", //d.UserId.ToString(),
+                        BranchId = "", //d.BranchId.ToString(),
+                        CompanyId = "", //d.CompanyId.ToString(),
+
+                    }).ToList()
+                }).FirstOrDefaultAsync();
+
+
+
+
+                return salesDtos;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework here)
+                Console.WriteLine($"Error retrieving sale: {ex.Message}");
+                throw; // Re-throw the exception after logging it
+            }
+
             //return await _context.SalesInfo
             //    .Include(s => s.SalesDetails)
             //    .ThenInclude(d => d.Product)
@@ -379,11 +433,11 @@ namespace GravyFoodsApi.MasjidServices
 
             //    .FirstOrDefaultAsync(s => s.SalesId == salesId);
 
-            return await _context.SalesInfo
-                .Include(s => s.CustomerInfo)            // load customer
-            .Include(s => s.SalesDetails)            // load sales details
-                .ThenInclude(d => d.Product)         // load product for each detail
-            .FirstOrDefaultAsync(s => s.SalesId == salesId);
+            //return await _context.SalesInfo
+            //    .Include(s => s.CustomerInfo)            // load customer
+            //.Include(s => s.SalesDetails)            // load sales details
+            //    .ThenInclude(d => d.Product)         // load product for each detail
+            //.FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == branchId && s.CompanyId == companyId);
 
 
         }
