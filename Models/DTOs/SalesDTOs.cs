@@ -24,8 +24,8 @@
         public string ProductId { get; set; } = string.Empty;
         public string ProductName { get; set; } = string.Empty;
         public double Quantity { get; set; }
-        public string UnitType { get; set; }
-        public string UnitId { get; set; } 
+        public string UnitType { get; set; } = string.Empty;
+        public string UnitId { get; set; } = string.Empty;
         public double PricePerUnit { get; set; }
         public double DiscountPerUnit { get; set; }
 

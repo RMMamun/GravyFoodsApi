@@ -26,10 +26,10 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("{invoiceNo}/{branchId}/{companyId}")]
         public async Task<IActionResult> GetInvoice(string invoiceNo, string branchId, string companyId)
         {
-            
+
             //SalesService salesService = new SalesService();
 
-            var salse = await _salesService.GetSaleByIdAsync(invoiceNo, branchId, companyId);
+            var salse = await _salesService.GetSaleInvoiceByIdAsync(invoiceNo, branchId, companyId);
             if (salse != null)
             {
 

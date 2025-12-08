@@ -9,8 +9,9 @@ namespace GravyFoodsApi.MasjidRepository
         Task<ApiResponse<SalesInfoDto>> CreateSalesAsync(SalesInfoDto sale);
 
         Task<IEnumerable<SalesInfoDto>> GetAllSalesAsync();
-        Task<SalesInfoDto?> GetSaleByIdAsync(string salesId, string branchId, string companyId);
-        
+        Task<ApiResponse<SalesInfoDto>> GetSaleByIdAsync(string salesId, string branchId, string companyId);
+        Task<SalesInfo?> GetSaleInvoiceByIdAsync(string salesId, string branchId, string companyId);
+
         Task<SalesInfo?> UpdateSaleAsync(string salesId, SalesInfo sale);
         Task<bool> DeleteSaleAsync(string salesId);
 

@@ -68,6 +68,10 @@ namespace GravyFoodsApi.MasjidServices
                                 TotalPrice = d.TotalPrice,
                                 VATPerUnit = d.VATPerUnit,
                                 TotalVAT = d.TotalVAT,
+                                UnitId = d.UnitId,
+                                WHId = d.WHId,
+                                DiscountAmountPerUnit = 0,
+                                
                                 BranchId = d.BranchId,
                                 CompanyId = d.CompanyId,
 
@@ -370,11 +374,13 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        public async Task<SalesInfoDto?> GetSaleByIdAsync(string salesId, string branchId, string companyId)
+        public async Task<ApiResponse<SalesInfoDto>> GetSaleByIdAsync(string salesId, string branchId, string companyId)
         {
+            ApiResponse<SalesInfoDto> apiRes = new ApiResponse<SalesInfoDto>();
+
             try
             {
-                var salesDtos = await _context.SalesInfo
+                var salesDtos = await _context.SalesInfo.Where (s => s.SalesId == salesId && s.BranchId == branchId && s.CompanyId == companyId)
                 .Include(s => s.SalesDetails)
                 .Include(s => s.CustomerInfo)
                 .Select(s => new SalesInfoDto
@@ -382,15 +388,16 @@ namespace GravyFoodsApi.MasjidServices
                     SalesId = s.SalesId.ToString(),   // adjust if Id is string
                     CustomerId = s.CustomerId.ToString(),
                     CustomerName = s.CustomerInfo.CustomerName,
-                    UserId = "", //s.UserId.ToString(),
-                    BranchId = "", //s.BranchId.ToString(),
-                    CompanyId = "", // s.CompanyId.ToString(),
+                    UserId = s.UserId.ToString(),
+                    BranchId = s.BranchId.ToString(),
+                    CompanyId = s.CompanyId.ToString(),
 
                     OrderStatus = s.OrderStatus,
                     TotalAmount = s.TotalAmount,
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
                     CreatedDateTime = s.CreatedDateTime,
+                    
 
 
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
@@ -407,23 +414,31 @@ namespace GravyFoodsApi.MasjidServices
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
                         DiscountType = d.DiscountType,
-                        UserId = "", //d.UserId.ToString(),
-                        BranchId = "", //d.BranchId.ToString(),
-                        CompanyId = "", //d.CompanyId.ToString(),
+                        UserId = s.UserId.ToString(),
+                        BranchId = d.BranchId.ToString(),
+                        CompanyId = d.CompanyId.ToString(),
+                        WHId = d.WHId,
+                        
 
                     }).ToList()
                 }).FirstOrDefaultAsync();
 
 
+                apiRes.Message = "Sale retrieved successfully.";
+                apiRes.Success = true;
+                apiRes.Data = salesDtos;
 
-
-                return salesDtos;
+                return apiRes;
             }
             catch (Exception ex)
             {
                 // Log the exception (you can use a logging framework here)
-                Console.WriteLine($"Error retrieving sale: {ex.Message}");
-                throw; // Re-throw the exception after logging it
+                //Console.WriteLine($"Error retrieving sale: {ex.Message}");
+                //throw; // Re-throw the exception after logging it
+                apiRes.Success = false;
+                apiRes.Message = "Error retrieving sale: " + ex.Message;
+                return apiRes;
+
             }
 
             //return await _context.SalesInfo
@@ -435,13 +450,43 @@ namespace GravyFoodsApi.MasjidServices
 
             //return await _context.SalesInfo
             //    .Include(s => s.CustomerInfo)            // load customer
-            //.Include(s => s.SalesDetails)            // load sales details
+            //    .Include(s => s.SalesDetails)            // load sales details
             //    .ThenInclude(d => d.Product)         // load product for each detail
             //.FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == branchId && s.CompanyId == companyId);
 
 
         }
 
+
+        public async Task<SalesInfo?> GetSaleInvoiceByIdAsync(string salesId, string branchId, string companyId)
+        {
+            try
+            {
+
+                //return await _context.SalesInfo
+                //    .Include(s => s.SalesDetails)
+                //    .ThenInclude(d => d.Product)
+                //    .Include(s => s.CustomerInfo)
+
+                //    .FirstOrDefaultAsync(s => s.SalesId == salesId);
+
+                return await _context.SalesInfo
+                    .Include(s => s.CustomerInfo)            // load customer
+                    .Include(s => s.SalesDetails)            // load sales details
+                    .ThenInclude(d => d.Product)         // load product for each detail
+                .FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == branchId && s.CompanyId == companyId);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework here)
+                Console.WriteLine($"Error retrieving sale: {ex.Message}");
+                throw; // Re-throw the exception after logging it
+            }
+
+        }
 
     }
 
