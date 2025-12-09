@@ -235,58 +235,73 @@ namespace GravyFoodsApi.MasjidServices
             return true;
         }
 
-        public async Task<IEnumerable<PurchaseInfoDto>> GetPurchaseByDateRangeAsync(DateTime fromDate, DateTime toDate, string branchId, string companyId)
+
+        public async Task<IEnumerable<PurchaseInfoDto>> GetPurchaseByDateRangeAsync(string searchStr, DateTime fromDate, DateTime toDate, string branchId, string companyId)
         {
             try
             {
 
+                var query = _context.PurchaseInfo
+                    .Include(s => s.PurchaseDetails)
+                    .Include(s => s.SupplierInfo)
+                    .AsQueryable();
 
-                //IEnumerable<PurchaseInfo> Purchase = await _context.PurchaseInfo
-                //    .Include(s => s.PurchaseDetails)
-                //    .Include(s => s.SupplierInfo)
-                //    .ToListAsync();
+                query = query.Where(s => s.BranchId == branchId && s.CompanyId == companyId);
 
-
-                var PurchaseDtos = await _context.PurchaseInfo.Where(s => s.CreatedDateTime.Date >= fromDate.Date && s.CreatedDateTime.Date <= toDate.Date && s.BranchId == branchId && s.CompanyId == companyId)
-                .Include(s => s.PurchaseDetails)
-                .Include(s => s.SupplierInfo)
-                .Select(s => new PurchaseInfoDto
+                // Date filter (only if provided)
+                if (fromDate != null && toDate != null)
                 {
-                    PurchaseId = s.PurchaseId.ToString(),   // adjust if Id is string
-                    SupplierId = s.SupplierId.ToString(),
-                    SupplierName = s.SupplierInfo.SupplierName,
-                    UserId = "", //s.UserId.ToString(),
-                    BranchId = "", //s.BranchId.ToString(),
-                    CompanyId = "", // s.CompanyId.ToString(),
-
-                    TotalAmount = s.TotalAmount,
-                    CreatedDateTime = s.CreatedDateTime,
+                    query = query.Where(s =>
+                        s.CreatedDateTime.Date >= fromDate.Date &&
+                        s.CreatedDateTime.Date <= toDate.Date);
+                }
 
 
-                    PurchaseDetails = s.PurchaseDetails.Select(d => new PurchaseDetailDto
+                // Phrase search (only if not empty)
+                if (!string.IsNullOrWhiteSpace(searchStr))
+                {
+                    query = query.Where(s =>
+                        (s.SupplierInfo.SupplierName + " "
+                        + s.PurchaseId + " "
+                        + s.UserId)
+                        .Contains(searchStr)
+                    );
+                }
+
+                // Final projection
+                var purchaseDtos = await query
+                    .Select(s => new PurchaseInfoDto
                     {
-                        ProductId = d.ProductId.ToString(),
-                        ProductName = d.Product.Name,   // assumes navigation to Product
-                        Quantity = d.Quantity,
-                        UnitType = d.UnitType,
-                        UnitId = d.UnitId,
-                        WHId = d.WHId,
-                        PricePerUnit = d.PricePerUnit,
-                        TotalPrice = d.TotalPrice,
-                        VATPerUnit = d.VATPerUnit,
-                        TotalVAT = d.TotalVAT,
-                        UserId = "", //d.UserId.ToString(),
-                        BranchId = "", //d.BranchId.ToString(),
-                        CompanyId = "", //d.CompanyId.ToString(),
+                        PurchaseId = s.PurchaseId.ToString(),
+                        SupplierId = s.SupplierId.ToString(),
+                        SupplierName = s.SupplierInfo.SupplierName,
+                        UserId = "",
+                        BranchId = "",
+                        CompanyId = "",
+                        TotalAmount = s.TotalAmount,
+                        CreatedDateTime = s.CreatedDateTime,
 
-                    }).ToList()
-                })
-                .ToListAsync();
+                        PurchaseDetails = s.PurchaseDetails.Select(d => new PurchaseDetailDto
+                        {
+                            ProductId = d.ProductId.ToString(),
+                            ProductName = d.Product.Name,
+                            Quantity = d.Quantity,
+                            UnitType = d.UnitType,
+                            UnitId = d.UnitId,
+                            WHId = d.WHId,
+                            PricePerUnit = d.PricePerUnit,
+                            TotalPrice = d.TotalPrice,
+                            VATPerUnit = d.VATPerUnit,
+                            TotalVAT = d.TotalVAT,
+                            UserId = "",
+                            BranchId = "",
+                            CompanyId = "",
+                        }).ToList()
+                    })
+                    .ToListAsync();
 
+                return purchaseDtos;
 
-
-
-                return PurchaseDtos;
             }
             catch (Exception ex)
             {
@@ -296,6 +311,70 @@ namespace GravyFoodsApi.MasjidServices
             }
 
         }
+
+        //public async Task<IEnumerable<PurchaseInfoDto>> GetPurchaseByDateRangeAsync(string searchStr, DateTime fromDate, DateTime toDate, string branchId, string companyId)
+        //{
+        //    try
+        //    {
+
+
+        //        //IEnumerable<PurchaseInfo> Purchase = await _context.PurchaseInfo
+        //        //    .Include(s => s.PurchaseDetails)
+        //        //    .Include(s => s.SupplierInfo)
+        //        //    .ToListAsync();
+
+
+        //        var PurchaseDtos = await _context.PurchaseInfo.Where(s => 
+        //        s.CreatedDateTime.Date >= fromDate.Date && s.CreatedDateTime.Date <= toDate.Date && s.BranchId == branchId && s.CompanyId == companyId)
+        //        .Include(s => s.PurchaseDetails)
+        //        .Include(s => s.SupplierInfo)
+        //        .Select(s => new PurchaseInfoDto
+        //        {
+        //            PurchaseId = s.PurchaseId.ToString(),   // adjust if Id is string
+        //            SupplierId = s.SupplierId.ToString(),
+        //            SupplierName = s.SupplierInfo.SupplierName,
+        //            UserId = "", //s.UserId.ToString(),
+        //            BranchId = "", //s.BranchId.ToString(),
+        //            CompanyId = "", // s.CompanyId.ToString(),
+
+        //            TotalAmount = s.TotalAmount,
+        //            CreatedDateTime = s.CreatedDateTime,
+
+
+        //            PurchaseDetails = s.PurchaseDetails.Select(d => new PurchaseDetailDto
+        //            {
+        //                ProductId = d.ProductId.ToString(),
+        //                ProductName = d.Product.Name,   // assumes navigation to Product
+        //                Quantity = d.Quantity,
+        //                UnitType = d.UnitType,
+        //                UnitId = d.UnitId,
+        //                WHId = d.WHId,
+        //                PricePerUnit = d.PricePerUnit,
+        //                TotalPrice = d.TotalPrice,
+        //                VATPerUnit = d.VATPerUnit,
+        //                TotalVAT = d.TotalVAT,
+        //                UserId = "", //d.UserId.ToString(),
+        //                BranchId = "", //d.BranchId.ToString(),
+        //                CompanyId = "", //d.CompanyId.ToString(),
+
+        //            }).ToList()
+        //        })
+        //        .ToListAsync();
+
+
+        //        //(s.SupplierInfo.SupplierName + " " + s.PurchaseId + " " + s.UserId).Contains(searchStr) && 
+        //        PurchaseDtos = PurchaseDtos.Where(s => (s.SupplierName + " " + s.PurchaseId + " " + s.UserId).Contains(searchStr));
+
+        //        return PurchaseDtos;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception (you can use a logging framework here)
+        //        Console.WriteLine($"Error retrieving Purchase: {ex.Message}");
+        //        throw; // Re-throw the exception after logging it
+        //    }
+
+        //}
 
         public async Task<IEnumerable<PurchaseInfoDto>> GetAllPurchaseAsync(string branchId, string companyId)
         {

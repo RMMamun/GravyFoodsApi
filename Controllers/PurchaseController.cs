@@ -33,10 +33,14 @@ namespace GravyFoodsApi.Controllers
         }
 
 
-        [HttpGet("{fromDate:Datetime}/{toDate:Datetime}/{branchId}/{companyId}")]
-        public async Task<ActionResult<IEnumerable<PurchaseInfoDto>>> GetPurchaseByDateRangeAsync(DateTime fromDate, DateTime toDate, string branchId, string companyId)
+        [HttpGet("{searchStr}/{fromDate:Datetime}/{toDate:Datetime}/{branchId}/{companyId}")]
+        public async Task<ActionResult<IEnumerable<PurchaseInfoDto>>> GetPurchaseByDateRangeAsync(string searchStr, DateTime fromDate, DateTime toDate, string branchId, string companyId)
         {
-            var Purchase = await _PurchaseService.GetPurchaseByDateRangeAsync(fromDate, toDate, branchId, companyId);
+            if (searchStr == "-")
+            {
+                searchStr = "";
+            }
+            var Purchase = await _PurchaseService.GetPurchaseByDateRangeAsync(searchStr,fromDate, toDate, branchId, companyId);
             if (Purchase == null) return NotFound();
             return Ok(Purchase);
         }
