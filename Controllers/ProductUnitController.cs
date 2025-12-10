@@ -33,13 +33,13 @@ namespace GravyFoodsApi.Controllers
         //[HttpPut]
         //public async Task<ActionResult<bool>> Update(ProductUnitsDto unit)
         //{
-        //    var isExisted = _repository.GetUnitsById(unit.UnitId, unit.BranchId, unit.CompanyId);
+        //    var isExisted = _repo.GetUnitsById(unit.UnitId, unit.BranchId, unit.CompanyId);
         //    if (isExisted == null)
         //    {
         //        return NotFound("Unit not found");
         //    }
 
-        //    var units = await _repository.UpdateUnitAsync(unit);
+        //    var units = await _repo.UpdateUnitAsync(unit);
         //    return Ok(units);
         //}
 

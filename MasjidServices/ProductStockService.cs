@@ -5,6 +5,7 @@ using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace GravyFoodsApi.MasjidServices
@@ -114,64 +115,8 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        public class SmallUnitQtyDto
-        { 
-            public string Unit { get ; set; } 
-            public int Qty { get; set; }
+        
 
-        }
-
-        public async Task<SmallUnitQtyDto> ConvertToSmallUnit(double Quantity, string Unit,string UnitId, string BranchId, string CompanyId)
-        {
-            try
-            {
-                var unitInfo = _UnitRepo.GetUnitsById(UnitId, BranchId, CompanyId).Result;
-                if (unitInfo == null)
-                {
-                    //response.Success = false;
-                    //response.Message = "Stock update failed!! Unit details not found for unit: " + Unit;
-                    //return response;
-                    SmallUnitQtyDto dto = new SmallUnitQtyDto();
-                    dto.Unit = Unit;
-                    dto.Qty = 0;
-                    
-                    return dto;
-                }
-                else
-                {
-                    //Convert quantity to small unit
-                    string unitSegments = unitInfo.UnitSegments;
-                    string unitSegmentsRatio = unitInfo.UnitSegmentsRatio;
-
-                    string[] units = unitSegments.Split('\\');
-                    //unitsegmantration values are like - 1\1000\1000\1000
-                    double[] segments = unitSegmentsRatio.Split('\\')
-                        .Select(s =>
-                        {
-                            double val = 1;
-                            double.TryParse(s, out val);
-                            return val;
-                        }).ToArray();
-
-                    string smallUnit = units[units.Length - 1];
-
-                    double convert = await _unitConvRepo.Convert(Quantity,Unit, smallUnit, units, segments);
-
-                    SmallUnitQtyDto dto = new SmallUnitQtyDto();
-                    dto.Unit = smallUnit;
-                    dto.Qty = (int)convert;
-                    return dto;
-
-                }
-            }
-            catch (Exception ex)
-            {
-                SmallUnitQtyDto dto = new SmallUnitQtyDto();
-                dto.Unit = "";
-                dto.Qty = 0;
-                return dto;
-            }
-        }
         public async Task<APIResponseDto> UpdateProductStockAsync(bool isAdd, string ProductId, double Quantity, string Unit,string UnitId,string WHId, string BranchId, string CompanyId)
         {
             APIResponseDto response = new APIResponseDto();
@@ -180,7 +125,7 @@ namespace GravyFoodsApi.MasjidServices
             {
 
                 //convert to small unit before updating stock
-                var result = await ConvertToSmallUnit(Quantity, Unit,UnitId, BranchId, CompanyId);
+                var result = await _unitConvRepo.ConvertToSmallUnit(Quantity, Unit,UnitId, BranchId, CompanyId);
 
                 int qty = result.Qty;
                 string smallUnit = result.Unit;
@@ -241,5 +186,93 @@ namespace GravyFoodsApi.MasjidServices
             }
 
         }
+
+
+        public async Task<ApiResponse<IEnumerable<LowStockProductsDto>>> GetLowerStockProductAsync(int totalProducts, string branchId, string companyId)
+        {
+
+            var response = new ApiResponse<IEnumerable<LowStockProductsDto>>();
+
+            try
+            {
+
+                totalProducts = totalProducts <= 0 ? 5 : totalProducts;
+
+                //var query = _context.ProductStocks
+                //   .Include(s => s.Product)
+                //   .AsQueryable();
+
+                //query = query.Where(s => s.BranchId == branchId && s.CompanyId == companyId)
+                //            .OrderBy(s => s.Quantity)     // sort from lowest to highest
+                //            .Take(totalProducts);
+
+                //Qty_UnitDto qtyUnitDto = new Qty_UnitDto();
+
+                //var stockDtos = await query
+                //    .Select(s => new LowStockProductsDto
+                //    {
+
+                //        ProductId = s.ProductId,
+                //        Quantity = _unitConvRepo.ConvertToShowingUnit(s.ProductId, s.Quantity, s.Product.DefaultUnit, branchId, companyId).Result.Qty,
+                //        ShowingUnit = _unitConvRepo.ConvertToShowingUnit(s.ProductId, s.Quantity, s.Product.DefaultUnit,branchId,companyId).Result.Unit,
+                //        WHId = s.WHId,
+                //        WHName = "",
+                //        BranchId = "",
+                //        CompanyId = ""
+
+                //    })
+                //    .ToListAsync();
+
+                var rawStocks = await _context.ProductStocks
+                    .Include(s => s.Product)
+                    .Where(s => s.BranchId == branchId && s.CompanyId == companyId)
+                    .OrderBy(s => s.Quantity)
+                    .Take(totalProducts)
+                    .ToListAsync();
+
+                var stockDtos = new List<LowStockProductsDto>();
+
+                foreach (var s in rawStocks)
+                {
+                    var unit = await _unitConvRepo.ConvertToShowingUnit(
+                        s.ProductId,
+                        s.Quantity,
+                        s.Product.DefaultUnit,
+                        branchId,
+                        companyId
+                    );
+
+                    stockDtos.Add(new LowStockProductsDto
+                    {
+                        ProductId = s.ProductId,
+                        Quantity = unit.Qty,
+                        ShowingUnit = unit.Unit,
+                        WHId = s.WHId,
+                        WHName = "",
+                        BranchId = "",
+                        CompanyId = ""
+                    });
+                }
+
+
+
+                response.Data = stockDtos;
+                response.Success = true;
+                response.Message = "Product stocks retrieved successfully.";
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Data = null;
+                response.Success = false;
+                response.Message = "An error occurred while retrieving product stocks.";
+                response.Errors = new List<string> { ex.Message.ToString() };
+
+                return response;
+
+            }
+        }
+
     }
 }

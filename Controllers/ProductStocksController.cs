@@ -1,5 +1,6 @@
 ﻿using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GravyFoodsApi.Controllers
@@ -8,24 +9,24 @@ namespace GravyFoodsApi.Controllers
     [ApiController]
     public class ProductStocksController : ControllerBase
     {
-        private readonly IProductStockRepository _repository;
+        private readonly IProductStockRepository _repo;
 
         public ProductStocksController(IProductStockRepository repository)
         {
-            _repository = repository;
+            _repo = repository;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<ProductStock>>> GetAll()
-        //{
-        //    var stocks = await _repository.GetAllAsync();
-        //    return Ok(stocks);
-        //}
+        [HttpGet("{totalProducts}/{branchId}/{companyId}")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<LowStockProductsDto>>>> GetLowStockProducts(int totalProducts, string branchId, string companyId)
+        {
+            var stocks = await _repo.GetLowerStockProductAsync(totalProducts, branchId,companyId);
+            return Ok(stocks);
+        }
 
         //[HttpGet("{id}")]
         //public async Task<ActionResult<ProductStock>> Get(int id)
         //{
-        //    var stock = await _repository.GetByIdAsync(id);
+        //    var stock = await _repo.GetByIdAsync(id);
         //    if (stock == null) return NotFound();
         //    return Ok(stock);
         //}
@@ -33,7 +34,7 @@ namespace GravyFoodsApi.Controllers
         //[HttpPost]
         //public async Task<ActionResult<ProductStock>> Create(ProductStock stock)
         //{
-        //    var created = await _repository.AddAsync(stock);
+        //    var created = await _repo.AddAsync(stock);
         //    return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         //}
 
@@ -41,14 +42,14 @@ namespace GravyFoodsApi.Controllers
         //public async Task<IActionResult> Update(int id, ProductStock stock)
         //{
         //    if (id != stock.Id) return BadRequest();
-        //    await _repository.UpdateAsync(stock);
+        //    await _repo.UpdateAsync(stock);
         //    return NoContent();
         //}
 
         //[HttpDelete("{id}")]
         //public async Task<IActionResult> Delete(int id)
         //{
-        //    await _repository.DeleteAsync(id);
+        //    await _repo.DeleteAsync(id);
         //    return NoContent();
         //}
     }

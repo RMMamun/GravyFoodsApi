@@ -22,7 +22,7 @@ namespace GravyFoodsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<SupplierInfo>> Create([FromBody] SupplierDTO supplier)
         {
-            //var created = await _repository.Create(supplier);
+            //var created = await _repo.Create(supplier);
             //return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
 
             var result = await _repository.Create(supplier);
@@ -38,7 +38,7 @@ namespace GravyFoodsApi.Controllers
         [HttpPut]
         public async Task<ActionResult<SupplierInfo>> UpdateAsync([FromBody] SupplierDTO supplier)
         {
-            //var created = await _repository.Create(supplier);
+            //var created = await _repo.Create(supplier);
             //return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
 
             var result = await _repository.UpdateSupplierInfoAsync(supplier);

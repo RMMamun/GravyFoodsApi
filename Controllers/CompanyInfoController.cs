@@ -20,16 +20,16 @@ namespace GravyFoodsApi.Controllers
         //[HttpPost]
         //public async Task<ActionResult<CustomerInfo>> Create([FromBody] CustomerInfoDTO customer)
         //{
-        //    //var created = await _repository.Create(customer);
+        //    //var created = await _repo.Create(customer);
         //    //return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
 
-        //    var customerExists = await _repository.GetCustomerByMobileOrEmail(customer.PhoneNo, customer.Email, customer.BranchId, customer.CompanyId);
+        //    var customerExists = await _repo.GetCustomerByMobileOrEmail(customer.PhoneNo, customer.Email, customer.BranchId, customer.CompanyId);
         //    if (customerExists != null)
         //    {
         //        return Ok(customerExists);
         //    }
 
-        //    var result = await _repository.Create(customer);
+        //    var result = await _repo.Create(customer);
 
         //    if (!result.Success)
         //        return Conflict(result.Message);

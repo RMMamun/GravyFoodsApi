@@ -294,8 +294,8 @@ namespace GravyFoodsApi.MasjidServices
                             VATPerUnit = d.VATPerUnit,
                             TotalVAT = d.TotalVAT,
                             UserId = "",
-                            BranchId = "",
-                            CompanyId = "",
+                            BranchId = d.BranchId,
+                            CompanyId = d.CompanyId,
                         }).ToList()
                     })
                     .ToListAsync();

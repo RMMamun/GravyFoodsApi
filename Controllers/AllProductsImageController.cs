@@ -29,7 +29,7 @@ namespace GravyFoodsApi.Controllers
         //[HttpPost]
         //public async Task<ActionResult<ProductImageDTO>> Create(IEnumerable<ProductImageDTO> product)
         //{
-        //    var created = await _repository.SaveProductImagesAsync(product);
+        //    var created = await _repo.SaveProductImagesAsync(product);
         //    return Ok(product);
         //    //return CreatedAtAction(nameof(Get), new { id = created.ProductId }, created);
         //}

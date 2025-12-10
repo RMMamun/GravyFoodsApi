@@ -39,7 +39,7 @@ namespace MasjidWorldwide.Controllers
         //[HttpGet("{barcode}/{branchId}/{companyId}")]
         //public async Task<ActionResult<ProductDto>> Get(string barcode, string branchId, string companyId)
         //{
-        //    var product = await _repository.GetProductByBarcodeAsync(barcode, branchId, companyId);
+        //    var product = await _repo.GetProductByBarcodeAsync(barcode, branchId, companyId);
         //    if (product == null) return NotFound();
         //    return Ok(product);
         //}
