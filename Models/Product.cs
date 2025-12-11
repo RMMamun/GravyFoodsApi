@@ -61,6 +61,10 @@ namespace GravyFoodsApi.Models
         [Required]
         public DateTime CreatedDateTime { get; set; }
 
+        public bool HasSerial { get; set; } = false;
+        public DateTime? ExpiryDate { get; set; }
+        public double StockLimit { get; set; }
+
         public string? BranchId { get; set; }
         public string? CompanyId { get; set; }
 
@@ -139,6 +143,12 @@ namespace GravyFoodsApi.Models
         public string CompanyName { get; set; }
 
         public DateTime CreatedDateTime { get; set; }
+
+        public bool HasSerial { get; set; } = false;
+        public DateTime? ExpiryDate { get; set; }
+        public double StockLimit { get; set; }
+
+
     }
 
 

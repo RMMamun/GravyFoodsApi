@@ -19,7 +19,7 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("{totalProducts}/{branchId}/{companyId}")]
         public async Task<ActionResult<ApiResponse<IEnumerable<LowStockProductsDto>>>> GetLowStockProducts(int totalProducts, string branchId, string companyId)
         {
-            var stocks = await _repo.GetLowerStockProductAsync(totalProducts, branchId,companyId);
+            var stocks = await _repo.GetLowStockProductsAsync(totalProducts, branchId,companyId);
             return Ok(stocks);
         }
 

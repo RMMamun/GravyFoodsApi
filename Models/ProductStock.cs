@@ -33,6 +33,9 @@ namespace GravyFoodsApi.Models
         // Navigation
         [ForeignKey(nameof(ProductId))]
         public Product Product { get; set; } = null!;
+
+        [ForeignKey(nameof(WHId))]
+        public Warehouse Warehouse { get; set; } = null!;
     }
 
 }

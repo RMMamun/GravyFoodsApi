@@ -188,7 +188,7 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<ApiResponse<IEnumerable<LowStockProductsDto>>> GetLowerStockProductAsync(int totalProducts, string branchId, string companyId)
+        public async Task<ApiResponse<IEnumerable<LowStockProductsDto>>> GetLowStockProductsAsync(int totalProducts, string branchId, string companyId)
         {
 
             var response = new ApiResponse<IEnumerable<LowStockProductsDto>>();
@@ -198,33 +198,9 @@ namespace GravyFoodsApi.MasjidServices
 
                 totalProducts = totalProducts <= 0 ? 5 : totalProducts;
 
-                //var query = _context.ProductStocks
-                //   .Include(s => s.Product)
-                //   .AsQueryable();
-
-                //query = query.Where(s => s.BranchId == branchId && s.CompanyId == companyId)
-                //            .OrderBy(s => s.Quantity)     // sort from lowest to highest
-                //            .Take(totalProducts);
-
-                //Qty_UnitDto qtyUnitDto = new Qty_UnitDto();
-
-                //var stockDtos = await query
-                //    .Select(s => new LowStockProductsDto
-                //    {
-
-                //        ProductId = s.ProductId,
-                //        Quantity = _unitConvRepo.ConvertToShowingUnit(s.ProductId, s.Quantity, s.Product.DefaultUnit, branchId, companyId).Result.Qty,
-                //        ShowingUnit = _unitConvRepo.ConvertToShowingUnit(s.ProductId, s.Quantity, s.Product.DefaultUnit,branchId,companyId).Result.Unit,
-                //        WHId = s.WHId,
-                //        WHName = "",
-                //        BranchId = "",
-                //        CompanyId = ""
-
-                //    })
-                //    .ToListAsync();
-
                 var rawStocks = await _context.ProductStocks
                     .Include(s => s.Product)
+                    .Include(w => w.Warehouse)
                     .Where(s => s.BranchId == branchId && s.CompanyId == companyId)
                     .OrderBy(s => s.Quantity)
                     .Take(totalProducts)
@@ -234,21 +210,16 @@ namespace GravyFoodsApi.MasjidServices
 
                 foreach (var s in rawStocks)
                 {
-                    var unit = await _unitConvRepo.ConvertToShowingUnit(
-                        s.ProductId,
-                        s.Quantity,
-                        s.Product.DefaultUnit,
-                        branchId,
-                        companyId
-                    );
+                    var unit = await _unitConvRepo.ConvertToShowingUnit(s.ProductId,s.Quantity,s.Product.DefaultUnit,branchId,companyId);
 
                     stockDtos.Add(new LowStockProductsDto
                     {
                         ProductId = s.ProductId,
+                        ProductName = s.Product.Name,
                         Quantity = unit.Qty,
                         ShowingUnit = unit.Unit,
                         WHId = s.WHId,
-                        WHName = "",
+                        WHName = s.Warehouse.WHName,
                         BranchId = "",
                         CompanyId = ""
                     });

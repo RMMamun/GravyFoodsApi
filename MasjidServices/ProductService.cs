@@ -193,6 +193,11 @@ namespace GravyFoodsApi.MasjidServices
                         BranchName = _product.Branch != null ? _product.Branch.BranchName : null,
                         CompanyId = _product.CompanyId,
                         CompanyName = _product.Company != null ? _product.Company.CompanyName : null,
+                        CreatedDateTime = _product.CreatedDateTime,
+                        ExpiryDate = _product.ExpiryDate,
+                        HasSerial = _product.HasSerial,
+                        StockLimit = _product.StockLimit
+                        
 
                     };
 
@@ -233,8 +238,12 @@ namespace GravyFoodsApi.MasjidServices
                 product.SKUCode = _product.SKUCode;
                 product.BranchId = _product.BranchId;
                 product.CompanyId = _product.CompanyId;
-                
-                
+                product.ExpiryDate = _product.ExpiryDate;
+                product.HasSerial = _product.HasSerial;
+                product.StockLimit = _product.StockLimit;
+                //product.CreatedDateTime = _product.CreatedDateTime;  //Not updatable
+
+
 
                 //product.Quantity = 0,
                 //product.BrandName = _product.Brand?.Name,
@@ -271,6 +280,7 @@ namespace GravyFoodsApi.MasjidServices
                     var newProduct = new Product
                     {
                         ProductId = GenerateProductId(product.CompanyId),
+
                         Name = product.Name,
                         Description = product.Description,
                         BrandId = product.BrandId,
@@ -288,6 +298,11 @@ namespace GravyFoodsApi.MasjidServices
                         DefaultUnit = product.DefaultUnit,
                         ProductCode = product.ProductCode,
                         SKUCode = product.SKUCode,
+                        StockLimit = product.StockLimit,
+                        ExpiryDate = product.ExpiryDate,
+                        HasSerial = product.HasSerial,
+                        
+                        
 
 
                     };
