@@ -17,20 +17,23 @@ namespace GravyFoodsApi.Models
         [MaxLength(100)]
         public string SerialNumber { get; set; } = string.Empty;
 
-        [Required]
+        
         [MaxLength(50)]
-        public string SKU { get; set; } = string.Empty;
+        public string? SKU { get; set; } = string.Empty;
 
-        [Required]
+        
         [MaxLength(50)]
-        public string IMEI1 { get; set; } = string.Empty;
+        public string? IMEI1 { get; set; } = string.Empty;
 
-        [Required]
+
         [MaxLength(50)]
-        public string IMEI2 { get; set; } = string.Empty;
+        public string? IMEI2 { get; set; } = string.Empty;
 
         public DateTime? ManufactureDate { get; set; }
         public DateTime? ExpiryDate { get; set; }
+
+        public string BranchId { get; set; } = string.Empty;
+        public string CompanyId { get; set; } = string.Empty;
 
         // Navigation
         [ForeignKey(nameof(ProductId))]
