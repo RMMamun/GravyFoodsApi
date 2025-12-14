@@ -102,6 +102,7 @@ builder.Services.AddScoped<IBranchInfoRepository,  BranchInfoService>();
 
 builder.Services.AddScoped<IProductStockRepository, ProductStockService>();
 builder.Services.AddScoped<IUnitConversionRepository, UnitConversionService>();
+builder.Services.AddScoped<IProductSerialRepository, ProductSerialService>();
 
 
 

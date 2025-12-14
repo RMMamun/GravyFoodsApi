@@ -39,10 +39,6 @@ namespace GravyFoodsApi.MasjidServices
                 await _context.SaveChangesAsync();
 
 
-
-
-
-
                 apiRes.Success = true;
                 apiRes.Message = "Serial added successfully";
 
