@@ -28,11 +28,19 @@ namespace MasjidWorldwide.Controllers
             return Ok(products);
         }
 
-        [HttpGet("{id}/{branchId}/{companyId}")]
-        public async Task<ActionResult<ProductDto>> Get(string id, string branchId, string companyId)
+        //[HttpGet("by-productid/{id}/{branchId}/{companyId}")]
+        //public async Task<ActionResult<ApiResponse<ProductDto>>> Get(string id, string branchId, string companyId)
+        //{
+        //    var product = await _repository.GetProductByIdAsync(id, branchId, companyId);
+        //    if (product.Success == false) return NotFound(product);
+        //    return Ok(product);
+        //}
+
+        [HttpGet("by-barcode/{productId}/{barcode}/{branchId}/{companyId}")]
+        public async Task<ActionResult<ApiResponse<ProductDto>>> GetProductByBarcode(string productId, string barcode, string branchId, string companyId)
         {
-            var product = await _repository.GetProductByIdAsync(id, branchId, companyId);
-            if (product == null) return NotFound();
+            var product = await _repository.GetProductByBarcodeAsync(productId, barcode, branchId, companyId);
+            if (product.Success == false) return NotFound(product);
             return Ok(product);
         }
 

@@ -73,52 +73,30 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        public async Task<ProductDto> GetProductByBarcodeAsync(string Barcode, string branchId, string companyId)
+        public async Task<ApiResponse<ProductDto>> GetProductByBarcodeAsync(string ProductId,string Barcode, string branchId, string companyId)
         {
+            ApiResponse<ProductDto> apiRes = new ApiResponse<ProductDto>();
+
             try
             {
 
-                //Product p = await _context.Product.Where(p => p.ProductId == Barcode && p.BranchId == branchId && p.CompanyId == companyId).FirstOrDefaultAsync();
-                //ProductDto productDtos = new ProductDto
-                //{
-                //    ProductId = p.ProductId,
-                //    Name = p.Name,
-                //    Description = p.Description,
-                //    CategoryId = p.CategoryId,
-                //    BrandId = p.BrandId,
-                //    Price = p.Price,
-                //    DiscountedPrice = p.DiscountedPrice,
-                //    DiscountAmount = p.DiscountAmount,
-                //    Cost = p.Cost,
-
-                //    Quantity = 0,
-                //    IsAvailable = p.IsAvailable,
-                //    IsSalable = p.IsSalable,
-                //    BrandName = p.Brand?.Name != null ? p.Brand?.Name : "",
-                //    CategoryName = p.Category?.Name,
-                //    ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
-                //    UnitId = p.Unit != null ? p.Unit.UnitId : null,
-                //    DefaultUnit = p.DefaultUnit,
-                //    ProductCode = p.ProductCode,
-                //    SKUCode = p.SKUCode,
-
-                //    BranchId = p.BranchId,
-                //    BranchName = p.Branch != null ? p.Branch.BranchName : null,
-                //    CompanyId = p.CompanyId,
-                //    CompanyName = p.Company != null ? p.Company.CompanyName : null,
-
-                //};
-
-                Product? products = await _context.Product.Where(p => p.ProductId == Barcode && p.BranchId == branchId && p.CompanyId == companyId).FirstOrDefaultAsync();
+                Product? products = await _context.Product.Where(p => (p.ProductCode == ProductId || p.SKUCode == Barcode) && p.BranchId == branchId && p.CompanyId == companyId).FirstOrDefaultAsync();
+                
                 var productDtos = _mapper.Map<ProductDto>(products);
 
-
-                return productDtos;
+                apiRes.Data = productDtos;
+                apiRes.Success = true;
+                apiRes.Message = "Product retrieved successfully.";
+                return apiRes;
             }
             catch (Exception ex)
             {
                 //throw new Exception(ex.Message);
-                return null;
+                apiRes.Success = false;
+                apiRes.Message = "Error retrieving product.";
+                apiRes.Errors = new List<string> { ex.Message };
+
+                return apiRes;
             }
         }
 
@@ -147,11 +125,13 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<ProductDto> GetProductByIdAsync(string ProductId, string branchId, string companyId)
+        public async Task<ApiResponse<ProductDto>> GetProductByIdAsync(string ProductId, string branchId, string companyId)
         {
+            ApiResponse<ProductDto> apiRes = new ApiResponse<ProductDto>();
+
             try
             {
-                Product _product =  await _context.Product
+                Product? _product =  await _context.Product
                                 .Include(p => p.Brand)
                                 .Include(p => p.Category)
                                 .Include(p => p.Images)
@@ -163,7 +143,9 @@ namespace GravyFoodsApi.MasjidServices
 
                 if (_product == null)
                 {
-                    return new ProductDto();
+                    apiRes.Success = false;
+                    apiRes.Message = "Product not found!";
+                    return apiRes;
                 }
                 else
                 {
@@ -195,18 +177,26 @@ namespace GravyFoodsApi.MasjidServices
                         CompanyName = _product.Company != null ? _product.Company.CompanyName : null,
                         CreatedDateTime = _product.CreatedDateTime,
                         ExpiryDate = _product.ExpiryDate,
-                        HasSerial = _product.HasSerial,
+                        IsSerialBased = _product.IsSerialBased,
                         StockLimit = _product.StockLimit
+                        
                         
 
                     };
 
-                    return productDtos;
+                    apiRes.Data = productDtos;
+                    apiRes.Success = true;
+                    apiRes.Message = "Product retrieved successfully.";
+
+                    return apiRes;
                 }
             }
             catch (Exception ex)
             {
-                return new ProductDto();
+                apiRes.Success = false;
+                apiRes.Message = "Error retrieving product.";
+                apiRes.Errors = new List<string> { ex.Message };
+                return apiRes;
             }
         }
 
@@ -239,7 +229,7 @@ namespace GravyFoodsApi.MasjidServices
                 product.BranchId = _product.BranchId;
                 product.CompanyId = _product.CompanyId;
                 product.ExpiryDate = _product.ExpiryDate;
-                product.HasSerial = _product.HasSerial;
+                product.IsSerialBased = _product.IsSerialBased;
                 product.StockLimit = _product.StockLimit;
                 //product.CreatedDateTime = _product.CreatedDateTime;  //Not updatable
 
@@ -300,7 +290,7 @@ namespace GravyFoodsApi.MasjidServices
                         SKUCode = product.SKUCode,
                         StockLimit = product.StockLimit,
                         ExpiryDate = product.ExpiryDate,
-                        HasSerial = product.HasSerial,
+                        IsSerialBased = product.IsSerialBased,
                         
                         
 
