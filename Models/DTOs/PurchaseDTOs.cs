@@ -34,10 +34,14 @@
         public decimal VATPerUnit { get; set; }
         public decimal TotalVAT { get; set; }
 
+        public bool IsSerialBased { get; set; } = false;
+
         public string UserId { get; set; } = string.Empty;
         public string BranchId { get; set; } = string.Empty;
         public string CompanyId { get; set; } = string.Empty;
 
+
+        public List<ProductSerialDto>? ProductSerial { get; set; } = new();
 
     }
 }
