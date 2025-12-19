@@ -14,11 +14,13 @@ namespace GravyFoodsApi.MasjidServices
     {
         private readonly MasjidDBContext _context;
         private readonly IProductStockRepository _StockRepo;
+        private readonly IProductSerialRepository _ProductSerialRepo;
 
-        public PurchaseService(MasjidDBContext context, IProductStockRepository stockRepo   )
+        public PurchaseService(MasjidDBContext context, IProductStockRepository stockRepo, IProductSerialRepository ProductSerialRepo)
         {
             _context = context;
             _StockRepo = stockRepo;
+            _ProductSerialRepo = ProductSerialRepo;
         }
 
 
@@ -90,6 +92,34 @@ namespace GravyFoodsApi.MasjidServices
 
                             await transaction.RollbackAsync();
                             return apiRes;
+                        }
+
+                        //Update Product Serials if any
+                        //call Product serial repository to update serials
+                        
+
+                        var serialsToSave = PurDto.PurchaseDetails
+                        .Where(d => d.ProductSerial?.Any() == true)
+                        .SelectMany(d => d.ProductSerial.Select(s => new ProductSerialDto
+                        {
+                            PurchaseId = PurDto.PurchaseId,
+                            ProductId = d.ProductId,
+                            SerialNumber = s.SerialNumber
+                        }))
+                        .ToList();
+
+                        if (serialsToSave != null)
+                        {
+                            ApiResponse<bool> serialSaved = await _ProductSerialRepo.AddProductSerialAsync(serialsToSave);
+                            if (serialSaved.Success == false)
+                            {
+
+                                apiRes.Success = false;
+                                apiRes.Message = "Sale created but stock update failed: " + stockUpdate.Message;
+
+                                await transaction.RollbackAsync();
+                                return apiRes;
+                            }
                         }
 
 

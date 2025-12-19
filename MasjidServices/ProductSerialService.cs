@@ -31,8 +31,19 @@ namespace GravyFoodsApi.MasjidServices
                     ExpiryDate = ps.ExpiryDate,
                     SKU = ps.SKU,
                     IMEI1 = ps.IMEI1,
-                    IMEI2 = ps.IMEI2
-
+                    IMEI2 = ps.IMEI2,
+                    PurchaseId = ps.PurchaseId,
+                    PurchaseDate = ps.PurchaseDate,
+                    SalesId = ps.SalesId,
+                    SalesDate = ps.SalesDate,
+                    PurchaseReturnDate = ps.PurchaseReturnDate,
+                    PurchaseReturnId = ps.PurchaseReturnId,
+                    SalesReturnDate = ps.SalesReturnDate,
+                    SalesReturnId = ps.SalesReturnId,
+                    StockStatus = ps.StockStatus,
+                    StockHistory = ps.StockHistory,
+                    WHId = ps.WHId,
+                   
                 });
 
                 await _context.ProductSerials.AddRangeAsync(productSerialList);

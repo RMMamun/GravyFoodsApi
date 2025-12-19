@@ -40,8 +40,7 @@
         public string BranchId { get; set; } = string.Empty;
         public string CompanyId { get; set; } = string.Empty;
 
-
-        public List<ProductSerialDto>? ProductSerial { get; set; } = new();
+        public List<PurchaseSerialsDto>? ProductSerial { get; set; } = new();
 
     }
 }
