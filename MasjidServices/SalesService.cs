@@ -488,6 +488,67 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
+
+        public async Task<ApiResponse<IEnumerable<BestSoldProductsDto>>> GetBestSoldProductsByDateRangeAsync(DateTime fromDate, DateTime toDate, string branchId, string companyId)
+        {
+            ApiResponse<IEnumerable<BestSoldProductsDto>> apiRes = new ApiResponse<IEnumerable<BestSoldProductsDto>>();
+
+            try
+            {
+
+
+                var bestSoldProducts = await _context.SalesDetails
+                .Where(d =>
+                    d.SalesInfo.CreatedDateTime.Date >= fromDate.Date &&
+                    d.SalesInfo.CreatedDateTime.Date <= toDate.Date &&
+                    d.SalesInfo.BranchId == branchId &&
+                    d.SalesInfo.CompanyId == companyId
+                )
+                .GroupBy(d => new
+                {
+                    d.ProductId,
+                    d.Product.Name,
+                    d.Product.ProductCode
+                })
+                .Select(g => new BestSoldProductsDto
+                {
+                    ProductId = g.Key.ProductId.ToString(),
+                    ProductName = g.Key.Name,
+                    ProductCode = g.Key.ProductCode,
+
+                    TotalQuantitySold = (decimal)g.Sum(x => x.Quantity),
+                    TotalSalesAmount = g.Sum(x => x.TotalPrice),
+                    TotalDiscount = g.Sum(x => x.TotalDiscount),
+                    TotalVAT = g.Sum(x => x.TotalVAT),
+                    BranchId = branchId,
+                    CompanyId = companyId
+                })
+                .OrderByDescending(x => x.TotalQuantitySold)
+                .ToListAsync();
+
+                apiRes.Data = bestSoldProducts;
+                apiRes.Message = "Best sold products retrieved successfully.";
+                apiRes.Success = true;
+
+                return apiRes;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework here)
+                //Console.WriteLine($"Error retrieving sales: {ex.Message}");
+                //throw; // Re-throw the exception after logging it
+
+                apiRes.Success = false;
+                apiRes.Message = "Error retrieving best sold products: " + ex.Message;
+                
+                return apiRes;
+
+            }
+
+        }
+
+
+
     }
 
 }

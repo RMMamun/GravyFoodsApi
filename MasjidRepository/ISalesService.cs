@@ -1,6 +1,7 @@
 ﻿using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 
+
 namespace GravyFoodsApi.MasjidRepository
 {
     public interface ISalesService
@@ -16,6 +17,8 @@ namespace GravyFoodsApi.MasjidRepository
         Task<bool> DeleteSaleAsync(string salesId);
 
         Task<IEnumerable<SalesInfoDto>> GetSalesByDateRangeAsync(DateTime fromDate, DateTime toDate, string branchId, string companyId);
+
+        Task<ApiResponse<IEnumerable<BestSoldProductsDto>>> GetBestSoldProductsByDateRangeAsync(DateTime fromDate, DateTime toDate, string branchId, string companyId);
 
     }
 }

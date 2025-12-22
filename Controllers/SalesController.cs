@@ -44,7 +44,35 @@ namespace GravyFoodsApi.Controllers
             if (sale == null) return NotFound();
             return Ok(sale);
         }
-        
+
+
+        [HttpGet("{statusType:int}/{fromDate:Datetime}/{toDate:Datetime}/{branchId}/{companyId}")]
+        public async Task<ActionResult> GetCustomSalesStatusByDateRangeAsync(int statusType, DateTime fromDate, DateTime toDate, string branchId, string companyId)
+        {
+            if (statusType == 1) //Best Sold Products
+            {
+                var sale = await _salesService.GetBestSoldProductsByDateRangeAsync(fromDate, toDate, branchId, companyId);
+                if (sale == null) return NotFound();
+                return Ok(sale);
+
+            }
+            else if (statusType == 2) //Other Status
+            {
+
+            }
+            else if (statusType == 3) //Other Status
+            {
+
+            }
+            else if (statusType == 4) //Other Status
+            {
+
+            }
+
+
+            return NotFound();
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse<SalesInfoDto>>> CreateSale(SalesInfoDto sale)
