@@ -104,6 +104,8 @@ builder.Services.AddScoped<IProductStockRepository, ProductStockService>();
 builder.Services.AddScoped<IUnitConversionRepository, UnitConversionService>();
 builder.Services.AddScoped<IProductSerialRepository, ProductSerialService>();
 
+builder.Services.AddScoped<IWarehouseRepository, WarehouseService>();
+
 
 
 

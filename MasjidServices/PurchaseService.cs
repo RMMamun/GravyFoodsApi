@@ -108,7 +108,7 @@ namespace GravyFoodsApi.MasjidServices
                         }))
                         .ToList();
 
-                        if (serialsToSave != null)
+                        if (serialsToSave != null && serialsToSave.Count > 0)
                         {
                             ApiResponse<bool> serialSaved = await _ProductSerialRepo.AddProductSerialAsync(serialsToSave);
                             if (serialSaved.Success == false)
@@ -168,7 +168,7 @@ namespace GravyFoodsApi.MasjidServices
                 foreach (var item in purDto.PurchaseDetails)
                 {
 
-                    response = await _StockRepo.UpdateProductStockAsync(true, item.ProductId, item.Quantity, item.UnitType, item.UnitId, item.WHId, item.BranchId, item.CompanyId);
+                    response = await _StockRepo.UpdateProductStockAsync(true, item.ProductId, item.Quantity, item.UnitType, item.UnitId, item.WHId, purDto.BranchId, purDto.CompanyId);
                 }
 
                 response.Success = true;
