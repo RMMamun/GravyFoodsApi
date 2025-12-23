@@ -22,5 +22,14 @@ namespace GravyFoodsApi.Controllers
             var Purchase = await _warehouseRepo.GetAllWarehousesAsync(branchId, companyId);
             return Ok(Purchase);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<ApiResponse<WarehouseDto>>> CreateAsync(WarehouseDto warehouseDto)
+        {
+            var result = await _warehouseRepo.CreateWarehouseAsync(warehouseDto);
+            if (result.Success == false) return BadRequest(result);
+
+            return Ok(result);
+        }
     }
 }

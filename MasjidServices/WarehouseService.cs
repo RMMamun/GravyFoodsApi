@@ -1,6 +1,7 @@
 ﻿using GravyFoodsApi.Data;
 using GravyFoodsApi.DTOs;
 using GravyFoodsApi.MasjidRepository;
+using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 
 namespace GravyFoodsApi.MasjidServices
@@ -14,9 +15,51 @@ namespace GravyFoodsApi.MasjidServices
             _context = context;
         }
 
-        public Task<ApiResponse<WarehouseDto>> CreateWarehouseAsync(WarehouseDto warehouseDto)
+        public async Task<ApiResponse<WarehouseDto>> CreateWarehouseAsync(WarehouseDto warehouseDto)
         {
-            throw new NotImplementedException();
+            ApiResponse < WarehouseDto > apiRes = new ApiResponse<WarehouseDto>();
+
+            try
+            {
+                var isExisted = await GetWarehouseByIdAsync(warehouseDto.WHId, warehouseDto.BranchId, warehouseDto.CompanyId);
+                if (isExisted.Success == true)
+                {
+                    apiRes.Success = false;
+                    apiRes.Message = $"Warehouse with ID '{warehouseDto.WHId}' already exists.";
+                    return apiRes;
+
+                    //return ServiceResultWrapper<SupplierInfo>.Fail($"Supplier with '{supplierInfo.Email}' OR '{supplierInfo.PhoneNo}' already exists.");
+                }
+
+                Warehouse newWH = new Warehouse
+                {
+
+                    WHId = GenerateWHId(warehouseDto.CompanyId),
+                    WHName = warehouseDto.WHName,
+                    WHLocationNo = warehouseDto.WHLocationNo,
+                    BranchId = warehouseDto.BranchId,
+                    CompanyId = warehouseDto.CompanyId,
+
+                };
+
+                await _context.Warehouse.AddAsync(newWH);
+                await _context.SaveChangesAsync();
+
+                warehouseDto.WHId = newWH.WHId;
+                apiRes.Data = warehouseDto;
+                return apiRes;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        private string GenerateWHId(string companyId)
+        {
+            var random = new Random();
+            var WHId = companyId + "-" + random.Next(1000, 9999).ToString();
+            return WHId;
         }
 
         public Task<ApiResponse<WarehouseDto>> DeleteWarehouseAsync(string WHId, string branchId, string companyId)
@@ -63,9 +106,47 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public Task<ApiResponse<WarehouseDto>> GetWarehouseByIdAsync(string WHId, string branchId, string companyId)
+        public async Task<ApiResponse<WarehouseDto>> GetWarehouseByIdAsync(string WHId, string branchId, string companyId)
         {
-            throw new NotImplementedException();
+            var response = new ApiResponse<WarehouseDto>();
+
+            try
+            {
+                var WHDto = _context.Warehouse.Where(w => w.WHId == WHId && w.BranchId == branchId && w.CompanyId == companyId).FirstOrDefault();
+
+                if (WHDto != null)
+                {
+
+                    // Map to DTO
+                    var warehouseDto = new WarehouseDto
+                    {
+                        WHId = WHDto.WHId,
+                        WHName = WHDto.WHName,
+                        WHLocationNo = WHDto.WHLocationNo,
+                        BranchId = WHDto.BranchId,
+                        CompanyId = WHDto.CompanyId
+                    };
+
+                    response.Data = warehouseDto;
+                    response.Success = true;
+                    response.Message = "Warehouses retrieved successfully.";
+                    response.Errors = null;
+                    
+                }
+
+                return response;
+            }
+
+            catch (Exception ex)
+            {
+
+                    response.Data = null;
+                    response.Success = false;
+                    response.Message = "An error occurred while retrieving warehouses.";
+                    response.Errors = new List<string> { ex.Message.ToString() };
+                
+                return response;
+            }
         }
 
         public Task<ApiResponse<WarehouseDto>> UpdateWarehouseAsync(WarehouseDto warehouseDto)
