@@ -75,7 +75,8 @@ namespace GravyFoodsApi.MasjidServices
 
         public Task<bool> CheckSupplierByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
         {
-            var isExisted = _context.SupplierInfo.Any(c => c.Email == email || c.PhoneNo == PhoneNo && (c.BranchId == branchId && c.CompanyId == companyId));
+            //c.Email == email ||
+            var isExisted = _context.SupplierInfo.Any(c =>  c.PhoneNo == PhoneNo && (c.BranchId == branchId && c.CompanyId == companyId));
             return Task.FromResult(isExisted);
         }
 
