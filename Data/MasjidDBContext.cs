@@ -41,6 +41,7 @@ namespace GravyFoodsApi.Data
         public DbSet<UserWiseMenuAssignment> UserWiseMenuAssignment { get; set; }
         public DbSet<EmployeeInfo> EmployeeInfo { get; set; }
         public DbSet<Warehouse> Warehouse { get; set; }
+        public DbSet<AppOptions> AppOptions { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

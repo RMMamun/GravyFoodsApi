@@ -8,6 +8,7 @@ using GravyFoodsApi.Models;
 using GravyFoodsApi.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using QuestPDF.Infrastructure;
@@ -105,7 +106,7 @@ builder.Services.AddScoped<IUnitConversionRepository, UnitConversionService>();
 builder.Services.AddScoped<IProductSerialRepository, ProductSerialService>();
 
 builder.Services.AddScoped<IWarehouseRepository, WarehouseService>();
-
+builder.Services.AddScoped<IAppOptionsRepository, AppOptionsService>();
 
 
 
