@@ -17,7 +17,7 @@ namespace GravyFoodsApi.Models.DTOs
         public bool IsEnabled { get; set; }
 
         public bool HasSelector { get; set; }
-        public int? SelectedValueId { get; set; }
+        public string? SelectedValueId { get; set; }
         public string? SelectedValueText { get; set; }
 
         public string? SelectorApiUrl { get; set; }

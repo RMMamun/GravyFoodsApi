@@ -1,4 +1,5 @@
 ﻿using GravyFoodsApi.MasjidRepository;
+using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GravyFoodsApi.Controllers
@@ -24,5 +25,20 @@ namespace GravyFoodsApi.Controllers
 
             return Ok(product);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateAppOptions([FromBody] IEnumerable<AppOptionDto> appOptionDtos)
+        {
+            var result = await _repository.UpdateAsync(appOptionDtos);
+            if (!result.Success)
+                return BadRequest(result.Message);
+            return Ok(result);
+        }
+
+
+
+
+
+
     }
 }
