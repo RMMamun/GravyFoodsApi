@@ -64,10 +64,16 @@ namespace GravyFoodsApi.Controllers
             return Ok(product);
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateCustomerInfo([FromBody] CustomerInfo dto)
+        {
+            var result = await _repository.UpdateCustomerInfoAsync(dto);
+            if (!result.Success)
+                return BadRequest(result.Message);
+            return Ok(result);
+        }
 
 
 
-
-
-    }
+     }
 }

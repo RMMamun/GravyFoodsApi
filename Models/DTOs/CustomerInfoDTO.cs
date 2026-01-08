@@ -7,6 +7,9 @@ namespace GravyFoodsApi.Models.DTOs
     {
 
 
+        [StringLength(50)]
+        public required string CustomerId { get; set; } = string.Empty;
+
         [StringLength(250)]
         public string CustomerName { get; set; } = string.Empty;
 

@@ -9,7 +9,7 @@ namespace GravyFoodsApi.MasjidRepository
         Task<CustomerInfo?> GetCustomerInfoById(string Id,string branchId, string companyId);
         Task<CustomerInfo?> GetCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId);
 
-        Task<bool> UpdateCustomerInfoAsync(CustomerInfo customerInfo);
+        Task<ApiResponse<bool>> UpdateCustomerInfoAsync(CustomerInfo dto);
         Task<IEnumerable<CustomerInfo>?> GetAllCustomersAsync(string branchId, string companyId);
     }
 }

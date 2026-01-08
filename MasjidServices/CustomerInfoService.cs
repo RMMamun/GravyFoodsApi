@@ -2,6 +2,7 @@
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
+using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Collections.Immutable;
@@ -72,9 +73,54 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public Task<bool> UpdateCustomerInfoAsync(CustomerInfo customerInfo)
+        public async Task<ApiResponse<bool>> UpdateCustomerInfoAsync(CustomerInfo dto)
         {
-            throw new NotImplementedException();
+            ApiResponse<bool> apiRes = new ApiResponse<bool>();
+
+            try
+            {
+
+                var existing = _context.CustomerInfo.FirstOrDefault(a => a.CustomerId == dto.CustomerId && a.BranchId == dto.BranchId && a.CompanyId == dto.CompanyId);
+                if (existing != null)
+                {
+
+                    existing.CustomerName = dto.CustomerName;
+                    existing.Address = dto.Address;
+                    existing.PhoneNo = dto.PhoneNo;
+                    existing.Email = dto.Email;
+                    existing.BranchId = dto.BranchId;
+                    existing.CompanyId = dto.CompanyId;
+
+                    //_context.CustomerInfo.Update(dto);    //*** using update make an error of tracking entity. So, we are not using it.
+
+                    await _context.SaveChangesAsync();
+
+                    apiRes.Message = "Customer info updated successfully.";
+                    apiRes.Success = true;
+                    apiRes.Data = true;
+
+                    return apiRes;
+
+                }
+                else
+                {
+                    //throw new KeyNotFoundException($"App option with ID {dto.Id} not found.");
+                    apiRes.Message = $"App option with ID {dto.Id} not found.";
+                    apiRes.Success = false;
+                    apiRes.Data = false;
+
+                    return apiRes;
+                }
+            }
+            catch (Exception ex)
+            {
+                apiRes.Message =  ex.Message;
+                apiRes.Success = false;
+                apiRes.Data = false;
+                return apiRes;
+            }
+
+            
         }
 
         public async Task<IEnumerable<CustomerInfo>?> GetAllCustomersAsync(string branchId, string companyId)
@@ -90,5 +136,6 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
+        
     }
 }
