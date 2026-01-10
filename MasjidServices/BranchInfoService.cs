@@ -121,57 +121,69 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public class CompanyBranchDto
-        {
-            public string CompanyCode { get; set; }
-            public string CompanyName { get; set; }
-            public string BranchCode { get; set; }
-            public string BranchName { get; set; }
-            public string Address { get; set; }
-        }
+        //**************** The following method has using for Company & Branch verification ******************
 
         public async Task<ApiResponse<CompanyBranchDto>> GetLinkCodeVerificationAsync(string LinkCode)
         {
 
-            ApiResponse<CompanyBranchDto> apiRes = new ApiResponse<CompanyBranchDto>();
-
-            //Split the code in 2 parts CompanyCode and BranchCode
-            string companyCode = LinkCode.Substring(0, 20);
-            string branchCode = LinkCode.Substring(20, 20);
-
-            var Branch = await _context.BranchInfo.Where(b => b.LinkCode == LinkCode && b.BranchId == branchCode).FirstOrDefaultAsync();
-            if (Branch == null)
+            try
             {
-                //return null;
-                apiRes.Success = false;
-                apiRes.Message = "Invalid Link Code.";
+
+
+                ApiResponse<CompanyBranchDto> apiRes = new ApiResponse<CompanyBranchDto>();
+
+                //Split the code in 2 parts CompanyCode and BranchCode
+                string companyCode = LinkCode.Substring(0, 20);
+                string branchCode = LinkCode.Substring(20, 20);
+
+                //Temp Data fetch for Company and Branch
+                companyCode = "1";
+                branchCode = "1";
+                //
+
+                var Branch = await _context.BranchInfo.Where(b => b.LinkCode == LinkCode && b.BranchId == branchCode).FirstOrDefaultAsync();
+                if (Branch == null)
+                {
+                    //return null;
+                    apiRes.Success = false;
+                    apiRes.Message = "Invalid Link Code.";
+
+                    return apiRes;
+                }
+
+
+                var Company = await _companyService.GetCompanyInfoAsync(companyCode);
+                if (Company == null)
+                {
+                    apiRes.Success = false;
+                    apiRes.Message = "Invalid Link Code.";
+
+                    return apiRes;
+                }
+
+                apiRes.Data = new CompanyBranchDto
+                {
+                    CompanyCode = Company.CompanyId,
+                    CompanyName = Company.CompanyName,
+                    BranchCode = Branch.BranchId,
+                    BranchName = Branch.BranchName,
+                    Address = Branch.Address
+                };
+
+                apiRes.Success = true;
+                apiRes.Message = "Link Code verified successfully.";
 
                 return apiRes;
+
             }
-
-
-            var Company = await _companyService.GetCompanyInfoAsync(companyCode);
-            if (Company == null)
+            catch (Exception ex)
             {
+                ApiResponse<CompanyBranchDto> apiRes = new ApiResponse<CompanyBranchDto>();
                 apiRes.Success = false;
-                apiRes.Message = "Invalid Link Code.";
-
+                apiRes.Message = "An error occurred while verifying the Link Code.";
+                apiRes.Errors = new List<string> { ex.Message };
                 return apiRes;
             }
-
-            apiRes.Data = new CompanyBranchDto
-            {
-                CompanyCode = Company.CompanyId,
-                CompanyName = Company.CompanyName,
-                BranchCode = Branch.BranchId,
-                BranchName = Branch.BranchName,
-                Address = Branch.Address
-            };
-
-            apiRes.Success = true;
-            apiRes.Message = "Link Code verified successfully.";
-
-            return apiRes;
         }
 
 

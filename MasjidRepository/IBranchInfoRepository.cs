@@ -9,5 +9,7 @@ namespace GravyFoodsApi.MasjidRepository
 
         Task<bool> UpdateBranchInfoAsync(BranchInfoDto BranchInfo);
         Task<bool> CreateBranchInfoAsync(BranchInfoDto BranchInfo);
+
+        Task<ApiResponse<CompanyBranchDto>> GetLinkCodeVerificationAsync(string LinkCode);
     }
 }

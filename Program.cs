@@ -108,6 +108,8 @@ builder.Services.AddScoped<IProductSerialRepository, ProductSerialService>();
 builder.Services.AddScoped<IWarehouseRepository, WarehouseService>();
 builder.Services.AddScoped<IAppOptionsRepository, AppOptionsService>();
 
+builder.Services.AddScoped<IContextCookieService, ContextCookieService>();
+builder.Services.AddDataProtection();
 
 
 
