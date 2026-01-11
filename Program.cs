@@ -1,9 +1,10 @@
-
+﻿
 using GravyFoodsApi.Common;
 using GravyFoodsApi.Data;
 using GravyFoodsApi.Mappings;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidServices;
+using GravyFoodsApi.MasjidServices.RegContext;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -114,6 +115,7 @@ builder.Services.AddDataProtection();
 
 
 
+
 //2028 08 21 <-
 //Gravy Foods/ POS ingegration <-
 
@@ -160,6 +162,9 @@ else
 }
 // in general
 
+
+
+
 //app.MapGet("/health", () => Results.Ok("Healthy"));
 //app.MapGet("/test-cors", (HttpContext context) =>
 //{
@@ -199,9 +204,10 @@ app.UseCors("AllowFrontend");  // must be before auth & MapControllers
 app.UseCors(builder =>
 {
     builder
-    .AllowAnyOrigin()
+    .WithOrigins("https://localhost:7065/")        //.AllowAnyOrigin()
     .AllowAnyMethod()
-    .AllowAnyHeader();
+    .AllowAnyHeader()
+    .AllowCredentials(); 
 });
 
 app.UseHttpsRedirection();
@@ -241,6 +247,8 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseAuthentication();    //2025 08 21
 app.UseAuthorization();
+
+app.UseMiddleware<BranchContextMiddleware>();
 
 app.MapControllers();
 

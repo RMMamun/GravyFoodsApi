@@ -20,14 +20,23 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("{linkCode}")]
         public async Task<IActionResult> GetBranchById(string linkCode)
         {
-            var product = await _repository.GetLinkCodeVerificationAsync(linkCode);
+            try
+            {
+                var product = await _repository.GetLinkCodeVerificationAsync(linkCode);
 
-            _cookieService.SetBranchContext(Response, Guid.Parse(product.Data.CompanyCode), Guid.Parse(product.Data.BranchCode));
+                //implementation not completed yet 
+                _cookieService.SetBranchContext(Response, (product.Data.CompanyCode), (product.Data.BranchCode));
 
-            if (product == null)
-                return NotFound();
+                if (product == null)
+                    return NotFound();
 
-            return Ok(product);
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (not implemented here for brevity)
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }

@@ -2,13 +2,14 @@
 using GravyFoodsApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
 
 namespace GravyFoodsApi.Controllers
 {
 
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    public class AuthController : PosBaseController
     {
         private readonly IAuthService _authService;
 
@@ -20,6 +21,10 @@ namespace GravyFoodsApi.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
+            //
+            request.CompanyCode = TenantId.ToString(); // Set CompanyCode from TenantId
+            
+
             var token = _authService.Authenticate(request);
             if (token == null) return BadRequest(new { error = "Invalid username or password" });
 

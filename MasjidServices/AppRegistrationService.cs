@@ -15,7 +15,7 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<ApiResponse<IEnumerable<AppOptionDto>>> GetAppOptionsAsync(string branchId, string companyId)
+        public async Task<ApiResponse<IEnumerable<AppOptionDto>>> GetAppRegistrationAsync(string branchId, string companyId)
         {
             var response = new ApiResponse<IEnumerable<AppOptionDto>>();
             try
