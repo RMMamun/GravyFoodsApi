@@ -22,8 +22,11 @@ namespace GravyFoodsApi.MasjidServices.RegContext
                     var decrypted = _protector.Unprotect(value);
                     var parts = decrypted.Split('|');
 
-                    context.Items["TenantId"] = Guid.Parse(parts[0]);
-                    context.Items["BranchId"] = Guid.Parse(parts[1]);
+                    //context.Items["TenantId"] = Guid.Parse(parts[0]);
+                    //context.Items["BranchId"] = Guid.Parse(parts[1]);
+
+                    context.Items["TenantId"] = parts[0];
+                    context.Items["BranchId"] = parts[1];
                 }
                 catch
                 {

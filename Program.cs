@@ -204,10 +204,10 @@ app.UseCors("AllowFrontend");  // must be before auth & MapControllers
 app.UseCors(builder =>
 {
     builder
-    .WithOrigins("https://localhost:7065/")        //.AllowAnyOrigin()
+    .AllowAnyOrigin()       //.WithOrigins("https://localhost:7065/")
     .AllowAnyMethod()
-    .AllowAnyHeader()
-    .AllowCredentials(); 
+    .AllowAnyHeader();
+    //.AllowCredentials(); 
 });
 
 app.UseHttpsRedirection();

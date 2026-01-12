@@ -17,12 +17,12 @@ namespace GravyFoodsApi.Controllers
             _cookieService = cookieService;
         }
 
-        [HttpGet("{linkCode}")]
-        public async Task<IActionResult> GetBranchById(string linkCode)
+        [HttpGet("{regCode}")]
+        public async Task<IActionResult> RegValidation(string regCode)
         {
             try
             {
-                var product = await _repository.GetLinkCodeVerificationAsync(linkCode);
+                var product = await _repository.GetLinkCodeVerificationAsync(regCode);
 
                 //implementation not completed yet 
                 _cookieService.SetBranchContext(Response, (product.Data.CompanyCode), (product.Data.BranchCode));
@@ -38,5 +38,16 @@ namespace GravyFoodsApi.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpGet]
+        public IActionResult CheckContext()
+        {
+            if (HttpContext.Items["TenantId"] == null)
+                return Unauthorized();
+
+            return Ok();
+        }
+
+
     }
 }
