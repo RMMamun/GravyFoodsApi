@@ -18,6 +18,9 @@ namespace GravyFoodsApi.MasjidRepository
 
         Task<IEnumerable<SalesInfoDto>> GetSalesByDateRangeAsync(DateTime fromDate, DateTime toDate, string branchId, string companyId);
 
+        Task<IEnumerable<SalesInfoDto>> SearchSalesAsync(string searchStr, DateTime fromDate, DateTime toDate, string branchId, string companyId);
+
+
         Task<ApiResponse<IEnumerable<BestSoldProductsDto>>> GetBestSoldProductsByDateRangeAsync(DateTime fromDate, DateTime toDate, string branchId, string companyId);
 
     }

@@ -5,6 +5,7 @@ namespace GravyFoodsApi.Controllers
     [ApiController]
     public abstract class PosBaseController : ControllerBase
     {
+        
         protected string TenantId =>
             HttpContext.Items["TenantId"] is string t
                 ? t
@@ -14,6 +15,8 @@ namespace GravyFoodsApi.Controllers
             HttpContext.Items["BranchId"] is Guid b
                 ? b
                 : throw new UnauthorizedAccessException("Branch context missing");
+
+    
     }
 
 }

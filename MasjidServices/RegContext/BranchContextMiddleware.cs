@@ -15,8 +15,12 @@ namespace GravyFoodsApi.MasjidServices.RegContext
 
         public async Task Invoke(HttpContext context)
         {
+            Console.WriteLine("BranchContextMiddleware HIT");
+
             if (context.Request.Cookies.TryGetValue("POS_CONTEXT", out var value))
             {
+                Console.WriteLine("POS_CONTEXT cookie FOUND");
+
                 try
                 {
                     var decrypted = _protector.Unprotect(value);
@@ -33,8 +37,12 @@ namespace GravyFoodsApi.MasjidServices.RegContext
                     context.Response.Cookies.Delete("POS_CONTEXT");
                 }
             }
+            else 
+            {
+                Console.WriteLine("POS_CONTEXT cookie NOT FOUND");
+            }
 
-            await _next(context);
+                await _next(context);
         }
     }
 

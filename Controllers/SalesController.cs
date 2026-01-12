@@ -46,6 +46,21 @@ namespace GravyFoodsApi.Controllers
         }
 
 
+        [HttpGet("{searchStr}/{fromDate:Datetime}/{toDate:Datetime}/{branchId}/{companyId}")]
+        public async Task<ActionResult<IEnumerable<SalesInfoDto>>> GetSalesByDateRangeAsync(string searchStr, DateTime fromDate, DateTime toDate, string branchId, string companyId)
+        {
+            if (searchStr == "-")
+            {
+                searchStr = "";
+            }
+
+            var sale = await _salesService.SearchSalesAsync(searchStr,fromDate, toDate, branchId, companyId);
+            if (sale == null) return NotFound();
+            return Ok(sale);
+        }
+
+
+
         [HttpGet("{statusType:int}/{fromDate:Datetime}/{toDate:Datetime}/{branchId}/{companyId}")]
         public async Task<ActionResult> GetCustomSalesStatusByDateRangeAsync(int statusType, DateTime fromDate, DateTime toDate, string branchId, string companyId)
         {

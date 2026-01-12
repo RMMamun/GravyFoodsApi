@@ -198,21 +198,26 @@ else
 //});
 
 
-
-
-app.UseCors("AllowFrontend");  // must be before auth & MapControllers
-app.UseCors(builder =>
-{
-    builder
-    .AllowAnyOrigin()       //.WithOrigins("https://localhost:7065/")
-    .AllowAnyMethod()
-    .AllowAnyHeader();
-    //.AllowCredentials(); 
-});
-
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+
+
+//app.UseCors("AllowFrontend");  // must be before auth & MapControllers
+
+app.UseCors(builder =>
+{
+    builder
+    .WithOrigins("https://localhost:7065")         //.AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials(); 
+});
+
+//app.UseHttpsRedirection();
+
+//app.UseRouting();
 
 
 
@@ -249,6 +254,7 @@ app.UseAuthentication();    //2025 08 21
 app.UseAuthorization();
 
 app.UseMiddleware<BranchContextMiddleware>();
+
 
 app.MapControllers();
 

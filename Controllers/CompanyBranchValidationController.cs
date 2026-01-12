@@ -40,7 +40,7 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult CheckContext()
+        public IActionResult CheckRegistration()
         {
             if (HttpContext.Items["TenantId"] == null)
                 return Unauthorized();
