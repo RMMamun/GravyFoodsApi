@@ -23,10 +23,17 @@ namespace GravyFoodsApi.MasjidServices.RegContext
 
                 response.Cookies.Append("POS_CONTEXT", encrypted, new CookieOptions
                 {
+                    //HttpOnly = true,
+                    //Secure = true,
+                    //SameSite = SameSiteMode.None,
+                    //Expires = DateTimeOffset.UtcNow.AddDays(30)
+
                     HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTimeOffset.UtcNow.AddDays(30)
+                    Secure = false,               // 🔥 IMPORTANT
+                    SameSite = SameSiteMode.Lax,  // 🔥 IMPORTANT
+                    Expires = DateTimeOffset.UtcNow.AddDays(30),
+                    Path = "/"
+
                 });
             }
             catch (Exception ex)

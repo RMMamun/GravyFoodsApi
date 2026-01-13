@@ -22,7 +22,7 @@ namespace GravyFoodsApi.Controllers
         public IActionResult Login([FromBody] LoginRequest request)
         {
             //
-            //request.CompanyCode = TenantId.ToString(); // Set CompanyCode from TenantId  *** ERROR on registry/context reading
+            request.CompanyCode = TenantId.ToString(); // Set CompanyCode from TenantId  *** ERROR on registry/context reading
             
 
             var token = _authService.Authenticate(request);
