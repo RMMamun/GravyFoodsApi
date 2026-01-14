@@ -2,7 +2,9 @@
 using GravyFoodsApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using NuGet.Protocol;
+using NuGet.Protocol.Plugins;
 using System.Threading.Tasks;
 
 namespace GravyFoodsApi.Controllers
@@ -20,17 +22,28 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             //
             //request.CompanyCode = TenantId.ToString(); // Set CompanyCode from TenantId  *** ERROR on registry/context reading
 
 
-            var token = _authService.Authenticate(request);
-            if (token == null) return BadRequest(new { error = "Invalid username or password" });
+            var token = await _authService.Authenticate(request);
 
-            return Ok(new { token });
+            if (string.IsNullOrEmpty(token))
+                return BadRequest(new { error = "Invalid username or password" });
+
+            return Ok(new LoginResponse
+            {
+                Token = token
+            });
         }
+
+        public class LoginResponse
+        {
+            public string Token { get; set; } = string.Empty;
+        }
+
 
         [Authorize]
         [HttpGet("secure-data")]

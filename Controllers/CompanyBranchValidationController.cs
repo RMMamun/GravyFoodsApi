@@ -25,7 +25,7 @@ namespace GravyFoodsApi.Controllers
                 var product = await _repository.GetLinkCodeVerificationAsync(regCode);
 
                 //implementation not completed yet 
-                _cookieService.SetBranchContext(Response, (product.Data.CompanyCode), (product.Data.BranchCode));
+                //_cookieService.SetBranchContext(Response, (product.Data.CompanyCode), (product.Data.BranchCode));
 
                 if (product == null)
                     return NotFound();

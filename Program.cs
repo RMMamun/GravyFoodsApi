@@ -253,7 +253,7 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseAuthentication();    //2025 08 21
 app.UseAuthorization();
 
-app.UseMiddleware<BranchContextMiddleware>();
+//app.UseMiddleware<BranchContextMiddleware>();
 
 
 app.MapControllers();
