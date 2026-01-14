@@ -3,6 +3,7 @@ using GravyFoodsApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
+using System.Threading.Tasks;
 
 namespace GravyFoodsApi.Controllers
 {
@@ -22,8 +23,8 @@ namespace GravyFoodsApi.Controllers
         public IActionResult Login([FromBody] LoginRequest request)
         {
             //
-            request.CompanyCode = TenantId.ToString(); // Set CompanyCode from TenantId  *** ERROR on registry/context reading
-            
+            //request.CompanyCode = TenantId.ToString(); // Set CompanyCode from TenantId  *** ERROR on registry/context reading
+
 
             var token = _authService.Authenticate(request);
             if (token == null) return BadRequest(new { error = "Invalid username or password" });
@@ -37,6 +38,26 @@ namespace GravyFoodsApi.Controllers
         {
             return Ok(new { message = $"Hello {User.Identity?.Name}, here is your secret data!" });
         }
+
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            var user = _authService.ValidateRefreshToken(refreshToken);
+            if (user == null)
+                return Unauthorized();
+
+            LoginRequest request = new LoginRequest();
+            //set user to request
+            var newAccessToken = await _authService.GenerateTokenAsync(request);
+
+            return Ok(new { accessToken = newAccessToken });
+        }
+
+
     }
+
 
 }
