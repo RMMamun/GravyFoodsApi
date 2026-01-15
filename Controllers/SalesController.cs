@@ -5,6 +5,7 @@ using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using System.Security.Claims;
 
 namespace GravyFoodsApi.Controllers
 {
@@ -49,6 +50,12 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("{searchStr}/{fromDate:Datetime}/{toDate:Datetime}/{branchId}/{companyId}")]
         public async Task<ActionResult<IEnumerable<SalesInfoDto>>> GetSalesByDateRangeAsync(string searchStr, DateTime fromDate, DateTime toDate, string branchId, string companyId)
         {
+            //var com = User.FindFirst("companyId")!.Value;
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var compId = User.FindFirstValue("companyId");
+            var brId = User.FindFirstValue("branchId");
+
             if (searchStr == "-")
             {
                 searchStr = "";
