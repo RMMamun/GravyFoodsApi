@@ -1,5 +1,6 @@
 ﻿using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -15,10 +16,12 @@ namespace GravyFoodsApi.Controllers
     public class AuthController : PosBaseController
     {
         private readonly IAuthService _authService;
+        private readonly ITenantContextRepository _tenant;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, ITenantContextRepository tenant)
         {
             _authService = authService;
+            _tenant = tenant;
         }
 
         [HttpPost("login")]
@@ -26,6 +29,11 @@ namespace GravyFoodsApi.Controllers
         {
             //
             //request.CompanyCode = TenantId.ToString(); // Set CompanyCode from TenantId  *** ERROR on registry/context reading
+            var companyid = _tenant.CompanyId;
+            var branchid = _tenant.BranchId;
+            
+            request.CompanyCode = companyid ?? string.Empty;
+            request.BranchCode = branchid ?? string.Empty;
 
 
             var token = await _authService.Authenticate(request);
@@ -33,17 +41,11 @@ namespace GravyFoodsApi.Controllers
             if (string.IsNullOrEmpty(token))
                 return BadRequest(new { error = "Invalid username or password" });
 
-            return Ok(new LoginResponse
+            return Ok(new TokenDto
             {
                 Token = token
             });
         }
-
-        public class LoginResponse
-        {
-            public string Token { get; set; } = string.Empty;
-        }
-
 
         [Authorize]
         [HttpGet("secure-data")]

@@ -113,6 +113,8 @@ builder.Services.AddScoped<IContextCookieService, ContextCookieService>();
 builder.Services.AddDataProtection();
 
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ITenantContextRepository, TenantContextService>();
 
 
 

@@ -141,7 +141,7 @@ namespace GravyFoodsApi.MasjidServices
                 branchCode = "1";
                 //
 
-                var Branch = await _context.BranchInfo.Where(b => b.LinkCode == LinkCode && b.BranchId == branchCode).FirstOrDefaultAsync();
+                var Branch = await _context.BranchInfo.Where(b => b.LinkCode == LinkCode && b.BranchId == branchCode && b.CompanyId == companyCode).FirstOrDefaultAsync();
                 if (Branch == null)
                 {
                     //return null;

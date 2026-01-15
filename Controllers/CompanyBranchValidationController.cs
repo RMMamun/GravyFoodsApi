@@ -1,5 +1,7 @@
 ﻿using GravyFoodsApi.MasjidRepository;
+using GravyFoodsApi.MasjidServices;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GravyFoodsApi.Controllers
@@ -10,11 +12,12 @@ namespace GravyFoodsApi.Controllers
     {
         private readonly IBranchInfoRepository _repository;
         private readonly IContextCookieService _cookieService;
+        private readonly IAuthService _authService;
 
-        public CompanyBranchValidationController(IBranchInfoRepository repository, IContextCookieService cookieService)
+        public CompanyBranchValidationController(IBranchInfoRepository repository, IAuthService authService)
         {
             _repository = repository;
-            _cookieService = cookieService;
+            _authService = authService;
         }
 
         [HttpGet("{regCode}")]
@@ -22,15 +25,33 @@ namespace GravyFoodsApi.Controllers
         {
             try
             {
-                var product = await _repository.GetLinkCodeVerificationAsync(regCode);
+                var result = await _repository.GetLinkCodeVerificationAsync(regCode);
 
                 //implementation not completed yet 
-                //_cookieService.SetBranchContext(Response, (product.Data.CompanyCode), (product.Data.BranchCode));
+                //_cookieService.SetBranchContext(Response, (result.Data.CompanyCode), (result.Data.BranchCode));
 
-                if (product == null)
+
+                if (result == null)
                     return NotFound();
 
-                return Ok(product);
+                LoginRequest loginRequest = new LoginRequest();
+                loginRequest.BranchCode = result.Data.BranchCode;
+                loginRequest.CompanyCode = result.Data.CompanyCode;
+                loginRequest.Username = "";
+
+                var token = await _authService.GenerateTokenAsync(loginRequest);
+
+
+                //return Ok(token);
+                if (string.IsNullOrEmpty(token))
+                    return BadRequest(new { error = "Invalid username or password" });
+
+                return Ok(new TokenDto
+                {
+                    Token = token
+                });
+
+
             }
             catch (Exception ex)
             {

@@ -2,6 +2,7 @@
 using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GravyFoodsApi.MasjidServices
 {
@@ -15,21 +16,23 @@ namespace GravyFoodsApi.MasjidServices
             _dbContext = dbContext;
         }
         
-        public LoginRequest? GetUser(string username, string password, string companyCode)
+        public async Task<LoginRequest?> GetUser(string username, string password, string branchId, string companyId)
         {
             try
             {
-                var str = GlobalVariable.ConnString;
+                //var str = GlobalVariable.ConnString;
 
-                var user = _dbContext.UserInfo.Where(u =>
+                var user = await _dbContext.UserInfo.Where(u =>
                     u.UserId.Equals(username) &&
-                    u.Password == password)
+                    u.Password == password &&
+                    u.BranchId == branchId &&
+                    u.CompanyId == companyId)
                     .Select(u => new LoginRequest
                     {
                         Username = u.UserId,
                         Password = u.Password
                     })
-                    .FirstOrDefault();
+                    .FirstOrDefaultAsync();
 
                 return user;
             }
