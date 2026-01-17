@@ -117,6 +117,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenantContextRepository, TenantContextService>();
 
 
+builder.Services.AddScoped<RefreshTokenService>();
 
 //2028 08 21 <-
 //Gravy Foods/ POS ingegration <-

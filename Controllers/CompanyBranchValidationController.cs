@@ -11,7 +11,7 @@ namespace GravyFoodsApi.Controllers
     public class CompanyBranchValidationController : Controller
     {
         private readonly IBranchInfoRepository _repository;
-        private readonly IContextCookieService _cookieService;
+        //private readonly IContextCookieService _cookieService;
         private readonly IAuthService _authService;
 
         public CompanyBranchValidationController(IBranchInfoRepository repository, IAuthService authService)

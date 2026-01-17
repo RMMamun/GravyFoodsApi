@@ -15,11 +15,11 @@ namespace GravyFoodsApi.Controllers
     public class SalesController : ControllerBase
     {
         private readonly ISalesService _salesService;
-
-        public SalesController(ISalesService salesService)
+        private readonly ITenantContextRepository _tenant;
+        public SalesController(ISalesService salesService, ITenantContextRepository tenant)
         {
             _salesService = salesService;
-
+            _tenant = tenant;
         }
 
         [HttpGet]
@@ -53,8 +53,8 @@ namespace GravyFoodsApi.Controllers
             //var com = User.FindFirst("companyId")!.Value;
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var compId = User.FindFirstValue("companyId");
-            var brId = User.FindFirstValue("branchId");
+            var compId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
+            var brId = _tenant.BranchId;        //User.FindFirstValue("branchId");
 
             if (searchStr == "-")
             {

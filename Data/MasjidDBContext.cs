@@ -1,4 +1,5 @@
 ﻿using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace GravyFoodsApi.Data
@@ -42,6 +43,8 @@ namespace GravyFoodsApi.Data
         public DbSet<EmployeeInfo> EmployeeInfo { get; set; }
         public DbSet<Warehouse> Warehouse { get; set; }
         public DbSet<AppOptions> AppOptions { get; internal set; }
+
+        public DbSet<RefreshToken> RefreshToken { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
