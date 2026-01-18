@@ -4,7 +4,7 @@ namespace GravyFoodsApi.MasjidRepository
 {
     public interface IAuthService
     {
-        Task<string?> Authenticate(LoginRequest request);
+        Task<UserInfoDTO?> LoginAsync(LoginRequest request);
         Task<string?> ValidateRefreshToken(string refreshToken);
 
         Task<string?> GenerateTokenAsync(LoginRequest user);

@@ -4,6 +4,6 @@ namespace GravyFoodsApi.MasjidRepository
 {
     public interface ILoginService
     {
-        Task<LoginRequest?> GetUser(string username, string password, string branchId, string companyCode);
+        Task<UserInfoDTO?> GetUser(string username, string password, string branchId, string companyCode);
     }
 }

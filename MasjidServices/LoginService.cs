@@ -16,21 +16,34 @@ namespace GravyFoodsApi.MasjidServices
             _dbContext = dbContext;
         }
         
-        public async Task<LoginRequest?> GetUser(string username, string password, string branchId, string companyId)
+        public async Task<UserInfoDTO?> GetUser(string userId, string password, string branchId, string companyId)
         {
             try
             {
                 //var str = GlobalVariable.ConnString;
 
                 var user = await _dbContext.UserInfo.Where(u =>
-                    u.UserId.Equals(username) &&
+                    u.UserId == userId &&
                     u.Password == password &&
                     u.BranchId == branchId &&
                     u.CompanyId == companyId)
-                    .Select(u => new LoginRequest
+                    .Select(u => new UserInfoDTO
                     {
-                        Username = u.UserId,
-                        Password = u.Password
+                        UserId = u.UserId,
+                        UserName = u.UserName,
+                        Password = u.Password,
+                        BranchId = u.BranchId,
+                        CompanyId = u.CompanyId,
+                        DeviceId = u.DeviceId,
+                        MasjidID = u.MasjidID,
+                        UserRole = u.UserRole,
+                        Email = u.Email,
+                        EntryDateTime = u.EntryDateTime,
+                        Latitude = u.Latitude,
+                        Longitude = u.Longitude,
+                        
+
+
                     })
                     .FirstOrDefaultAsync();
 

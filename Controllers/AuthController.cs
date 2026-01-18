@@ -36,22 +36,22 @@ namespace GravyFoodsApi.Controllers
             request.CompanyCode = companyid ?? string.Empty;
             request.BranchCode = branchid ?? string.Empty;
 
-            var user = await _authService.Authenticate(request);
+            var user = await _authService.LoginAsync(request);
 
-            if (string.IsNullOrEmpty(user))
+            if (user == null)
                 return BadRequest(new { error = "Invalid username or password" });
 
             return Ok(new TokenDto
             {
-                Token = user
+                Token = user.UserId
             });
         }
 
         //[HttpPost("login")]
         //public async Task<IActionResult> Login([FromBody] LoginRequest request)
         //{
-        //    // 1️⃣ Authenticate user (includes company + branch validation)
-        //    var user = await _authService.Authenticate(request);
+        //    // 1️⃣ LoginAsync user (includes company + branch validation)
+        //    var user = await _authService.LoginAsync(request);
 
         //    if (user == null)
         //        return Unauthorized(new { error = "Invalid credentials" });

@@ -22,14 +22,14 @@ namespace GravyFoodsApi.MasjidServices
             _config = config;
         }
 
-        public async Task<string?> Authenticate(LoginRequest request)
+        public async Task<UserInfoDTO?> LoginAsync(LoginRequest request)
         {
 
             var user = await _loginService.GetUser(request.Username, request.Password,request.BranchCode,request.CompanyCode);
             if (user == null) return null;
 
             //return GenerateTokenAsync(request).Result;
-            return user.Username;
+            return user;
         }
 
         public async Task<string?> GenerateTokenAsync(LoginRequest request)
