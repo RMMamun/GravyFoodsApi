@@ -17,6 +17,9 @@ namespace GravyFoodsApi.Models
         public string Website { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
+        
+        public required Guid RegCode { get; set; }
+
         // Navigation Property (One-to-Many: Company -> Branches)
         public ICollection<BranchInfo> Branches { get; set; } = new List<BranchInfo>();
 
