@@ -1,5 +1,6 @@
 ﻿using GravyFoodsApi.DTO;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 
 namespace GravyFoodsApi.MasjidRepository
 {
@@ -12,6 +13,10 @@ namespace GravyFoodsApi.MasjidRepository
         Task<bool> isExisted(SubscriptionDto subscription);
 
         Task<IEnumerable<POSSubscription>?> GetAllAsync();
+
+        Task<ApiResponse<CompanyRegistrationResponseDto?>> GetCompanyRegistrationVerificationAsync(string RegCode);
+
+
 
 
     }

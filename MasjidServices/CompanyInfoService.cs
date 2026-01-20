@@ -8,12 +8,11 @@ namespace GravyFoodsApi.MasjidServices
     public class CompanyInfoService : ICompanyInfoService
     {
         private readonly MasjidDBContext _context;
-        private readonly IBranchInfoRepository _branchRep;
+        
 
-        public CompanyInfoService(MasjidDBContext context, IBranchInfoRepository branchRep)
+        public CompanyInfoService(MasjidDBContext context)
         {
             _context = context;
-            _branchRep = branchRep;
         }
 
         public async Task<bool> CreateCompanyInfoAsync(CompanyInfoDto companyInfo)
@@ -52,65 +51,6 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<ApiResponse<CompanyRegistrationResponseDto?>> GetCompanyRegistrationVerificationAsync(Guid RegCode)
-        {
-
-            ApiResponse<CompanyRegistrationResponseDto?> apiRes = new ApiResponse<CompanyRegistrationResponseDto?>();
-            try
-            {
-
-
-                var result = await _context.CompanyInfo.Where(b => b.RegCode == RegCode).FirstOrDefaultAsync();
-                if (result == null)
-                {
-                    //return null;
-                    apiRes.Success = false;
-                    apiRes.Message = "Invalid Registration Code.";
-                    apiRes.Data = null;
-
-                    return apiRes;
-                }
-
-                IEnumerable<BranchInfoDto> branches = await _branchRep.GetAllBranchesAsync(result.CompanyId);
-
-                if (branches == null || branches.Count() == 0)
-                {
-                    apiRes.Success = false;
-                    apiRes.Message = "No branches found for the company.";
-                    apiRes.Data = null;
-                    return apiRes;
-                }
-
-
-                var comRegRes = new CompanyRegistrationResponseDto
-                {
-                    CompanyName = result.CompanyName
-                };
-
-                foreach (var branch in branches)
-                {
-                    comRegRes.Branches.Add(new BranchesDto
-                    {
-                        BranchName = branch.BranchName,
-                        LinkCode = branch.LinkCode
-                    });
-                }
-
-
-                apiRes.Success = true;
-                apiRes.Message = "Link Code verified successfully.";
-
-                return apiRes;
-
-            }
-            catch (Exception ex)
-            {
-                apiRes.Success = false;
-                apiRes.Message = "An error occurred while verifying the Link Code.";
-                apiRes.Errors = new List<string> { ex.Message };
-                return apiRes;
-            }
-        }
 
     }
 }

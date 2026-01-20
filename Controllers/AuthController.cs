@@ -14,7 +14,7 @@ namespace GravyFoodsApi.Controllers
 
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : PosBaseController
+    public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
         private readonly ITenantContextRepository _tenant;

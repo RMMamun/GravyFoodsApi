@@ -10,7 +10,7 @@ namespace GravyFoodsApi.MasjidRepository
         Task<bool> UpdateCompanyInfoAsync(CompanyInfoDto companyInfo);
         Task<bool> CreateCompanyInfoAsync(CompanyInfoDto companyInfo);
 
-        Task<ApiResponse<CompanyRegistrationResponseDto?>> GetCompanyRegistrationVerificationAsync(Guid RegCode);
+        
 
     }
 }

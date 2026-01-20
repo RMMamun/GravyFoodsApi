@@ -149,5 +149,21 @@ namespace GravyFoodsApi.Controllers
                 return BadRequest(ex.Message); // Returns a 400 Bad Request response with the error message
             }
         }
+
+        
+        [HttpGet("CompanyRegistrationVerification{regCode}")]
+        public async Task<IActionResult> GetCompanyRegistrationVerification(string regCode)
+        {
+            var result = await _posSubs.GetCompanyRegistrationVerificationAsync(regCode);
+            if (result.Success == false)
+                return NotFound(result.Message);
+            return Ok(result);
+        }
+
+
+
+
+
+
     }
 }

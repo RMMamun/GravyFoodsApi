@@ -51,14 +51,6 @@ namespace GravyFoodsApi.Controllers
         }
 
 
-        [HttpGet("{regCode:guid}")]
-        public async Task<IActionResult> GetCompanyRegistrationVerification(Guid regCode)
-        {
-            var result = await _repository.GetCompanyRegistrationVerificationAsync(regCode);
-            if (result.Success == false)
-                return NotFound(result.Message);
-            return Ok(result);
-        }
 
     }
 }

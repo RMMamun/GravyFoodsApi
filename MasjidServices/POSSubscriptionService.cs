@@ -3,6 +3,7 @@ using GravyFoodsApi.Data;
 using GravyFoodsApi.DTO;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace GravyFoodsApi.MasjidServices
@@ -12,9 +13,12 @@ namespace GravyFoodsApi.MasjidServices
 
         CommonMethods commonMethods = new CommonMethods();
         private readonly MasjidDBContext _dbContext;
-        public POSSubscriptionService(MasjidDBContext dbContext)
+        private readonly IBranchInfoRepository _branchRep;
+
+        public POSSubscriptionService(MasjidDBContext dbContext, IBranchInfoRepository branchRep)
         {
             _dbContext = dbContext;
+            _branchRep = branchRep;
         }
 
         public async Task<bool> isExisted(SubscriptionDto subsDto)
@@ -136,6 +140,69 @@ namespace GravyFoodsApi.MasjidServices
                 return false;
             }
         }
+
+
+        public async Task<ApiResponse<CompanyRegistrationResponseDto?>> GetCompanyRegistrationVerificationAsync(string RegCode)
+        {
+
+            ApiResponse<CompanyRegistrationResponseDto?> apiRes = new ApiResponse<CompanyRegistrationResponseDto?>();
+            try
+            {
+
+
+                var result = await _dbContext.CompanyInfo.Where(b => b.RegCode.ToString() == RegCode).FirstOrDefaultAsync();
+                if (result == null)
+                {
+                    //return null;
+                    apiRes.Success = false;
+                    apiRes.Message = "Invalid Registration Code.";
+                    apiRes.Data = null;
+
+                    return apiRes;
+                }
+
+                IEnumerable<BranchInfoDto> branches = await _branchRep.GetAllBranchesAsync(result.CompanyId);
+
+                if (branches == null || branches.Count() == 0)
+                {
+                    apiRes.Success = false;
+                    apiRes.Message = "No branches found for the company.";
+                    apiRes.Data = null;
+                    return apiRes;
+                }
+
+
+                var comRegRes = new CompanyRegistrationResponseDto
+                {
+                    CompanyName = result.CompanyName
+                };
+
+                foreach (var branch in branches)
+                {
+                    comRegRes.Branches.Add(new BranchesDto
+                    {
+                        BranchName = branch.BranchName,
+                        LinkCode = branch.LinkCode
+                    });
+                }
+
+
+                apiRes.Success = true;
+                apiRes.Message = "Link Code verified successfully.";
+
+                return apiRes;
+
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = "An error occurred while verifying the Link Code.";
+                apiRes.Errors = new List<string> { ex.Message };
+                return apiRes;
+            }
+        }
+
+
 
 
     }
