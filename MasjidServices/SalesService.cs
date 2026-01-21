@@ -224,11 +224,11 @@ namespace GravyFoodsApi.MasjidServices
             return existing;
         }
 
-        public async Task<bool> DeleteSaleAsync(string salesId)
+        public async Task<bool> DeleteSaleAsync(string salesId,string branchId, string companyId)
         {
             var existing = await _context.SalesInfo
                 .Include(s => s.SalesDetails)
-                .FirstOrDefaultAsync(s => s.SalesId == salesId);
+                .FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == branchId && s.CompanyId == companyId);
 
             if (existing == null)
                 return false;

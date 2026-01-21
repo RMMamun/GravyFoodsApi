@@ -51,7 +51,8 @@ namespace GravyFoodsApi.MasjidServices
                     //new Claim(ClaimTypes.Name, user.Username)
                     new Claim(JwtRegisteredClaimNames.Sub, request.Username.ToString()),
                     new Claim("companyId", request.CompanyCode.ToString()),
-                    new Claim("branchId", request.BranchCode.ToString())
+                    new Claim("branchId", request.BranchCode.ToString()),
+                    
 
                 };
 

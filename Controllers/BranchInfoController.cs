@@ -43,6 +43,10 @@ namespace GravyFoodsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<bool>> Create([FromBody] BranchInfoDto branch)
         {
+            /*****************************************************************************************
+                Branch will create by Client Subscription process. Or can create till his limit
+            *****************************************************************************************/
+
             //var created = await _repo.Create(branch);
             //return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
 

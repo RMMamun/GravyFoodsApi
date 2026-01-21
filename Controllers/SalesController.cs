@@ -4,7 +4,9 @@ using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using System.ComponentModel.Design;
 using System.Security.Claims;
 
 namespace GravyFoodsApi.Controllers
@@ -32,6 +34,10 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("{id}/{branchId}/{companyId}")]
         public async Task<ActionResult<ApiResponse<SalesInfoDto>>> GetSale(string id, string branchId, string companyId)
         {
+
+            companyId = _tenant.CompanyId;
+            branchId = _tenant.BranchId;
+
             var sale = await _salesService.GetSaleByIdAsync(id, branchId, companyId);
             if (sale.Success == false) return NotFound(sale);
             return Ok(sale);
@@ -41,6 +47,9 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("{fromDate:Datetime}/{toDate:Datetime}/{branchId}/{companyId}")]
         public async Task<ActionResult<IEnumerable<SalesInfoDto>>> GetSalesByDateRangeAsync(DateTime fromDate, DateTime toDate, string branchId, string companyId)
         {
+            companyId = _tenant.CompanyId;
+            branchId = _tenant.BranchId;
+
             var sale = await _salesService.GetSalesByDateRangeAsync(fromDate,toDate,branchId,companyId);
             if (sale == null) return NotFound();
             return Ok(sale);
@@ -50,12 +59,13 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("{searchStr}/{fromDate:Datetime}/{toDate:Datetime}/{branchId}/{companyId}")]
         public async Task<ActionResult<IEnumerable<SalesInfoDto>>> GetSalesByDateRangeAsync(string searchStr, DateTime fromDate, DateTime toDate, string branchId, string companyId)
         {
+            companyId = _tenant.CompanyId;
+            branchId = _tenant.BranchId;
+
             //var com = User.FindFirst("companyId")!.Value;
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var compId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
-            var brId = _tenant.BranchId;        //User.FindFirstValue("branchId");
-
+            
             if (searchStr == "-")
             {
                 searchStr = "";
@@ -71,6 +81,9 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("{statusType:int}/{fromDate:Datetime}/{toDate:Datetime}/{branchId}/{companyId}")]
         public async Task<ActionResult> GetCustomSalesStatusByDateRangeAsync(int statusType, DateTime fromDate, DateTime toDate, string branchId, string companyId)
         {
+            companyId = _tenant.CompanyId;
+            branchId = _tenant.BranchId;
+
             if (statusType == 1) //Best Sold Products
             {
                 var sale = await _salesService.GetBestSoldProductsByDateRangeAsync(fromDate, toDate, branchId, companyId);
@@ -99,6 +112,9 @@ namespace GravyFoodsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse<SalesInfoDto>>> CreateSale(SalesInfoDto sale)
         {
+            sale.CompanyId = _tenant.CompanyId;
+            sale.BranchId = _tenant.BranchId;
+
 
             var apiResponse = await _salesService.CreateSalesAsync(sale);
 
@@ -113,13 +129,13 @@ namespace GravyFoodsApi.Controllers
         }
 
 
-        
-
-
 
         [HttpPut("{id}")]
         public async Task<ActionResult<SalesInfo>> UpdateSale(string id, SalesInfo sale)
         {
+            sale.CompanyId = _tenant.CompanyId;
+            sale.BranchId = _tenant.BranchId;
+
             var updated = await _salesService.UpdateSaleAsync(id, sale);
             if (updated == null) return NotFound();
             return Ok(updated);
@@ -128,7 +144,10 @@ namespace GravyFoodsApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSale(string id)
         {
-            var deleted = await _salesService.DeleteSaleAsync(id);
+            string companyId = _tenant.CompanyId;
+            string branchId = _tenant.BranchId;
+
+            var deleted = await _salesService.DeleteSaleAsync(id,branchId,companyId);
             if (!deleted) return NotFound();
             return NoContent();
         }
