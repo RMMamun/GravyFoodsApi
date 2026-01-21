@@ -9,11 +9,11 @@ namespace GravyFoodsApi.Controllers
     [ApiController]
     //[Route("[controller]")]
     [Route("api/[controller]")]
-    public class POSSubscriptionController : Controller
+    public class SubscriptionInfoController : Controller
     {
-        private readonly IPOSSubscription _posSubs;
+        private readonly ISubscriptionInfo _posSubs;
         private readonly ILoggingService _logService;
-        public POSSubscriptionController(IPOSSubscription posSubs, ILoggingService logService)
+        public SubscriptionInfoController(ISubscriptionInfo posSubs, ILoggingService logService)
         {
             _posSubs = posSubs;
             _logService = logService;
@@ -22,7 +22,7 @@ namespace GravyFoodsApi.Controllers
         // POST: api/UserInfo
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("CreateSubscription")]
-        public async Task<ActionResult<POSSubscription>> CreateSubscription(POSSubscription subscription)
+        public async Task<ActionResult<SubscriptionInfo>> CreateSubscription(SubscriptionInfo subscription)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpPost("UpdateSubscription")]
-        public async Task<ActionResult<bool>> UpdateSubscription(POSSubscription subscription)
+        public async Task<ActionResult<bool>> UpdateSubscription(SubscriptionInfo subscription)
         {
             try
             {
@@ -132,7 +132,7 @@ namespace GravyFoodsApi.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<POSSubscription>>> GetAllAsync()
+        public async Task<ActionResult<IEnumerable<SubscriptionInfo>>> GetAllAsync()
         {
             try
             {

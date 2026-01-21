@@ -3,6 +3,9 @@ using GravyFoodsApi.MasjidServices;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Operations;
+using System.ComponentModel.Design;
+using System.Security.Claims;
 
 namespace GravyFoodsApi.Controllers
 {
@@ -12,11 +15,23 @@ namespace GravyFoodsApi.Controllers
     public class NavMenuItemController : Controller
     {
         private readonly INavMenuRepository _repo;
-        public NavMenuItemController(INavMenuRepository repo) => _repo = repo;
+        private readonly ITenantContextRepository _tenant;
+        public NavMenuItemController(INavMenuRepository repo, ITenantContextRepository tenant)
+        {
+            _repo = repo;
+            _tenant = tenant;
+        }
+
+
+            
 
         [HttpGet("{companyId}/{branchId}")]
         public async Task<IActionResult> GetHierarchicalMenus(string companyId, string branchId)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            companyId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
+            branchId = _tenant.BranchId;        //User.FindFirstValue("branchId");
+
             var menus = await _repo.GetHierarchicalMenusAsync(companyId, branchId);
             return Ok(menus);
         }
@@ -24,6 +39,10 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("parents/{companyId}/{branchId}")]
         public async Task<ActionResult<IEnumerable<NavMenuItemDto>>> GetParentMenus(string companyId, string branchId)
         {
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            companyId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
+            branchId = _tenant.BranchId;        //User.FindFirstValue("branchId");
 
             var parents = await _repo.GetParentMenusAsync(companyId, branchId);
 
@@ -33,6 +52,10 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("menuitems/{userId}/{companyId}/{branchId}")]
         public async Task<ActionResult<IEnumerable<NavMenuItemDto>>> GetMenuItems(string userId, string companyId, string branchId)
         {
+            userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            companyId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
+            branchId = _tenant.BranchId;        //User.FindFirstValue("branchId");
+
             var menus = await _repo.GetMenusByUserAsync(userId, companyId, branchId);
             return Ok(menus);
         }
@@ -42,6 +65,14 @@ namespace GravyFoodsApi.Controllers
         {
             try
             {
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var companyId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
+                var branchId = _tenant.BranchId;        //User.FindFirstValue("branchId");
+
+                menuItem.BranchId = branchId;
+                menuItem.CompanyId = companyId;
+
 
                 var result = await _repo.CreateAsync(menuItem);
 
@@ -62,6 +93,13 @@ namespace GravyFoodsApi.Controllers
         {
             try
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var companyId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
+                var branchId = _tenant.BranchId;        //User.FindFirstValue("branchId");
+
+                menuItem.BranchId = branchId;
+                menuItem.CompanyId = companyId;
+
 
                 var result = await _repo.UpdateAsync(menuItem);
 

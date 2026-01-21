@@ -88,7 +88,7 @@ namespace GravyFoodsApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "POSSubscription",
+                name: "SubscriptionInfo",
                 columns: table => new
                 {
                     DeviceKey = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
@@ -666,7 +666,7 @@ namespace GravyFoodsApi.Migrations
                 name: "Logging");
 
             migrationBuilder.DropTable(
-                name: "POSSubscription");
+                name: "SubscriptionInfo");
 
             migrationBuilder.DropTable(
                 name: "ProductAttributes");

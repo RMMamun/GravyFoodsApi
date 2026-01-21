@@ -8,14 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GravyFoodsApi.MasjidServices
 {
-    public class POSSubscriptionService : IPOSSubscription
+    public class SubscriptionInfoService : ISubscriptionInfo
     {
 
         CommonMethods commonMethods = new CommonMethods();
         private readonly MasjidDBContext _dbContext;
         private readonly IBranchInfoRepository _branchRep;
 
-        public POSSubscriptionService(MasjidDBContext dbContext, IBranchInfoRepository branchRep)
+        public SubscriptionInfoService(MasjidDBContext dbContext, IBranchInfoRepository branchRep)
         {
             _dbContext = dbContext;
             _branchRep = branchRep;
@@ -26,7 +26,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-                var result = await _dbContext.POSSubscription.Where(x => x.DeviceKey == subsDto.DeviceKey).FirstOrDefaultAsync();
+                var result = await _dbContext.SubscriptionInfo.Where(x => x.DeviceKey == subsDto.DeviceKey).FirstOrDefaultAsync();
 
                 if (result != null)
                 {
@@ -48,7 +48,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-                var result = await _dbContext.POSSubscription.Where(x => x.DeviceKey == subsDto.DeviceKey).FirstOrDefaultAsync();
+                var result = await _dbContext.SubscriptionInfo.Where(x => x.DeviceKey == subsDto.DeviceKey).FirstOrDefaultAsync();
 
                 if (result != null)
                 {
@@ -72,12 +72,12 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<IEnumerable<POSSubscription>?> GetAllAsync()
+        public async Task<IEnumerable<SubscriptionInfo>?> GetAllAsync()
         {
             try
             {
 
-                var result = await _dbContext.POSSubscription.OrderBy(x => x.SubscriptionStartDate).ToListAsync();
+                var result = await _dbContext.SubscriptionInfo.OrderBy(x => x.SubscriptionStartDate).ToListAsync();
 
                 if (result != null)
                 {
@@ -96,12 +96,12 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<POSSubscription> Create(POSSubscription subscription)
+        public async Task<SubscriptionInfo> Create(SubscriptionInfo subscription)
         {
             try
             {
 
-                var result = await _dbContext.POSSubscription.AddAsync(subscription);
+                var result = await _dbContext.SubscriptionInfo.AddAsync(subscription);
                 await _dbContext.SaveChangesAsync();
 
                 return result.Entity;
@@ -112,13 +112,13 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<bool> UpdateSubscriptionAsync(POSSubscription subs)
+        public async Task<bool> UpdateSubscriptionAsync(SubscriptionInfo subs)
         {
             try
             {
 
                 
-                var result = await _dbContext.POSSubscription.Where(x => x.DeviceKey == subs.DeviceKey).FirstOrDefaultAsync();
+                var result = await _dbContext.SubscriptionInfo.Where(x => x.DeviceKey == subs.DeviceKey).FirstOrDefaultAsync();
                 if (result != null)
                 {
 
@@ -149,7 +149,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-                var checkReg = await _dbContext.POSSubscription.FirstOrDefaultAsync(b => b.RegCode == RegCode);
+                var checkReg = await _dbContext.SubscriptionInfo.FirstOrDefaultAsync(b => b.RegCode == RegCode);
                 if (checkReg == null)
                 {
                     //return null;

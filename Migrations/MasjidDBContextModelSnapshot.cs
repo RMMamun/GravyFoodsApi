@@ -285,7 +285,7 @@ namespace GravyFoodsApi.Migrations
                     b.ToTable("Logging");
                 });
 
-            modelBuilder.Entity("GravyFoodsApi.Models.POSSubscription", b =>
+            modelBuilder.Entity("GravyFoodsApi.Models.SubscriptionInfo", b =>
                 {
                     b.Property<string>("DeviceKey")
                         .HasMaxLength(250)
@@ -329,7 +329,7 @@ namespace GravyFoodsApi.Migrations
 
                     b.HasKey("DeviceKey");
 
-                    b.ToTable("POSSubscription");
+                    b.ToTable("SubscriptionInfo");
                 });
 
             modelBuilder.Entity("GravyFoodsApi.Models.Product", b =>

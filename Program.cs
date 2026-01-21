@@ -80,7 +80,7 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 
 builder.Services.AddScoped<IUserInfoService, UserInfoService>();
-builder.Services.AddScoped<IPOSSubscription, POSSubscriptionService>();
+builder.Services.AddScoped<ISubscriptionInfo, SubscriptionInfoService>();
 builder.Services.AddScoped<ILoggingService, LoggingService>();
 ////Gravy Foods/ POS ingegration ->
 builder.Services.AddScoped<ILoginService, LoginService>();

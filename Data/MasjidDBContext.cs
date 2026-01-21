@@ -12,6 +12,7 @@ namespace GravyFoodsApi.Data
 
         public DbSet<UserInfo> UserInfo { get; set; } = null!;
         public DbSet<Country> Country { get; set; }
+        public DbSet<SubscriptionInfo> SubscriptionInfo { get; set; }
         public DbSet<POSSubscription> POSSubscription { get; set; }
         public DbSet<Logging> Logging { get; set; }
         public DbSet<Product> Product { get; set; }
