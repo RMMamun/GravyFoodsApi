@@ -52,7 +52,7 @@ namespace GravyFoodsApi.MasjidServices
 
                 if (result != null)
                 {
-                    //int remainDays = result.SubscriptionEndDate - subsDto.SubscriptionEndDate;
+                    //int remainDays = checkCompany.SubscriptionEndDate - subsDto.SubscriptionEndDate;
                     // Step 2: Calculate the difference
                     TimeSpan difference = result.SubscriptionEndDate - subsDto.SubscriptionEndDate;
 
@@ -149,9 +149,20 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
+                var checkReg = await _dbContext.POSSubscription.FirstOrDefaultAsync(b => b.RegCode == RegCode);
+                if (checkReg == null)
+                {
+                    //return null;
+                    apiRes.Success = false;
+                    apiRes.Message = "Invalid Registration Code.";
+                    apiRes.Data = null;
 
-                var result = await _dbContext.CompanyInfo.Where(b => b.RegCode.ToString() == RegCode).FirstOrDefaultAsync();
-                if (result == null)
+                    return apiRes;
+                }
+                var CompId = checkReg.CompanyId;
+
+                var checkCompany = await _dbContext.CompanyInfo.Where(b => b.CompanyId == CompId).FirstOrDefaultAsync();
+                if (checkCompany == null)
                 {
                     //return null;
                     apiRes.Success = false;
@@ -161,7 +172,7 @@ namespace GravyFoodsApi.MasjidServices
                     return apiRes;
                 }
 
-                IEnumerable<BranchInfoDto> branches = await _branchRep.GetAllBranchesAsync(result.CompanyId);
+                IEnumerable<BranchInfoDto> branches = await _branchRep.GetAllBranchesAsync(CompId);
 
                 if (branches == null || branches.Count() == 0)
                 {
@@ -174,7 +185,8 @@ namespace GravyFoodsApi.MasjidServices
 
                 var comRegRes = new CompanyRegistrationResponseDto
                 {
-                    CompanyName = result.CompanyName
+                    CompanyId = checkCompany.CompanyId,
+                    CompanyName = checkCompany.CompanyName
                 };
 
                 foreach (var branch in branches)
@@ -182,11 +194,11 @@ namespace GravyFoodsApi.MasjidServices
                     comRegRes.Branches.Add(new BranchesDto
                     {
                         BranchName = branch.BranchName,
-                        LinkCode = branch.LinkCode
+                        BranchId = branch.BranchId
                     });
                 }
 
-
+                apiRes.Data = comRegRes;
                 apiRes.Success = true;
                 apiRes.Message = "Link Code verified successfully.";
 

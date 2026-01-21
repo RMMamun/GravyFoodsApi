@@ -24,7 +24,7 @@ namespace GravyFoodsApi.Models
         public string? Mobile { get; set; }
         public string? Email { get; set; }
 
-        public char RegCode { get; set; } 
+        public string RegCode { get; set; } 
         public string CompanyId { get; set; } = string.Empty;
 
         public required DateTime EntryDateTime { get; set; }

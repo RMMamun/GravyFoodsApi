@@ -1,13 +1,14 @@
 ﻿using GravyFoodsApi.DTO;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GravyFoodsApi.Controllers
 {
     [ApiController]
-    /*[Route("api/[controller]")]*/
-    [Route("[controller]")]
+    //[Route("[controller]")]
+    [Route("api/[controller]")]
     public class POSSubscriptionController : Controller
     {
         private readonly IPOSSubscription _posSubs;
@@ -151,12 +152,15 @@ namespace GravyFoodsApi.Controllers
         }
 
         
-        [HttpGet("CompanyRegistrationVerification{regCode}")]
-        public async Task<IActionResult> GetCompanyRegistrationVerification(string regCode)
+        [HttpGet("CompanyRegistrationVerification/{regCode}")]
+        public async Task<ActionResult<ApiResponse<CompanyRegistrationResponseDto?>>> GetCompanyRegistrationVerification(string regCode)
         {
+            //public async Task<ActionResult<ApiResponse<ProductDto>>> GetProductByIdAsync(string productId, string branchId, string companyId)
+
             var result = await _posSubs.GetCompanyRegistrationVerificationAsync(regCode);
             if (result.Success == false)
-                return NotFound(result.Message);
+                return NotFound(result);
+
             return Ok(result);
         }
 

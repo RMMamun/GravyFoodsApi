@@ -30,33 +30,33 @@ namespace GravyFoodsApi.Controllers
         {
             //
             //request.CompanyCode = TenantId.ToString(); // Set CompanyCode from TenantId  *** ERROR on registry/context reading
-            var companyid = _tenant.CompanyId;
-            var branchid = _tenant.BranchId;
+            //var companyid = _tenant.CompanyId;
+            //var branchid = _tenant.BranchId;
 
-            request.CompanyCode = companyid ?? string.Empty;
-            request.BranchCode = branchid ?? string.Empty;
+            //request.CompanyCode = companyid ?? string.Empty;
+            //request.BranchCode = branchid ?? string.Empty;
 
-            var user = await _authService.LoginAsync(request);
+            var _token = await _authService.LoginAsync(request);
 
-            if (user == null)
+            if (_token == null)
                 return BadRequest(new { error = "Invalid username or password" });
 
             return Ok(new TokenDto
             {
-                Token = user.UserId
+                Token = _token
             });
         }
 
         //[HttpPost("login")]
         //public async Task<IActionResult> Login([FromBody] LoginRequest request)
         //{
-        //    // 1️⃣ LoginAsync user (includes company + branch validation)
-        //    var user = await _authService.LoginAsync(request);
+        //    // 1️⃣ LoginAsync _token (includes company + branch validation)
+        //    var _token = await _authService.LoginAsync(request);
 
-        //    if (user == null)
+        //    if (_token == null)
         //        return Unauthorized(new { error = "Invalid credentials" });
 
-        //    //user.BranchId;
+        //    //_token.BranchId;
         //    // 2️⃣ Generate JWT access token
         //    var accessToken = _authService.GenerateTokenAsync(request);
 
@@ -67,7 +67,7 @@ namespace GravyFoodsApi.Controllers
         //    // 4️⃣ Store refresh token (hashed)
         //    _db.RefreshTokens.Add(new RefreshToken
         //    {
-        //        UserId = user.id,
+        //        UserId = _token.id,
         //        TokenHash = refreshTokenHash,
         //        ExpiresAt = DateTime.UtcNow.AddDays(7),
         //        CreatedAt = DateTime.UtcNow
@@ -111,7 +111,7 @@ namespace GravyFoodsApi.Controllers
                 return Unauthorized();
 
             LoginRequest request = new LoginRequest();
-            //set user to request
+            //set _token to request
             var newAccessToken = await _authService.GenerateTokenAsync(request);
 
             return Ok(new { accessToken = newAccessToken });

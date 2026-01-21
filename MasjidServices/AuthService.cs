@@ -22,39 +22,53 @@ namespace GravyFoodsApi.MasjidServices
             _config = config;
         }
 
-        public async Task<UserInfoDTO?> LoginAsync(LoginRequest request)
+        public async Task<string?> LoginAsync(LoginRequest request)
         {
+            try
+            {
+                var user = await _loginService.GetUser(request.Username, request.Password, request.BranchCode, request.CompanyCode);
+                if (user == null) return null;
 
-            var user = await _loginService.GetUser(request.Username, request.Password,request.BranchCode,request.CompanyCode);
-            if (user == null) return null;
-
-            //return GenerateTokenAsync(request).Result;
-            return user;
+                return GenerateTokenAsync(request).Result;
+                //return user;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<string?> GenerateTokenAsync(LoginRequest request)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
+            try
             {
-                //new Claim(ClaimTypes.Name, user.Username)
-                new Claim(JwtRegisteredClaimNames.Sub, request.Username.ToString()),
-                new Claim("companyId", request.CompanyCode.ToString()),
-                new Claim("branchId", request.BranchCode.ToString())
 
-            };
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtKey));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                claims: claims,
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: creds
-            );
+                var claims = new[]
+                {
+                    //new Claim(ClaimTypes.Name, user.Username)
+                    new Claim(JwtRegisteredClaimNames.Sub, request.Username.ToString()),
+                    new Claim("companyId", request.CompanyCode.ToString()),
+                    new Claim("branchId", request.BranchCode.ToString())
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                };
+
+                var token = new JwtSecurityToken(
+                    claims: claims,
+                    issuer: _config["Jwt:Issuer"],
+                    audience: _config["Jwt:Audience"],
+                    expires: DateTime.UtcNow.AddHours(1),
+                    signingCredentials: creds
+                );
+
+                return new JwtSecurityTokenHandler().WriteToken(token);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
 
