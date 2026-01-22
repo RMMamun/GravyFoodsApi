@@ -20,7 +20,7 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CustomerInfo>> Create([FromBody] CustomerInfoDTO customer)
+        public async Task<ActionResult<CustomerInfoDTO>> Create([FromBody] CustomerInfoDTO customer)
         {
             //var created = await _repo.Create(customer);
             //return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
@@ -36,8 +36,8 @@ namespace GravyFoodsApi.Controllers
             if (!result.Success)
                 return Conflict(result.Message);
 
-            return CreatedAtAction(nameof(GetProductById), new { id = result.Data.Id }, result.Data);
-            //return Ok(result.Data);
+            //return CreatedAtAction(nameof(GetProductById), new { id = result.Data.Id }, result.Data);
+            return Ok(result.Data);
 
         }
 
@@ -47,7 +47,7 @@ namespace GravyFoodsApi.Controllers
             var product = await _repository.GetCustomerInfoById(id,branchId,companyId);
 
             if (product == null)
-                return NotFound();
+                return NotFound(product);
 
             return Ok(product);
         }
@@ -65,7 +65,7 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateCustomerInfo([FromBody] CustomerInfo dto)
+        public async Task<IActionResult> UpdateCustomerInfo([FromBody] CustomerInfoDTO dto)
         {
             var result = await _repository.UpdateCustomerInfoAsync(dto);
             if (!result.Success)

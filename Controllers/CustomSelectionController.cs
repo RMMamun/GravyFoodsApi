@@ -54,11 +54,18 @@ namespace GravyFoodsApi.Controllers
 
         private async Task<ApiResponse<List<CustomSelectionListDto>>> GetCustomersAsync(string branchId, string companyId)
         {
+            ApiResponse<List<CustomSelectionListDto>> apiRes = new ApiResponse<List<CustomSelectionListDto>>();
             try
             {
                 var res = await _cusRepo.GetAllCustomersAsync(branchId, companyId);
-
-                var list = res.Select(x => new CustomSelectionListDto
+                if (res.Success == false)
+                {
+                    apiRes.Success = res.Success;
+                    apiRes.Message = res.Message;
+                    apiRes.Data = (List<CustomSelectionListDto>?)res.Data;
+                    return apiRes;
+                }
+                var list = res.Data.Select(x => new CustomSelectionListDto
                 {
                     Id = x.CustomerId,
                     Name = x.CustomerName,

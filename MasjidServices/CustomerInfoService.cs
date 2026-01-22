@@ -182,7 +182,7 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<ApiResponse<bool>> UpdateCustomerInfoAsync(CustomerInfo dto)
+        public async Task<ApiResponse<bool>> UpdateCustomerInfoAsync(CustomerInfoDTO dto)
         {
             ApiResponse<bool> apiRes = new ApiResponse<bool>();
 
@@ -214,7 +214,7 @@ namespace GravyFoodsApi.MasjidServices
                 else
                 {
                     //throw new KeyNotFoundException($"App option with ID {dto.Id} not found.");
-                    apiRes.Message = $"Customer with ID {dto.Id} not found.";
+                    apiRes.Message = $"Customer with ID {dto.CustomerId} not found.";
                     apiRes.Success = false;
                     apiRes.Data = false;
 

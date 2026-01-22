@@ -78,8 +78,8 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<IEnumerable<BranchInfoDto>> GetAllBranchesAsync(string companyId)
         {
-
-            IEnumerable<BranchInfo> branches = await _context.BranchInfo.Where(b => b.CompanyId == _tenant.CompanyId).ToListAsync();
+            //Canno use tenant in this method because its call at reg code check
+            IEnumerable<BranchInfo> branches = await _context.BranchInfo.Where(b => b.CompanyId == companyId).ToListAsync();
             IEnumerable<BranchInfoDto> branchesDto = branches.Select(p => new BranchInfoDto
             {
                 CompanyId = p.CompanyId,
