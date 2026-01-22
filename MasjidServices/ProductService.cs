@@ -46,7 +46,7 @@ namespace GravyFoodsApi.MasjidServices
                 //    Quantity = 0,
                 //    IsAvailable = p.IsAvailable,
                 //    IsSalable = p.IsSalable,
-                //    BrandName = p.Brand?.Name,
+                //    BrandName = p.BrandDto?.Name,
                 //    CategoryName = p.Category?.Name,
                 //    ImageUrl = p.Images.FirstOrDefault() != null ? p.Images.FirstOrDefault().ImageUrl : null,
                 //    UnitId = p.Unit != null ? p.Unit.UnitId : null,
@@ -236,7 +236,7 @@ namespace GravyFoodsApi.MasjidServices
 
 
                 //product.Quantity = 0,
-                //product.BrandName = _product.Brand?.Name,
+                //product.BrandName = _product.BrandDto?.Name,
                 //product.CategoryName = _product.Category?.Name,
                 //product.ImageUrl = _product.Images.FirstOrDefault() != null ? _product.Images.FirstOrDefault().ImageUrl : null,
                 //product.UnitName = _product.Unit != null ? _product.Unit.UnitName : null,

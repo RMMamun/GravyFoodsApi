@@ -65,7 +65,7 @@ namespace GravyFoodsApi.Migrations
                     b.ToTable("BranchInfo");
                 });
 
-            modelBuilder.Entity("GravyFoodsApi.Models.Brand", b =>
+            modelBuilder.Entity("GravyFoodsApi.Models.BrandDto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -899,7 +899,7 @@ namespace GravyFoodsApi.Migrations
                         .WithMany()
                         .HasForeignKey("BranchId");
 
-                    b.HasOne("GravyFoodsApi.Models.Brand", "Brand")
+                    b.HasOne("GravyFoodsApi.Models.BrandDto", "BrandDto")
                         .WithMany("Products")
                         .HasForeignKey("BrandId");
 
@@ -921,7 +921,7 @@ namespace GravyFoodsApi.Migrations
 
                     b.Navigation("Branch");
 
-                    b.Navigation("Brand");
+                    b.Navigation("BrandDto");
 
                     b.Navigation("Category");
 
@@ -1066,7 +1066,7 @@ namespace GravyFoodsApi.Migrations
                     b.Navigation("CustomerInfo");
                 });
 
-            modelBuilder.Entity("GravyFoodsApi.Models.Brand", b =>
+            modelBuilder.Entity("GravyFoodsApi.Models.BrandDto", b =>
                 {
                     b.Navigation("Products");
                 });

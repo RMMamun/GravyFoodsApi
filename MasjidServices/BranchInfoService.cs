@@ -13,10 +13,13 @@ namespace GravyFoodsApi.MasjidServices
     {
         private readonly MasjidDBContext _context;
         private readonly ICompanyInfoService _companyService;
-        public BranchInfoService(MasjidDBContext context, ICompanyInfoService companyService)
+        private readonly ITenantContextRepository _tenant;
+
+        public BranchInfoService(MasjidDBContext context, ICompanyInfoService companyService, ITenantContextRepository tenant)
         {
             _context = context;
             _companyService = companyService;
+            _tenant = tenant;
         }
 
         public async Task<bool> CreateBranchInfoAsync(BranchInfoDto BranchInfo)
@@ -48,7 +51,8 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<BranchInfoDto> GetBranchInfoAsync(string BranchId, string companyId)
         {
-            var Branch = await _context.BranchInfo.Where(b => b.CompanyId == companyId && b.BranchId == BranchId).FirstOrDefaultAsync();
+
+            var Branch = await _context.BranchInfo.Where(b => b.CompanyId == _tenant.CompanyId && b.BranchId == _tenant.BranchId).FirstOrDefaultAsync();
             if (Branch == null)
             {
                 return null;
@@ -75,7 +79,7 @@ namespace GravyFoodsApi.MasjidServices
         public async Task<IEnumerable<BranchInfoDto>> GetAllBranchesAsync(string companyId)
         {
 
-            IEnumerable<BranchInfo> branches = await _context.BranchInfo.Where(b => b.CompanyId == companyId).ToListAsync();
+            IEnumerable<BranchInfo> branches = await _context.BranchInfo.Where(b => b.CompanyId == _tenant.CompanyId).ToListAsync();
             IEnumerable<BranchInfoDto> branchesDto = branches.Select(p => new BranchInfoDto
             {
                 CompanyId = p.CompanyId,
@@ -97,20 +101,20 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<bool> UpdateBranchInfoAsync(BranchInfoDto branchDo)
         {
-            var Branch = await _context.BranchInfo.Where(b => b.CompanyId == branchDo.CompanyId && b.BranchId == branchDo.BranchId).FirstOrDefaultAsync();
+            var Branch = await _context.BranchInfo.Where(b => b.CompanyId == _tenant.CompanyId && b.BranchId == _tenant.BranchId).FirstOrDefaultAsync();
             if (Branch == null)
             {
                 return false;
             }
 
-            Branch.BranchId = branchDo.BranchId;
+            //Branch.BranchId = branchDo.BranchId;
             Branch.BranchName = branchDo.BranchName;
             Branch.Address = branchDo.Address;
             Branch.Phone = branchDo.Phone;
             Branch.Mobile = branchDo.Mobile;
             Branch.Email = branchDo.Email;
             Branch.Website = branchDo.Website;
-            Branch.CompanyId = branchDo.CompanyId;
+            //Branch.CompanyId = branchDo.CompanyId;
             Branch.LinkCode = branchDo.LinkCode;
 
 
@@ -122,6 +126,7 @@ namespace GravyFoodsApi.MasjidServices
 
 
         //**************** The following method has using for Company & Branch verification ******************
+        // NOT USING- X X X X X X X X X 
 
         public async Task<ApiResponse<CompanyBranchDto>> GetLinkCodeVerificationAsync(string LinkCode)
         {

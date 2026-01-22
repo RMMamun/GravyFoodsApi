@@ -11,10 +11,12 @@ namespace GravyFoodsApi.Controllers
     {
 
         private readonly IProductImageRepository _repository;
+        private readonly ITenantContextRepository _tenant;
 
-        public AllProductsImageController(IProductImageRepository repository)
+        public AllProductsImageController(IProductImageRepository repository, ITenantContextRepository tenant)
         {
             _repository = repository;
+            _tenant = tenant;
         }
 
         [HttpGet("{id}")]
@@ -38,6 +40,9 @@ namespace GravyFoodsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductImageDTO>> GetAllImagesAsync([FromBody] AllProductImageGetParameterDto product)
         {
+            product.CompanyId = _tenant.CompanyId;
+            product.BranchId = _tenant.BranchId;
+
             var created = await _repository.GetAllProductImagesAsync(product);
             return Ok(created);
             //return CreatedAtAction(nameof(Get), new { id = created.ProductId }, created);

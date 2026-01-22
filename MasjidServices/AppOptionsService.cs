@@ -8,15 +8,19 @@ namespace GravyFoodsApi.MasjidServices
     public class AppOptionsService : IAppOptionsRepository
     {
         private readonly MasjidDBContext _context;
-
-        public AppOptionsService(MasjidDBContext context)
+        private readonly ITenantContextRepository _tenant;
+        public AppOptionsService(MasjidDBContext context, ITenantContextRepository tenant)
         {
             _context = context;
+            _tenant = tenant;
         }
 
 
         public async Task<ApiResponse<IEnumerable<AppOptionDto>>> GetAppOptionsAsync(string branchId, string companyId)
         {
+            branchId = _tenant.BranchId;
+            companyId = _tenant.CompanyId;
+
             var response = new ApiResponse<IEnumerable<AppOptionDto>>();
             try
             {
@@ -34,8 +38,8 @@ namespace GravyFoodsApi.MasjidServices
                         SelectorApiUrl = a.SelectorApiUrl,
                         DisplayOrder = a.DisplayOrder,
                         IsActive = a.IsActive,
-                        BranchId = a.BranchId,
-                        CompanyId = a.CompanyId,
+                        BranchId = "",
+                        CompanyId = "",
 
 
                     }
@@ -58,6 +62,7 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<ApiResponse<bool>> UpdateAsync(IEnumerable<AppOptionDto> appOptionDtos)
         {
+
             ApiResponse<bool> apiRes = new ApiResponse<bool>();
 
             try
@@ -70,7 +75,8 @@ namespace GravyFoodsApi.MasjidServices
 
                 foreach (var dto in appOptionDtos)
                 {
-                    var existingOption = _context.AppOptions.FirstOrDefault(a => a.Id == dto.Id && a.BranchId == dto.BranchId && a.CompanyId == dto.CompanyId);
+
+                    var existingOption = _context.AppOptions.FirstOrDefault(a => a.Id == dto.Id && a.BranchId == _tenant.BranchId && a.CompanyId == _tenant.CompanyId);
                     if (existingOption != null)
                     {
                         existingOption.OptionKey = dto.OptionKey;
@@ -82,8 +88,8 @@ namespace GravyFoodsApi.MasjidServices
                         existingOption.SelectorApiUrl = dto.SelectorApiUrl;
                         existingOption.DisplayOrder = dto.DisplayOrder;
                         existingOption.IsActive = dto.IsActive;
-                        existingOption.BranchId = dto.BranchId;
-                        existingOption.CompanyId = dto.CompanyId;
+                        //existingOption.BranchId = dto.BranchId;
+                        //existingOption.CompanyId = dto.CompanyId;
 
                         _context.AppOptions.Update(existingOption);
                         

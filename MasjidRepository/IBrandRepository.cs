@@ -6,11 +6,11 @@ using System;
 
 namespace GravyFoodsApi.Repositories
 {
-    public interface IBrandRepository : IRepository<Brand> 
+    public interface IBrandRepository 
     { 
-        Task<Brand> CreateAsync(Brand brand);
-        Task<Brand> GetBrandById(int Id);
-        Task<IEnumerable<Brand>> GetBrandsAsync();
+        Task<BrandDto> CreateAsync(BrandDto brand);
+        Task<BrandDto> GetBrandById(int Id);
+        Task<IEnumerable<BrandDto>> GetBrandsAsync();
     }
 
     

@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace GravyFoodsApi.MasjidServices
 {
-    
+
     public class TenantContextService : ITenantContextRepository
     {
         public string CompanyId { get; }
@@ -11,9 +11,20 @@ namespace GravyFoodsApi.MasjidServices
 
         public TenantContextService(IHttpContextAccessor accessor)
         {
-            var user = accessor.HttpContext!.User;
-            CompanyId = (user.FindFirstValue("companyId"));
-            BranchId = (user.FindFirstValue("branchId"));
+            try
+            {
+                var user = accessor.HttpContext!.User;
+                var company = (user.FindFirstValue("companyId"));
+                var branch = (user.FindFirstValue("branchId"));
+
+                CompanyId = string.IsNullOrEmpty(company) == false ? company : "";
+                BranchId = string.IsNullOrEmpty(branch) == false ? branch : "";
+            }
+            catch (Exception ex)
+            {
+                CompanyId = "";
+                BranchId = "";
+            }
         }
     }
 

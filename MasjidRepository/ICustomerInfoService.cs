@@ -5,11 +5,11 @@ namespace GravyFoodsApi.MasjidRepository
 {
     public interface ICustomerInfoService 
     {
-        Task<ServiceResultWrapper<CustomerInfo>> Create(CustomerInfoDTO customerInfo);
-        Task<CustomerInfo?> GetCustomerInfoById(string Id,string branchId, string companyId);
-        Task<CustomerInfo?> GetCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId);
+        Task<ApiResponse<CustomerInfoDTO>> Create(CustomerInfoDTO customerInfo);
+        Task<ApiResponse<CustomerInfoDTO?>> GetCustomerInfoById(string Id,string branchId, string companyId);
+        Task<ApiResponse<CustomerInfoDTO?>> GetCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId);
 
         Task<ApiResponse<bool>> UpdateCustomerInfoAsync(CustomerInfo dto);
-        Task<IEnumerable<CustomerInfo>?> GetAllCustomersAsync(string branchId, string companyId);
+        Task<ApiResponse<IEnumerable<CustomerInfoDTO>?>> GetAllCustomersAsync(string branchId, string companyId);
     }
 }

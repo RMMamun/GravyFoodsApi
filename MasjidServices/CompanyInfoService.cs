@@ -8,11 +8,12 @@ namespace GravyFoodsApi.MasjidServices
     public class CompanyInfoService : ICompanyInfoService
     {
         private readonly MasjidDBContext _context;
-        
+        private readonly ITenantContextRepository _tenant;
 
-        public CompanyInfoService(MasjidDBContext context)
+        public CompanyInfoService(MasjidDBContext context, ITenantContextRepository tenant)
         {
             _context = context;
+            _tenant = tenant;
         }
 
         public async Task<bool> CreateCompanyInfoAsync(CompanyInfoDto companyInfo)
@@ -28,7 +29,7 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<CompanyInfoDto> GetCompanyInfoAsync(string companyId)
         {
-            var company = await _context.CompanyInfo.FindAsync(companyId);
+            var company = await _context.CompanyInfo.FindAsync(_tenant.CompanyId);
             if (company == null)
             {
                 return null;

@@ -28,7 +28,7 @@
 
             //If property names differ between source and destination, use ForMember to map them explicitly
             //CreateMap<Product, ProductDto>()
-            //            .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand!.Name));
+            //            .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.BrandDto!.Name));
 
 
 

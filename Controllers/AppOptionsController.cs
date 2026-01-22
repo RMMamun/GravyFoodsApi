@@ -9,6 +9,7 @@ namespace GravyFoodsApi.Controllers
     public class AppOptionsController : Controller
     {
         private readonly IAppOptionsRepository _repository;
+        
 
         public AppOptionsController(IAppOptionsRepository repository)
         {
@@ -29,6 +30,7 @@ namespace GravyFoodsApi.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateAppOptions([FromBody] IEnumerable<AppOptionDto> appOptionDtos)
         {
+            
             var result = await _repository.UpdateAsync(appOptionDtos);
             if (!result.Success)
                 return BadRequest(result.Message);

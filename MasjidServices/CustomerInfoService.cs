@@ -12,39 +12,53 @@ namespace GravyFoodsApi.MasjidServices
     public class CustomerInfoService : ICustomerInfoService
     {
         private readonly MasjidDBContext _context;
+        private readonly ITenantContextRepository _tenant;
 
-        public CustomerInfoService(MasjidDBContext context)
+        public CustomerInfoService(MasjidDBContext context, ITenantContextRepository tenant)
         {
             _context = context;
+            _tenant = tenant;
         }
 
-        public async Task<ServiceResultWrapper<CustomerInfo>> Create(CustomerInfoDTO customerInfo)
+        public async Task<ApiResponse<CustomerInfoDTO>> Create(CustomerInfoDTO customerInfo)
         {
+            ApiResponse<CustomerInfoDTO> apiRes = new();
             // Implementation to add customer info to database
             // Check if email or phone number already exists
-            bool isExisted = await CheckCustomerByMobileOrEmail(customerInfo.PhoneNo, customerInfo.Email, customerInfo.BranchId, customerInfo.CompanyId);
-            if (isExisted)
+            var isExisted = await CheckCustomerByMobileOrEmail(customerInfo.PhoneNo, customerInfo.Email, _tenant.BranchId, _tenant.CompanyId);
+            if (isExisted.Data == false)
             {
                 //return null;
-                return ServiceResultWrapper<CustomerInfo>.Fail($"Customer with '{customerInfo.Email}' OR '{customerInfo.PhoneNo}' already exists.");
+                apiRes.Success = false;
+                apiRes.Message = $"Customer with '{customerInfo.Email}' OR '{customerInfo.PhoneNo}' already exists.";
+                //return ServiceResultWrapper<CustomerInfoDTO>.Fail($"Customer with '{customerInfo.Email}' OR '{customerInfo.PhoneNo}' already exists.");
+                return apiRes;
             }
 
             CustomerInfo newCustomer = new CustomerInfo
             {
 
-                CustomerId = GenerateCustomerId(customerInfo.CompanyId),
+                CustomerId = GenerateCustomerId(_tenant.CompanyId),
                 CustomerName = customerInfo.CustomerName,
                 Address = customerInfo.Address,
                 PhoneNo = customerInfo.PhoneNo,
                 Email = customerInfo.Email,
-                BranchId = customerInfo.BranchId,
-                CompanyId = customerInfo.CompanyId,
+                BranchId = _tenant.BranchId,
+                CompanyId = _tenant.CompanyId,
 
             };
 
             await _context.CustomerInfo.AddAsync(newCustomer);
             await _context.SaveChangesAsync();
-            return ServiceResultWrapper<CustomerInfo>.Ok(newCustomer);
+
+            customerInfo.CustomerId = newCustomer.CustomerId;
+
+            //return ServiceResultWrapper<CustomerInfoDTO>.Ok(customerInfo);
+            apiRes.Success = true;
+            apiRes.Message = "Successfully create the customer";
+            apiRes.Data = customerInfo;
+            return apiRes;
+
         }
 
         private string GenerateCustomerId(string companyCode)
@@ -54,22 +68,117 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public Task<bool> CheckCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
+        public async Task<ApiResponse<bool>> CheckCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
         {
-            var isExisted = _context.CustomerInfo.Any(c => c.Email == email || c.PhoneNo == PhoneNo && c.BranchId == branchId && c.CompanyId == companyId);
-            return Task.FromResult(isExisted);
+            ApiResponse<bool> apiRes = new();
+            try
+            {
+                var isExisted = (await _context.CustomerInfo.AnyAsync(c => c.Email == email || c.PhoneNo == PhoneNo && c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId));
+
+                if (isExisted == true)
+                {
+                    apiRes.Data = true;
+                    apiRes.Message = "Customer found";
+                }
+                else
+                {
+                    apiRes.Data = false;
+                    apiRes.Message = "Customer nnot found";
+                }
+
+                apiRes.Success = true;
+
+                return apiRes;
+            }
+            catch (Exception ex)
+            {
+                apiRes.Message = ex.Message;
+                apiRes.Success = false;
+                return apiRes;
+            }
         }
 
-        public Task<CustomerInfo?> GetCustomerInfoById(string Id, string branchId, string companyId)
+        public async Task<ApiResponse<CustomerInfoDTO?>> GetCustomerInfoById(string Id, string branchId, string companyId)
         {
-            var customer = _context.CustomerInfo.FirstOrDefault(c => c.CustomerId == Id && c.BranchId == branchId && c.CompanyId == companyId);
-            return Task.FromResult(customer);
+            ApiResponse<CustomerInfoDTO?> apiRes = new();
+
+            try
+            {
+
+                var customer = (await _context.CustomerInfo.FirstOrDefaultAsync(c => c.CustomerId == Id && c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId));
+                if (customer == null)
+                {
+                    apiRes.Success = true;
+                    apiRes.Message = "Customer not found";
+                    apiRes.Data = null;
+                    return apiRes;
+                }
+
+                CustomerInfoDTO newC =  new CustomerInfoDTO
+                {
+                    CustomerId = customer.CustomerId,
+                    CustomerName = customer.CustomerName,
+                    Address = customer.Address,
+                    Email = customer.Email,
+                    PhoneNo = customer.PhoneNo
+                };
+
+                apiRes.Data = newC;
+                apiRes.Success = true;
+                apiRes.Message = "Customer found";
+
+
+                return apiRes;
+                //return Task.FromResult(customer);
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
+
+                return apiRes;
+            }
         }
 
-        public Task<CustomerInfo?> GetCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
+        public async Task<ApiResponse<CustomerInfoDTO?>> GetCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
         {
-            var customer = _context.CustomerInfo.FirstOrDefault(c => c.Email == email || c.PhoneNo == PhoneNo && c.BranchId == branchId && c.CompanyId == companyId);
-            return Task.FromResult(customer);
+            ApiResponse<CustomerInfoDTO?> apiRes = new();
+            try
+            {
+                var customer = await _context.CustomerInfo.FirstOrDefaultAsync(c => c.Email == email || c.PhoneNo == PhoneNo && c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId);
+                if (customer == null)
+                {
+                    apiRes.Success = true;
+                    apiRes.Data = null;
+                    apiRes.Message = "Customer not found";
+
+                    return apiRes;
+                }
+
+                CustomerInfoDTO Cus = new CustomerInfoDTO
+                {
+                    CustomerId = customer.CustomerId,
+                    CustomerName = customer.CustomerName,
+                    Address = customer.Address,
+                    Email = customer.Email,
+                    PhoneNo = customer.PhoneNo
+                };
+
+                apiRes.Success = true;
+                apiRes.Data = Cus;
+                apiRes.Message = "Customer found";
+
+                return apiRes;
+
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Data = null;
+                apiRes.Message = ex.Message;
+
+                return apiRes;
+            }
         }
 
 
@@ -80,7 +189,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-                var existing = _context.CustomerInfo.FirstOrDefault(a => a.CustomerId == dto.CustomerId && a.BranchId == dto.BranchId && a.CompanyId == dto.CompanyId);
+                var existing = _context.CustomerInfo.FirstOrDefault(a => a.CustomerId == dto.CustomerId && a.BranchId == _tenant.BranchId && a.CompanyId == _tenant.CompanyId);
                 if (existing != null)
                 {
 
@@ -88,8 +197,8 @@ namespace GravyFoodsApi.MasjidServices
                     existing.Address = dto.Address;
                     existing.PhoneNo = dto.PhoneNo;
                     existing.Email = dto.Email;
-                    existing.BranchId = dto.BranchId;
-                    existing.CompanyId = dto.CompanyId;
+                    //existing.BranchId = dto.BranchId;
+                    //existing.CompanyId = dto.CompanyId;
 
                     //_context.CustomerInfo.Update(dto);    //*** using update make an error of tracking entity. So, we are not using it.
 
@@ -105,7 +214,7 @@ namespace GravyFoodsApi.MasjidServices
                 else
                 {
                     //throw new KeyNotFoundException($"App option with ID {dto.Id} not found.");
-                    apiRes.Message = $"App option with ID {dto.Id} not found.";
+                    apiRes.Message = $"Customer with ID {dto.Id} not found.";
                     apiRes.Success = false;
                     apiRes.Data = false;
 
@@ -123,16 +232,53 @@ namespace GravyFoodsApi.MasjidServices
             
         }
 
-        public async Task<IEnumerable<CustomerInfo>?> GetAllCustomersAsync(string branchId, string companyId)
+        public async Task<ApiResponse<IEnumerable<CustomerInfoDTO>?>> GetAllCustomersAsync(string branchId, string companyId)
         {
-            //IEnumerable<CustomerInfo>? customer = _context.CustomerInfo.Where(c => c.BranchId == branchId && c.CompanyId == companyId).ToImmutableList();
-            //return Task.FromResult(customer);
+            ApiResponse<IEnumerable<CustomerInfoDTO>?> apiRes = new();
+            try
+            {
+                //IEnumerable<CustomerInfo>? customer = _context.CustomerInfo.Where(c => c.BranchId == branchId && c.CompanyId == companyId).ToImmutableList();
+                //return Task.FromResult(customer);
 
-            var customers = await _context.CustomerInfo
-                                .Where(c => c.BranchId == branchId && c.CompanyId == companyId)
-                                .ToListAsync();
+                var customers = await _context.CustomerInfo
+                                    .Where(c => c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId)
+                                    .ToListAsync();
 
-            return customers.ToImmutableList();
+                if (customers.Count() == 0)
+                {
+                    apiRes.Success = true;
+                    apiRes.Data = null;
+                    apiRes.Message = "No customer found";
+
+                    return apiRes;
+                }
+                IEnumerable<CustomerInfoDTO> allCus = customers.Select(p => new CustomerInfoDTO
+                {
+                    CompanyId = p.CompanyId,
+                    BranchId = p.BranchId,
+                    CustomerId = p.CustomerId,
+                    CustomerName = p.CustomerName,
+                    PhoneNo = p.PhoneNo,
+                    Address = p.Address,
+                    Email = p.Email
+
+                });
+
+                apiRes.Success = true;
+                apiRes.Data = allCus;
+                apiRes.Message = "Customer found";
+
+                return apiRes;
+            }
+            catch (Exception ex) 
+            {
+                apiRes.Message = ex.Message;
+                apiRes.Success = false;
+
+                return apiRes;
+
+
+            }
 
         }
 
