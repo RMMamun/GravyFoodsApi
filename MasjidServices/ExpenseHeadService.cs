@@ -10,10 +10,12 @@ namespace GravyFoodsApi.MasjidServices
     public class ExpenseHeadService : Repository<ExpenseHead>, IExpenseHeadService
     {
         private readonly MasjidDBContext _context;
+        private readonly ITenantContextRepository _tenant;
 
-        public ExpenseHeadService(MasjidDBContext context) : base(context)
+        public ExpenseHeadService(MasjidDBContext context, ITenantContextRepository tenant) : base(context)
         {
             _context = context;
+            _tenant = tenant;
         }
 
         
@@ -24,8 +26,8 @@ namespace GravyFoodsApi.MasjidServices
                 ExpenseHead expense = new ExpenseHead();
                 expense.HeadName = expenseHead.HeadName;
                 expense.AccountCode = expenseHead.AccountCode;
-                expense.BranchId = expenseHead.BranchId;
-                expense.CompanyId = expenseHead.CompanyId;
+                expense.BranchId = _tenant.BranchId;
+                expense.CompanyId = _tenant.CompanyId;
                 expense.CreatedAt = expenseHead.CreatedAt;
 
 
