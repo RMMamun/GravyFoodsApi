@@ -5,12 +5,13 @@ namespace GravyFoodsApi.MasjidRepository
 {
     public interface IExpenseHeadService : IRepository<ExpenseHead>
     {
-        Task<ExpenseHead> CreateAsync(ExpenseHeadDto expenseHead);
-        Task<ExpenseHead?> GetExpenseHeadById(int Id, string branchId, string companyId);
-
-        Task<IEnumerable<ExpenseHead?>> GetAllExpenseHeadAsync(string branchId, string companyId);
+        Task<ApiResponse<bool>> CreateAsync(ExpenseHeadDto expenseHead);
         
-        Task<bool> UpdateExpenseHeadAsync(ExpenseHead expenseHead);
-        Task<bool> DeleteExpenseHeadsAsync(int id, string branchId, string companyId);
+        Task<ApiResponse<ExpenseHeadDto?>> GetExpenseHeadById(int Id);
+
+        Task<ApiResponse<IEnumerable<ExpenseHeadDto?>>> GetAllExpenseHeadAsync();
+        
+        Task<ApiResponse<bool>> UpdateExpenseHeadAsync(ExpenseHeadDto expenseHead);
+        Task<ApiResponse<bool>> DeleteExpenseHeadsAsync(int id);
     }
 }

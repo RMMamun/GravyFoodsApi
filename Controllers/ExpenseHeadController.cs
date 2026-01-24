@@ -2,6 +2,7 @@
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace GravyFoodsApi.Controllers
 {
@@ -18,37 +19,76 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ExpenseHead>> Create([FromBody] ExpenseHeadDto expenseHead)
+        public async Task<ActionResult<ApiResponse<bool>>> Create([FromBody] ExpenseHeadDto expenseHead)
         {
-            var created = await _repository.CreateAsync(expenseHead);
-            return Ok(created);
-            //return CreatedAtAction(nameof(GetExpenseHeadById), new { id = created.Data.Id, branchId = created.Data.BranchId, companyId = created.Data.CompanyId }, created.Data);
+            ApiResponse<bool> apiRes = new ApiResponse<bool>();
+            try
+            {
+                var created = await _repository.CreateAsync(expenseHead);
+                return Ok(created);
+                //return CreatedAtAction(nameof(GetExpenseHeadById), new { id = created.Data.Id, branchId = created.Data.BranchId, companyId = created.Data.CompanyId }, created.Data);
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
+                return BadRequest(apiRes);
+            }
         }
 
-        [HttpGet("{id:int}/{branchId}/{companyId}")]
-        public async Task<ActionResult<ExpenseHead>> GetExpenseHeadByIdAsync(int id, string branchId, string companyId)
+        [HttpPut]
+        public async Task<ActionResult<ApiResponse<bool>>> Update([FromBody] ExpenseHeadDto expenseHead)
         {
-            
-            var expenseHead = await _repository.GetExpenseHeadById(id, branchId, companyId);
-            if (expenseHead == null)
+            ApiResponse<bool> apiRes = new ApiResponse<bool>();
+            try
             {
-                return NotFound();
+                var created = await _repository.UpdateExpenseHeadAsync(expenseHead);
+                return Ok(created);
+                //return CreatedAtAction(nameof(GetExpenseHeadById), new { id = created.Data.Id, branchId = created.Data.BranchId, companyId = created.Data.CompanyId }, created.Data);
             }
-            return Ok(expenseHead);
-
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
+                return BadRequest(apiRes);
+            }
         }
 
-        [HttpGet("{branchId}/{companyId}")]
-        public async Task<ActionResult<IEnumerable<ExpenseHead>>> GetAllExpenseHeadAsync(string branchId, string companyId)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ApiResponse<ExpenseHeadDto>>> GetExpenseHeadByIdAsync(int id)
         {
+            ApiResponse<ExpenseHeadDto> apiRes = new ApiResponse<ExpenseHeadDto>();
 
-            var expenseHead = await _repository.GetAllExpenseHeadAsync(branchId, companyId);
-            if (expenseHead == null)
+            try
             {
-                return NotFound();
+                var expenseHead = await _repository.GetExpenseHeadById(id);
+                
+                return Ok(expenseHead);
             }
-            return Ok(expenseHead);
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
+                return BadRequest(apiRes);
+            }
+        }
 
+        [HttpGet]
+        public async Task<ActionResult<ApiResponse<IEnumerable<ExpenseHeadDto>>>> GetAllExpenseHeadAsync()
+        {
+            ApiResponse<IEnumerable<ExpenseHeadDto>> apiRes = new ApiResponse<IEnumerable<ExpenseHeadDto>>();
+
+            try
+            {
+                var expenseHead = await _repository.GetAllExpenseHeadAsync();
+                return Ok(expenseHead);
+            }
+            catch(Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
+                return BadRequest(apiRes);
+            }
         }
 
     }

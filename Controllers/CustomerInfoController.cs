@@ -42,7 +42,7 @@ namespace GravyFoodsApi.Controllers
         }
 
         [HttpGet("{id}/{branchId}/{companyId}")]
-        public async Task<IActionResult> GetProductById(string id, string branchId, string companyId)
+        public async Task<IActionResult> GetCustomerById(string id, string branchId, string companyId)
         {
             var product = await _repository.GetCustomerInfoById(id,branchId,companyId);
 
@@ -54,7 +54,7 @@ namespace GravyFoodsApi.Controllers
 
 
         [HttpGet("{branchId}/{companyId}")]
-        public async Task<IActionResult> GetProductById(string branchId, string companyId)
+        public async Task<IActionResult> GetAllCustomersAsync(string branchId, string companyId)
         {
             var product = await _repository.GetAllCustomersAsync(branchId, companyId);
 
