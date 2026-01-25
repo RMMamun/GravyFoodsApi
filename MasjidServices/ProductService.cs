@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GravyFoodsApi.Data;
+using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Repositories;
@@ -17,11 +18,13 @@ namespace GravyFoodsApi.MasjidServices
     {
         private readonly MasjidDBContext _context;
         private readonly IMapper _mapper;
+        private readonly ITenantContextRepository _tenant;
 
-        public ProductService(MasjidDBContext context, IMapper mapper) : base(context)
+        public ProductService(MasjidDBContext context, IMapper mapper, ITenantContextRepository tenant) : base(context)
         {
             _context = context;
             _mapper = mapper;
+            _tenant = tenant;
         }
 
         public async Task<IEnumerable<ProductDto>> GetProductsWithDetailsAsync(string branchId, string companyId)
@@ -60,7 +63,7 @@ namespace GravyFoodsApi.MasjidServices
 
                 //});
 
-                var products = await GetProductsDetailsAsyc(branchId, companyId);
+                var products = await GetProductsDetailsAsyc(_tenant.BranchId, _tenant.CompanyId);
                 var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
 
                 return productDtos;
@@ -80,7 +83,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-                Product? products = await _context.Product.Where(p => (p.ProductCode == ProductId || p.SKUCode == Barcode) && p.BranchId == branchId && p.CompanyId == companyId).FirstOrDefaultAsync();
+                Product? products = await _context.Product.Where(p => (p.ProductCode == ProductId || p.SKUCode == Barcode) && p.BranchId == _tenant.BranchId && p.CompanyId == _tenant.CompanyId).FirstOrDefaultAsync();
                 
                 var productDtos = _mapper.Map<ProductDto>(products);
 
@@ -112,7 +115,7 @@ namespace GravyFoodsApi.MasjidServices
                 .Include(p => p.Branch)
                 .Include(p => p.Company)
                 .Include(p => p.Unit)
-                .Where(w =>  w.BranchId == branchId && w.CompanyId == companyId)
+                .Where(w =>  w.BranchId == _tenant.BranchId && w.CompanyId == _tenant.CompanyId)
                 .ToListAsync();
 
                 //w.IsAvailable == true && w.IsSalable == true &&
@@ -138,7 +141,7 @@ namespace GravyFoodsApi.MasjidServices
                                 .Include(p => p.Branch)
                                 .Include(p => p.Company)
                                 .Include(p => p.Unit)
-                                .Where(w => w.BranchId == branchId && w.CompanyId == companyId && w.ProductId == ProductId)
+                                .Where(w => w.BranchId == _tenant.BranchId && w.CompanyId == _tenant.CompanyId && w.ProductId == ProductId)
                                 .FirstOrDefaultAsync();
 
                 if (_product == null)
@@ -204,8 +207,8 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-
-                var product = await _context.Product.FindAsync(_product.ProductId);
+                //var product = await _context.Product.FindAsync(_product.ProductId);
+                var product = await _context.Product.Where(w => w.ProductId == _product.ProductId && w.BranchId == _tenant.BranchId && w.CompanyId == _tenant.CompanyId).FirstOrDefaultAsync();
                 if (product == null)
                 {
                     return false;
@@ -276,8 +279,6 @@ namespace GravyFoodsApi.MasjidServices
                         BrandId = product.BrandId,
                         CategoryId = product.CategoryId,
                         UnitId = product.UnitId,
-                        BranchId = product.BranchId,
-                        CompanyId = product.CompanyId,
                         CreatedDateTime = product.CreatedDateTime,
                         Price = product.Price,
                         DiscountedPrice = product.DiscountedPrice,
@@ -291,8 +292,10 @@ namespace GravyFoodsApi.MasjidServices
                         StockLimit = product.StockLimit,
                         ExpiryDate = product.ExpiryDate,
                         IsSerialBased = product.IsSerialBased,
-                        
-                        
+
+                        BranchId = _tenant.BranchId,
+                        CompanyId = _tenant.CompanyId,
+
 
 
                     };
@@ -336,9 +339,13 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<bool> DeleteProductAsync(string ProductId, string branchId, string companyId)
         {
+
+            string BranchId = _tenant.BranchId;
+            string CompanyId = _tenant.CompanyId;
+
             try
             {
-                var product = await _context.Product.FindAsync(ProductId);
+                var product = await _context.Product.Where(w => w.ProductId == ProductId && w.BranchId == BranchId && w.CompanyId == CompanyId).FirstOrDefaultAsync();
                 if (product == null)
                 {
                     return false;
@@ -349,11 +356,11 @@ namespace GravyFoodsApi.MasjidServices
 
 
                 await _context.ProductImages
-                .Where(od => od.ProductId == ProductId)
+                .Where(od => od.ProductId == ProductId && od.BranchId == BranchId && od.CompanyId == CompanyId)
                 .ExecuteDeleteAsync();
 
                 await _context.Product
-                .Where(od => od.ProductId == ProductId)
+                .Where(od => od.ProductId == ProductId && od.BranchId == BranchId && od.CompanyId == CompanyId)
                 .ExecuteDeleteAsync();
 
                 //_context.Products.Remove(product);

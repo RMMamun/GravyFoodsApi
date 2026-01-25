@@ -13,13 +13,15 @@ namespace GravyFoodsApi.MasjidServices
     public class ProductImageService : Repository<ProductImage>, IProductImageRepository
     {
         private readonly MasjidDBContext _context;
+        private readonly ITenantContextRepository _tenant;
 
         private string imageDirectory = Path.Combine(Environment.CurrentDirectory, "ProductImages");
 
 
-        public ProductImageService(MasjidDBContext context) : base(context)
+        public ProductImageService(MasjidDBContext context, ITenantContextRepository tenant) : base(context)
         {
             _context = context;
+            _tenant = tenant;
         }
 
         public Task<IEnumerable<ProductImageDTO>> GetProductImagesAsync(string productId)
@@ -28,7 +30,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
                 var images = _context.ProductImages
-                    .Where(pi => pi.ProductId == productId)
+                    .Where(pi => pi.ProductId == productId && pi.BranchId == _tenant.BranchId && pi.CompanyId == _tenant.CompanyId)
                     .Select(pi => new ProductImageDTO
                     {
                         ProductId = pi.ProductId,
@@ -56,7 +58,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
                 var images = _context.ProductImages
-                    .Where(pi => pi.BranchId == allProductImage.BranchId && pi.CompanyId == allProductImage.CompanyId)
+                    .Where(pi => pi.BranchId == _tenant.BranchId && pi.CompanyId == _tenant.CompanyId)
                     .Select(pi => new ProductImageDTO
                     {
                         ProductId = pi.ProductId,
@@ -83,11 +85,11 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
                 var isSaved = false;
-                string productId = productImage.Select(p => p.ProductId).FirstOrDefault() ?? string.Empty;
+                string productId = productImage.Select(p => p.ProductId ).FirstOrDefault() ?? string.Empty;
 
 
                 //Delete existing images for the product from the Directory & Database
-                this.DeleteProductImages(productId);
+                await this.DeleteProductImages(productId);
                 
 
                 foreach (var img in productImage)
@@ -153,7 +155,7 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<byte[]> GetImageDataFromDevice(string imgFileName)
+        public async Task<byte[]?> GetImageDataFromDevice(string imgFileName)
         {
             try
             {
@@ -175,15 +177,19 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public Task<bool> DeleteProductImages(string productid)
+        public async Task<bool> DeleteProductImages(string productid)
         {
             try
             {
                 //Get all images of the product
-                IList<ProductImage?> img = _context.ProductImages.Where(p => p.ProductId == productid).ToList();
-                
+                IList<ProductImage>? img = await _context.ProductImages.Where(p => p.ProductId == productid && p.BranchId == _tenant.BranchId && p.CompanyId == _tenant.CompanyId).ToListAsync();
+
+                if (img == null || img.Count == 0)
+                {
+                    return false;
+                }
                 //Delete all images of the product
-                _context.ProductImages.Where(p => p.ProductId == productid).ExecuteDelete();
+                _context.ProductImages.Where(p => p.ProductId == productid && p.BranchId == _tenant.BranchId && p.CompanyId == _tenant.CompanyId).ExecuteDelete();
 
                 string fileDirectory = Path.Combine(Environment.CurrentDirectory, "MasjidImages");
 
@@ -200,12 +206,13 @@ namespace GravyFoodsApi.MasjidServices
                 }
 
                 _context.SaveChanges();
-                return Task.FromResult(true);
+
+                return (true);
             }
             catch (Exception ex)
             {
                 // Log the exception (ex) as needed
-                return Task.FromResult(false);
+                return (false);
             }
         }
 

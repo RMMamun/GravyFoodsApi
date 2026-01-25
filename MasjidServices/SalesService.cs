@@ -14,18 +14,25 @@ namespace GravyFoodsApi.MasjidServices
     {
         private readonly MasjidDBContext _context;
         private readonly IProductStockRepository _StockRepo;
+        private readonly ITenantContextRepository _tenant;
 
 
-        public SalesService(MasjidDBContext context, IProductStockRepository stockRepo)
+
+        public SalesService(MasjidDBContext context, IProductStockRepository stockRepo, ITenantContextRepository tenant)
         {
             _context = context;
             _StockRepo = stockRepo;
+            _tenant = tenant;
         }
 
 
         public async Task<ApiResponse<SalesInfoDto>> CreateSalesAsync(SalesInfoDto saleDto)
         {
+
             ApiResponse<SalesInfoDto> apiRes = new ApiResponse<SalesInfoDto>();
+
+            string _branchId = _tenant.BranchId;
+            string _companyId = _tenant.CompanyId;
 
             // Get execution strategy (required for SQL Azure / retry logic)
             var strategy = _context.Database.CreateExecutionStrategy();
@@ -51,8 +58,8 @@ namespace GravyFoodsApi.MasjidServices
                             TotalDiscountAmount = saleDto.TotalDiscountAmount,
                             TotalPaidAmount = saleDto.TotalPaidAmount,
                             CreatedDateTime = saleDto.CreatedDateTime,
-                            BranchId = saleDto.BranchId,
-                            CompanyId = saleDto.CompanyId,
+                            BranchId = _branchId,
+                            CompanyId = _companyId,
                             UserId = saleDto.UserId,
 
 
@@ -72,8 +79,8 @@ namespace GravyFoodsApi.MasjidServices
                                 WHId = d.WHId,
                                 DiscountAmountPerUnit = 0,
                                 
-                                BranchId = d.BranchId,
-                                CompanyId = d.CompanyId,
+                                BranchId = _branchId,
+                                CompanyId = _companyId,
 
 
                                 SalesId = strSalesId // Fix: Set the required SalesId property
@@ -95,10 +102,7 @@ namespace GravyFoodsApi.MasjidServices
                             return apiRes;
                         }
 
-
                         await transaction.CommitAsync();
-
-
 
                         saleDto.SalesId = strSalesId;
 
@@ -142,8 +146,7 @@ namespace GravyFoodsApi.MasjidServices
                 ProductStockDto stock = new ProductStockDto();
                 foreach (var item in sale.SalesDetails)
                 {
-
-                    response = await _StockRepo.UpdateProductStockAsync(false,item.ProductId, item.Quantity, item.UnitType, item.UnitId, item.WHId, item.BranchId, item.CompanyId);
+                    response = await _StockRepo.UpdateProductStockAsync(false,item.ProductId, item.Quantity, item.UnitType, item.UnitId, item.WHId, _tenant.BranchId, _tenant.CompanyId);
                 }
 
                 response.Success = true;
@@ -164,7 +167,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             string str = companyCode + Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
             //check if already exists, 
-            var isExist = _context.SalesInfo.Any(c => c.SalesId == str);
+            var isExist = _context.SalesInfo.Any(c => c.SalesId == str && c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId);
             if (isExist)
             {
                 //recursively call the function until a unique ID is found
@@ -205,7 +208,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             var existing = await _context.SalesInfo
                 .Include(s => s.SalesDetails)
-                .FirstOrDefaultAsync(s => s.SalesId == salesId);
+                .FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId);
 
             if (existing == null)
                 return null;
@@ -228,7 +231,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             var existing = await _context.SalesInfo
                 .Include(s => s.SalesDetails)
-                .FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == branchId && s.CompanyId == companyId);
+                .FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId);
 
             if (existing == null)
                 return false;
@@ -245,14 +248,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-
-                //IEnumerable<SalesInfo> sales = await _context.SalesInfo
-                //    .Include(s => s.SalesDetails)
-                //    .Include(s => s.CustomerInfo)
-                //    .ToListAsync();
-
-
-                var salesDtos = await _context.SalesInfo.Where(s => s.CreatedDateTime.Date >= fromDate.Date && s.CreatedDateTime.Date <= toDate.Date && s.BranchId == branchId && s.CompanyId == companyId)
+                var salesDtos = await _context.SalesInfo.Where(s => s.CreatedDateTime.Date >= fromDate.Date && s.CreatedDateTime.Date <= toDate.Date && s.BranchId ==_tenant.BranchId && s.CompanyId == _tenant.CompanyId)
                 .Include(s => s.SalesDetails)
                 .Include(s => s.CustomerInfo)
                 .Select(s => new SalesInfoDto
@@ -294,8 +290,6 @@ namespace GravyFoodsApi.MasjidServices
                 .ToListAsync();
 
 
-
-
                 return salesDtos;
             }
             catch (Exception ex)
@@ -318,7 +312,7 @@ namespace GravyFoodsApi.MasjidServices
                     .Include(s => s.CustomerInfo)
                     .AsQueryable();
 
-                query = query.Where(s => s.BranchId == branchId && s.CompanyId == companyId);
+                query = query.Where(s => s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId);
 
                 // Date filter (only if provided)
                 if (fromDate != null && toDate != null)
@@ -415,7 +409,7 @@ namespace GravyFoodsApi.MasjidServices
                 //    .ToListAsync();
 
 
-                var salesDtos = await _context.SalesInfo
+                var salesDtos = await _context.SalesInfo.Where(w => w.BranchId == _tenant.BranchId && w.CompanyId == _tenant.CompanyId)
                 .Include(s => s.SalesDetails)
                 .Include(s => s.CustomerInfo)
                 .Select(s => new SalesInfoDto
@@ -476,7 +470,7 @@ namespace GravyFoodsApi.MasjidServices
 
             try
             {
-                var salesDtos = await _context.SalesInfo.Where (s => s.SalesId == salesId && s.BranchId == branchId && s.CompanyId == companyId)
+                var salesDtos = await _context.SalesInfo.Where (s => s.SalesId == salesId && s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId)
                 .Include(s => s.SalesDetails)
                 .Include(s => s.CustomerInfo)
                 .Select(s => new SalesInfoDto
@@ -570,7 +564,7 @@ namespace GravyFoodsApi.MasjidServices
                     .Include(s => s.CustomerInfo)            // load customer
                     .Include(s => s.SalesDetails)            // load sales details
                     .ThenInclude(d => d.Product)         // load product for each detail
-                .FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == branchId && s.CompanyId == companyId);
+                .FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId);
 
 
 
@@ -597,8 +591,8 @@ namespace GravyFoodsApi.MasjidServices
                 .Where(d =>
                     d.SalesInfo.CreatedDateTime.Date >= fromDate.Date &&
                     d.SalesInfo.CreatedDateTime.Date <= toDate.Date &&
-                    d.SalesInfo.BranchId == branchId &&
-                    d.SalesInfo.CompanyId == companyId
+                    d.SalesInfo.BranchId == _tenant.BranchId &&
+                    d.SalesInfo.CompanyId == _tenant.CompanyId
                 )
                 .GroupBy(d => new
                 {
@@ -616,8 +610,8 @@ namespace GravyFoodsApi.MasjidServices
                     TotalSalesAmount = g.Sum(x => x.TotalPrice),
                     TotalDiscount = g.Sum(x => x.TotalDiscount),
                     TotalVAT = g.Sum(x => x.TotalVAT),
-                    BranchId = branchId,
-                    CompanyId = companyId
+                    BranchId = _tenant.BranchId,
+                    CompanyId = _tenant.CompanyId
                 })
                 .OrderByDescending(x => x.TotalQuantitySold)
                 .ToListAsync();

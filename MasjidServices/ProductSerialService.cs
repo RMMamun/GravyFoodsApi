@@ -9,10 +9,12 @@ namespace GravyFoodsApi.MasjidServices
     {
 
         private readonly MasjidDBContext _context;
+        private readonly ITenantContextRepository _tenant;
 
-        public ProductSerialService(MasjidDBContext context)
+        public ProductSerialService(MasjidDBContext context, ITenantContextRepository tenant)
         {
             _context = context;
+            _tenant = tenant;
         }
 
         public async Task<ApiResponse<bool>> AddProductSerialAsync(IEnumerable<ProductSerialDto> productSerials)
@@ -25,8 +27,6 @@ namespace GravyFoodsApi.MasjidServices
                 {
                     ProductId = ps.ProductId,
                     SerialNumber = ps.SerialNumber,
-                    BranchId = ps.BranchId,
-                    CompanyId = ps.CompanyId,
                     ManufactureDate = ps.ManufactureDate,
                     ExpiryDate = ps.ExpiryDate,
                     SKU = ps.SKU,
@@ -43,12 +43,13 @@ namespace GravyFoodsApi.MasjidServices
                     StockStatus = ps.StockStatus,
                     StockHistory = ps.StockHistory,
                     WHId = ps.WHId,
-                   
+                    BranchId = _tenant.BranchId,
+                    CompanyId = _tenant.CompanyId,
+
                 });
 
                 await _context.ProductSerials.AddRangeAsync(productSerialList);
                 await _context.SaveChangesAsync();
-
 
                 apiRes.Success = true;
                 apiRes.Message = "Serial added successfully";

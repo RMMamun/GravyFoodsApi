@@ -16,24 +16,27 @@ namespace GravyFoodsApi.MasjidServices
         private readonly IMapper _mapper;
         private  readonly IProductUnitRepository _UnitRepo;
         private readonly IUnitConversionRepository _unitConvRepo;
-        public ProductStockService(MasjidDBContext context, IMapper mapper, IProductUnitRepository UnitRepo, IUnitConversionRepository unitConvRepo)
+        private readonly ITenantContextRepository _tenant;
+        public ProductStockService(MasjidDBContext context, IMapper mapper, IProductUnitRepository UnitRepo, IUnitConversionRepository unitConvRepo, ITenantContextRepository tenant)
         {
             _context = context;
             _mapper = mapper;
             _UnitRepo = UnitRepo;
             _unitConvRepo = unitConvRepo;
+            _tenant = tenant;
         }
 
-        public Task<ApiResponse<IEnumerable<ProductStockDto>>> GetAllProductStockAsync(string branchId, string companyId)
+        public async Task<ApiResponse<IEnumerable<ProductStockDto>>> GetAllProductStockAsync(string branchId, string companyId)
         {
             var response = new ApiResponse<IEnumerable<ProductStockDto>>();
             try
             {
 
-                var stocks = _context.Set<ProductStock>()
-                    .Where(ps => ps.BranchId == branchId
-                              && ps.CompanyId == companyId)
-                    .ToList();
+                var stocks = await _context.Set<ProductStock>()
+                    .Where(ps => ps.BranchId == _tenant.BranchId
+                              && ps.CompanyId == _tenant.CompanyId)
+                    .ToListAsync();
+
                 var stockDtos = stocks.Select(stock => new ProductStockDto
                 {
                     ProductId = stock.ProductId,
@@ -48,7 +51,7 @@ namespace GravyFoodsApi.MasjidServices
                 response.Success = true;
                 response.Message = "Product stocks retrieved successfully.";
 
-                return Task.FromResult(response);
+                return (response);
             }
             catch (Exception ex)
             {
@@ -57,22 +60,23 @@ namespace GravyFoodsApi.MasjidServices
                 response.Message = "An error occurred while retrieving product stocks.";
                 response.Errors = new List<string> { ex.Message.ToString() };
 
-                return Task.FromResult(response);
+                return (response);
 
             }
         }
 
-        public Task<ApiResponse<ProductStockDto>> GetProductStockByIdAsync(string productId, string branchId, string companyId)
+        public async Task<ApiResponse<ProductStockDto>> GetProductStockByIdAsync(string productId, string branchId, string companyId)
         {
             var response = new ApiResponse<ProductStockDto>();
 
             try
             {
                 
-                var stock = _context.Set<ProductStock>()
-                    .FirstOrDefault(ps => ps.ProductId == productId
-                                       && ps.BranchId == branchId
-                                       && ps.CompanyId == companyId);
+                var stock = await _context.Set<ProductStock>()
+                    .FirstOrDefaultAsync(ps => ps.ProductId == productId
+                                       && ps.BranchId == _tenant.BranchId
+                                       && ps.CompanyId == _tenant.CompanyId);
+
                 if (stock != null)
                     {
                     //var stockDto = new ProductStockDto
@@ -99,7 +103,7 @@ namespace GravyFoodsApi.MasjidServices
                     response.Success = false;
                     response.Message = "Product stock not found.";
                 }
-                return Task.FromResult(response);
+                return (response);
             }
             catch (Exception ex)
             {
@@ -108,7 +112,7 @@ namespace GravyFoodsApi.MasjidServices
                 response.Message = "An error occurred while retrieving product stock.";
                 response.Errors = new List<string> { ex.Message.ToString() };
 
-                return Task.FromResult(response);
+                return (response);
 
 
             }
@@ -119,13 +123,16 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<APIResponseDto> UpdateProductStockAsync(bool isAdd, string ProductId, double Quantity, string Unit,string UnitId,string WHId, string BranchId, string CompanyId)
         {
+            string _branchId = _tenant.BranchId;
+            string _companyId = _tenant.CompanyId;
+
             APIResponseDto response = new APIResponseDto();
 
             try
             {
 
                 //convert to small unit before updating stock
-                var result = await _unitConvRepo.ConvertToSmallUnit(Quantity, Unit,UnitId, BranchId, CompanyId);
+                var result = await _unitConvRepo.ConvertToSmallUnit(Quantity, Unit,UnitId, _branchId, _companyId);
 
                 int qty = result.Qty;
                 string smallUnit = result.Unit;
@@ -133,8 +140,8 @@ namespace GravyFoodsApi.MasjidServices
                 //Check the product stock exists
                 var existingStock = _context.Set<ProductStock>()
                     .FirstOrDefault(ps => ps.ProductId == ProductId
-                                       && ps.BranchId == BranchId
-                                       && ps.CompanyId == CompanyId);
+                                       && ps.BranchId == _branchId
+                                       && ps.CompanyId == _companyId);
 
 
                 //***** Create new stock entry ***********************
@@ -144,8 +151,8 @@ namespace GravyFoodsApi.MasjidServices
                     ProductStock newStock = new ProductStock
                     {
                         ProductId = ProductId,
-                        BranchId = BranchId,
-                        CompanyId = CompanyId,
+                        BranchId = _branchId,
+                        CompanyId = _companyId,
                         Quantity = isAdd ? qty : -qty,
                         SmallUnit = smallUnit,
                         WHId = WHId
@@ -190,6 +197,8 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<ApiResponse<IEnumerable<LowStockProductsDto>>> GetLowStockProductsAsync(int totalProducts, string branchId, string companyId)
         {
+            string _branchId = _tenant.BranchId;
+            string _companyId = _tenant.CompanyId;  
 
             var response = new ApiResponse<IEnumerable<LowStockProductsDto>>();
 
@@ -201,7 +210,7 @@ namespace GravyFoodsApi.MasjidServices
                 var rawStocks = await _context.ProductStocks
                     .Include(s => s.Product)
                     .Include(w => w.Warehouse)
-                    .Where(s => s.BranchId == branchId && s.CompanyId == companyId)
+                    .Where(s => s.BranchId == _branchId && s.CompanyId == _companyId)
                     .OrderBy(s => s.Quantity)
                     .Take(totalProducts)
                     .ToListAsync();
@@ -210,7 +219,7 @@ namespace GravyFoodsApi.MasjidServices
 
                 foreach (var s in rawStocks)
                 {
-                    var unit = await _unitConvRepo.ConvertToShowingUnit(s.ProductId,s.Quantity,s.Product.DefaultUnit,branchId,companyId);
+                    var unit = await _unitConvRepo.ConvertToShowingUnit(s.ProductId,s.Quantity,s.Product.DefaultUnit, _branchId, _companyId);
 
                     stockDtos.Add(new LowStockProductsDto
                     {

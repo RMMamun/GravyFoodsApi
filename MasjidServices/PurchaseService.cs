@@ -15,17 +15,22 @@ namespace GravyFoodsApi.MasjidServices
         private readonly MasjidDBContext _context;
         private readonly IProductStockRepository _StockRepo;
         private readonly IProductSerialRepository _ProductSerialRepo;
+        private readonly ITenantContextRepository _tenant;
 
-        public PurchaseService(MasjidDBContext context, IProductStockRepository stockRepo, IProductSerialRepository ProductSerialRepo)
+        public PurchaseService(MasjidDBContext context, IProductStockRepository stockRepo, IProductSerialRepository ProductSerialRepo, ITenantContextRepository tenant)
         {
             _context = context;
             _StockRepo = stockRepo;
             _ProductSerialRepo = ProductSerialRepo;
+            _tenant = tenant;
         }
 
 
         public async Task<ApiResponse<PurchaseInfoDto>> CreatePurchaseAsync(PurchaseInfoDto PurDto)
         {
+
+            string _branchId = _tenant.BranchId;
+            string _companyId = _tenant.CompanyId;
 
             ApiResponse<PurchaseInfoDto> apiRes = new ApiResponse<PurchaseInfoDto>();
 
@@ -39,7 +44,6 @@ namespace GravyFoodsApi.MasjidServices
                     // START TRANSACTION INSIDE RETRY STRATEGY
                     await using var transaction = await _context.Database.BeginTransactionAsync();
 
-
                     try
                     {
                         string strPurchaseId = GeneratePurchaseId(PurDto.CompanyId);
@@ -51,14 +55,14 @@ namespace GravyFoodsApi.MasjidServices
                             PaidAmount = PurDto.PaidAmount,
                             DueAmount = PurDto.DueAmount,
                             CreatedDateTime = DateTime.Now,
-                            BranchId = PurDto.BranchId,
-                            CompanyId = PurDto.CompanyId,
                             UserId = PurDto.UserId,
                             EditDateTime = null,
                             PaymentMethod = "",
                             PurchaseDate = PurDto.CreatedDateTime,
                             TransactionId = "",
 
+                            BranchId = _branchId,
+                            CompanyId = _companyId,
 
 
                             PurchaseDetails = PurDto.PurchaseDetails.Select(d => new PurchaseDetails
@@ -72,13 +76,15 @@ namespace GravyFoodsApi.MasjidServices
                                 TotalPrice = d.TotalPrice,
                                 VATPerUnit = d.VATPerUnit,
                                 TotalVAT = d.TotalVAT,
-                                BranchId = PurDto.BranchId,
-                                CompanyId = PurDto.CompanyId,
+
+                                BranchId = _branchId,
+                                CompanyId = _companyId,
 
 
                                 PurchaseId = strPurchaseId // Fix: Set the required PurchaseId property
                             }).ToList()
                         }; ;
+
                         _context.PurchaseInfo.Add(Purchase);
                         await _context.SaveChangesAsync();
 
@@ -168,7 +174,7 @@ namespace GravyFoodsApi.MasjidServices
                 foreach (var item in purDto.PurchaseDetails)
                 {
 
-                    response = await _StockRepo.UpdateProductStockAsync(true, item.ProductId, item.Quantity, item.UnitType, item.UnitId, item.WHId, purDto.BranchId, purDto.CompanyId);
+                    response = await _StockRepo.UpdateProductStockAsync(true, item.ProductId, item.Quantity, item.UnitType, item.UnitId, item.WHId, _tenant.BranchId, _tenant.CompanyId);
                 }
 
                 response.Success = true;
@@ -189,7 +195,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             string str = companyCode + Guid.NewGuid().ToString("N").Substring(0, 30).ToUpper();
             //check if already exists, 
-            var isExist = _context.PurchaseInfo.Any(c => c.PurchaseId == str);
+            var isExist = _context.PurchaseInfo.Any(c => c.PurchaseId == str && c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId);
             if (isExist)
             {
                 //recursively call the function until a unique ID is found
@@ -230,7 +236,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             var existing = await _context.PurchaseInfo
                 .Include(s => s.PurchaseDetails)
-                .FirstOrDefaultAsync(s => s.PurchaseId == PurchaseId);
+                .FirstOrDefaultAsync(s => s.PurchaseId == PurchaseId && s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId);
 
             if (existing == null)
                 return null;
@@ -253,7 +259,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             var existing = await _context.PurchaseInfo
                 .Include(s => s.PurchaseDetails)
-                .FirstOrDefaultAsync(s => s.PurchaseId == PurchaseId && s.BranchId == BranchId && s.CompanyId == CompanyId);
+                .FirstOrDefaultAsync(s => s.PurchaseId == PurchaseId && s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId);
 
             if (existing == null)
                 return false;
@@ -276,7 +282,7 @@ namespace GravyFoodsApi.MasjidServices
                     .Include(s => s.SupplierInfo)
                     .AsQueryable();
 
-                query = query.Where(s => s.BranchId == branchId && s.CompanyId == companyId);
+                query = query.Where(s => s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId);
 
                 // Date filter (only if provided)
                 if (fromDate != null && toDate != null)
@@ -324,8 +330,8 @@ namespace GravyFoodsApi.MasjidServices
                             VATPerUnit = d.VATPerUnit,
                             TotalVAT = d.TotalVAT,
                             UserId = "",
-                            BranchId = d.BranchId,
-                            CompanyId = d.CompanyId,
+                            BranchId = _tenant.BranchId,
+                            CompanyId = _tenant.CompanyId,
                         }).ToList()
                     })
                     .ToListAsync();
@@ -411,6 +417,8 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
+                string _branchId = _tenant.BranchId;
+                string _companyId = _tenant.CompanyId;
 
                 //IEnumerable<PurchaseInfo> Purchase = await _context.PurchaseInfo
                 //    .Include(s => s.PurchaseDetails)
@@ -427,8 +435,8 @@ namespace GravyFoodsApi.MasjidServices
                     SupplierId = s.SupplierId.ToString(),
                     SupplierName = s.SupplierInfo.SupplierName,
                     UserId = s.UserId.ToString(),
-                    BranchId = s.BranchId.ToString(),
-                    CompanyId = s.CompanyId.ToString(),
+                    BranchId = _branchId,
+                    CompanyId = _companyId,
 
                     TotalAmount = s.TotalAmount,
                     CreatedDateTime = s.CreatedDateTime,
@@ -447,15 +455,12 @@ namespace GravyFoodsApi.MasjidServices
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
                         UserId = "", //d.UserId.ToString(),
-                        BranchId = d.BranchId.ToString(),
-                        CompanyId = d.CompanyId.ToString(),
+                        BranchId = _branchId,
+                        CompanyId = _companyId,
 
                     }).ToList()
-                })
-                .ToListAsync();
 
-
-
+                }).ToListAsync();
 
                 return PurchaseDtos;
             }
@@ -479,9 +484,9 @@ namespace GravyFoodsApi.MasjidServices
 
             return await _context.PurchaseInfo
                 .Include(s => s.SupplierInfo)            // load Supplier
-            .Include(s => s.PurchaseDetails)            // load Purchase details
+                .Include(s => s.PurchaseDetails)            // load Purchase details
                 .ThenInclude(d => d.Product)         // load product for each detail
-            .FirstOrDefaultAsync(s => s.PurchaseId == PurchaseId && s.BranchId == BranchId && s.CompanyId == CompanyId);
+            .FirstOrDefaultAsync(s => s.PurchaseId == PurchaseId && s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId);
 
 
         }

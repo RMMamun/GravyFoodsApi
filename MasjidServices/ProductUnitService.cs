@@ -15,10 +15,12 @@ namespace GravyFoodsApi.MasjidServices
     public class ProductUnitService : IProductUnitRepository
     {
         private readonly MasjidDBContext _context;
+        private readonly ITenantContextRepository _tenant;
 
-        public ProductUnitService(MasjidDBContext context)
+        public ProductUnitService(MasjidDBContext context, ITenantContextRepository tenant)
         {
             _context = context;
+            _tenant = tenant;
         }
 
 
@@ -29,14 +31,15 @@ namespace GravyFoodsApi.MasjidServices
             {
                 var newUnit = new ProductUnits
                 {
-                    UnitId = GenerateUnitId(unitDto.CompanyId),
+                    UnitId = await GenerateUnitId(unitDto.CompanyId),
                     UnitName = unitDto.UnitName,
                     UnitDescription = unitDto.UnitDescription,
                     UnitSegments = unitDto.UnitSegments,
                     UnitSegmentsRatio = unitDto.UnitSegmentsRatio,
                     IsActive = unitDto.IsActive,
-                    BranchId = unitDto.BranchId,
-                    CompanyId = unitDto.CompanyId
+
+                    BranchId = _tenant.BranchId,
+                    CompanyId = _tenant.CompanyId
                 };
                 _context.ProductUnits.Add(newUnit);
                 await _context.SaveChangesAsync();
@@ -50,7 +53,7 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        private string GenerateUnitId(string companyCode)
+        private async Task<string> GenerateUnitId(string companyCode)
         {
             var unitid = companyCode + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper();
             //check the generated id in the database, if exists create new and check again 
@@ -62,7 +65,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-                var unit = await _context.ProductUnits.Where(b => b.UnitId == unitdto.UnitId && b.CompanyId == unitdto.CompanyId && b.BranchId == unitdto.BranchId).FirstOrDefaultAsync();
+                var unit = await _context.ProductUnits.Where(b => b.UnitId == unitdto.UnitId && b.CompanyId == _tenant.CompanyId && b.BranchId == _tenant.BranchId).FirstOrDefaultAsync();
                 if (unit == null)
                 {
                     return false;
@@ -102,7 +105,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                var p = await _context.ProductUnits.Where(u => u.UnitId == unitId && u.BranchId == branchId && u.CompanyId == companyId).FirstOrDefaultAsync();
+                var p = await _context.ProductUnits.Where(u => u.UnitId == unitId && u.BranchId == _tenant.BranchId && u.CompanyId == _tenant.CompanyId).FirstOrDefaultAsync();
                 if (p == null)
                 {
                     return null;
@@ -133,7 +136,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                IEnumerable<ProductUnits> units = await _context.ProductUnits.Where(b => b.BranchId == branchId && b.CompanyId == companyId).ToListAsync();
+                IEnumerable<ProductUnits> units = await _context.ProductUnits.Where(b => b.BranchId == _tenant.BranchId && b.CompanyId == _tenant.CompanyId).ToListAsync();
                 IEnumerable<ProductUnitsDto> allUnits = units.Select(p => new ProductUnitsDto
                 {
                     UnitId = p.UnitId,
@@ -160,7 +163,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                var unit = await _context.ProductUnits.Where(b => b.UnitId == unitId && b.CompanyId == companyId && b.BranchId == branchId).FirstOrDefaultAsync();
+                var unit = await _context.ProductUnits.Where(b => b.UnitId == unitId && b.CompanyId == _tenant.CompanyId && b.BranchId == _tenant.BranchId).FirstOrDefaultAsync();
                 if (unit == null)
                 {
                     return false;

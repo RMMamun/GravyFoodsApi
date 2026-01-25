@@ -10,19 +10,24 @@ namespace GravyFoodsApi.MasjidServices
     public class NavMenuService : INavMenuRepository
     {
         private readonly MasjidDBContext _context;
-        public NavMenuService(MasjidDBContext context) => _context = context;
+        private readonly ITenantContextRepository _tenant;
+        public NavMenuService(MasjidDBContext context, ITenantContextRepository tenant)
+        {
+            _context = context;
+            _tenant = tenant;
+        }
 
         public async Task<List<NavMenuItem>> GetAllMenusAsync(string companyId, string branchId)
         {
             return await _context.NavMenuItems
-                .Where(x => x.CompanyId == companyId && x.BranchId == branchId && x.IsActive)
+                .Where(x => x.CompanyId == _tenant.CompanyId && x.BranchId == _tenant.BranchId)
                 .OrderBy(x => x.DisplayOrder)
                 .ToListAsync();
         }
 
         public async Task<List<NavMenuItemDto>> GetHierarchicalMenusAsync(string companyId, string branchId)
         {
-            var items = await GetAllMenusAsync(companyId, branchId);
+            var items = await GetAllMenusAsync(_tenant.CompanyId, _tenant.BranchId);
 
             List<NavMenuItemDto> ToDtoTree(int? parentId)
             {
@@ -59,7 +64,7 @@ namespace GravyFoodsApi.MasjidServices
             //.Where(m => m.ParentId == null && m.BranchId == branchId && m.CompanyId == companyId)
 
             var parents = await _context.NavMenuItems
-            .Where(m => m.BranchId == branchId && m.CompanyId == companyId)
+            .Where(m => m.BranchId == _tenant.BranchId && m.CompanyId == _tenant.CompanyId)
             .Select(m => new NavMenuItemDto { 
                 MenuId = m.MenuId, 
                 Title = m.Title,
@@ -88,8 +93,8 @@ namespace GravyFoodsApi.MasjidServices
                 //check the existence
                 var exists = await _context.NavMenuItems
                     .AnyAsync(m => m.Title == menuItem.Title
-                    && m.CompanyId == menuItem.CompanyId
-                    && m.BranchId == menuItem.BranchId);
+                    && m.CompanyId == _tenant.CompanyId
+                    && m.BranchId == _tenant.BranchId);
 
                 if (exists)
                 {
@@ -99,7 +104,7 @@ namespace GravyFoodsApi.MasjidServices
 
                 //create menuid as last menuid + 1
                 var lastMenu = await _context.NavMenuItems
-                    .Where(m => m.CompanyId == menuItem.CompanyId && m.BranchId == menuItem.BranchId)
+                    .Where(m => m.CompanyId == _tenant.CompanyId && m.BranchId == _tenant.BranchId)
                     .OrderByDescending(m => m.MenuId)
                     .FirstOrDefaultAsync();
 
@@ -113,8 +118,8 @@ namespace GravyFoodsApi.MasjidServices
 
                 var createdItem = await _context.NavMenuItems
                     .FirstOrDefaultAsync(m => m.Title == menuItem.Title
-                    && m.CompanyId == menuItem.CompanyId
-                    && m.BranchId == menuItem.BranchId);
+                    && m.CompanyId == _tenant.CompanyId
+                    && m.BranchId == _tenant.BranchId);
 
                 if (createdItem != null)
                 {
@@ -140,8 +145,8 @@ namespace GravyFoodsApi.MasjidServices
                 //check the existence
                 var exists = await _context.NavMenuItems
                     .AnyAsync(m => m.MenuId == menuItem.MenuId
-                    && m.CompanyId == menuItem.CompanyId
-                    && m.BranchId == menuItem.BranchId);
+                    && m.CompanyId == _tenant.CompanyId
+                    && m.BranchId == _tenant.BranchId);
 
                 if (exists == false)
                 {
@@ -172,8 +177,8 @@ namespace GravyFoodsApi.MasjidServices
                                    join a in _context.UserWiseMenuAssignment
                                       on new { m.MenuId, m.CompanyId, m.BranchId } equals new { MenuId = a.MenuId, a.CompanyId, a.BranchId }
                                    where a.UserId == userId
-                                         && a.CompanyId == companyId
-                                         && a.BranchId == branchId
+                                         && a.CompanyId == _tenant.CompanyId
+                                         && a.BranchId == _tenant.BranchId
                                          && m.IsActive
                                    orderby m.DisplayOrder
                                    select m)
