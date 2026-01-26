@@ -19,12 +19,12 @@ namespace GravyFoodsApi.MasjidServices
     {
         private readonly MasjidDBContext _context;
         private readonly IProductUnitRepository _UnitRepo;
-        public UnitConversionService(MasjidDBContext context, IProductUnitRepository UnitRepo)
+        private readonly ITenantContextRepository _tenant;
+        public UnitConversionService(MasjidDBContext context, IProductUnitRepository UnitRepo, ITenantContextRepository tenant)
         {
             _context = context;
             _UnitRepo = UnitRepo;
-
-
+            _tenant = tenant;
         }
 
               
@@ -75,7 +75,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                var unitInfo = _UnitRepo.GetUnitsById(UnitId, BranchId, CompanyId).Result;
+                var unitInfo = _UnitRepo.GetUnitsById(UnitId, _tenant.BranchId, _tenant.CompanyId).Result;
                 if (unitInfo == null)
                 {
                     //response.Success = false;
@@ -129,7 +129,7 @@ namespace GravyFoodsApi.MasjidServices
             {
 
                 var result = (
-                            from p in _context.Product.Where(p => p.ProductId == ProductId && p.BranchId == BranchId && p.CompanyId == CompanyId)
+                            from p in _context.Product.Where(p => p.ProductId == ProductId && p.BranchId == _tenant.BranchId && p.CompanyId == _tenant.CompanyId)
                             join u in _context.ProductUnits on p.UnitId equals u.UnitId
                             select new
                             {
@@ -142,9 +142,7 @@ namespace GravyFoodsApi.MasjidServices
 
 
 
-                string ShowingUnit = result.Result.DefaultUnit;
 
-                string UnitId = result.Result.UnitId;
                 //var unitInfo = _UnitRepo.GetUnitsById(UnitId, BranchId, CompanyId).Result;
 
                 if (result == null)
@@ -160,6 +158,10 @@ namespace GravyFoodsApi.MasjidServices
                 }
                 else
                 {
+                    string ShowingUnit = result.Result.DefaultUnit;
+
+                    string UnitId = result.Result.UnitId;
+
                     //Convert quantity to small unit
                     string unitSegments = result.Result.UnitSegments;
                     string unitSegmentsRatio = result.Result.UnitSegmentsRatio;

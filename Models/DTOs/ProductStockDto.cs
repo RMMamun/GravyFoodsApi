@@ -60,4 +60,26 @@ namespace GravyFoodsApi.Models.DTOs
 
     }
 
+
+    public class ProductsStockDto
+    {
+
+        public string ProductId { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
+
+        public string WHId { get; set; }
+        public string WHName { get; set; }
+
+        public int Quantity { get; set; }
+
+        public string ShowingUnit { get; set; }
+
+        public string BranchName { get; set; } = string.Empty;
+
+
+
+    }
+
+
+
 }

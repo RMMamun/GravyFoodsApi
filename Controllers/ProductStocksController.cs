@@ -23,6 +23,16 @@ namespace GravyFoodsApi.Controllers
             return Ok(stocks);
         }
 
+
+        [HttpGet("GetStockOfAllProducts")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<LowStockProductsDto>>>> GetStockOfAllProducts()
+        {
+            var stocks = await _repo.GetAllProductStockAsync();
+            return Ok(stocks);
+        }
+
+
+
         //[HttpGet("{id}")]
         //public async Task<ActionResult<ProductStock>> Get(int id)
         //{

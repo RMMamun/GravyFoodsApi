@@ -9,10 +9,12 @@ namespace GravyFoodsApi.MasjidServices
     public class WarehouseService : IWarehouseRepository
     {
         private readonly MasjidDBContext _context;
+        private readonly ITenantContextRepository _tenant;
 
-        public WarehouseService(MasjidDBContext context)
+        public WarehouseService(MasjidDBContext context, ITenantContextRepository tenant)
         {
             _context = context;
+            _tenant = tenant;
         }
 
         public async Task<ApiResponse<WarehouseDto>> CreateWarehouseAsync(WarehouseDto warehouseDto)
@@ -21,7 +23,7 @@ namespace GravyFoodsApi.MasjidServices
 
             try
             {
-                var isExisted = await GetWarehouseByIdAsync(warehouseDto.WHId, warehouseDto.BranchId, warehouseDto.CompanyId);
+                var isExisted = await GetWarehouseByIdAsync(warehouseDto.WHId, _tenant.BranchId, _tenant.CompanyId);
                 if (isExisted.Success == true)
                 {
                     apiRes.Success = false;
@@ -34,11 +36,11 @@ namespace GravyFoodsApi.MasjidServices
                 Warehouse newWH = new Warehouse
                 {
 
-                    WHId = GenerateWHId(warehouseDto.CompanyId),
+                    WHId = GenerateWHId(_tenant.CompanyId),
                     WHName = warehouseDto.WHName,
                     WHLocationNo = warehouseDto.WHLocationNo,
-                    BranchId = warehouseDto.BranchId,
-                    CompanyId = warehouseDto.CompanyId,
+                    BranchId = _tenant.BranchId,
+                    CompanyId = _tenant.CompanyId,
 
                 };
 
@@ -71,7 +73,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                var warehouses = _context.Warehouse.Where(w => w.BranchId == branchId && w.CompanyId == companyId).ToList();
+                var warehouses = _context.Warehouse.Where(w => w.BranchId == _tenant.BranchId && w.CompanyId == _tenant.CompanyId).ToList();
                 var warehouseDtos = warehouses.Select(w => new WarehouseDto
                 {
                     WHId = w.WHId,
@@ -112,7 +114,7 @@ namespace GravyFoodsApi.MasjidServices
 
             try
             {
-                var WHDto = _context.Warehouse.Where(w => w.WHId == WHId && w.BranchId == branchId && w.CompanyId == companyId).FirstOrDefault();
+                var WHDto = _context.Warehouse.Where(w => w.WHId == WHId && w.BranchId == _tenant.BranchId && w.CompanyId == _tenant.CompanyId).FirstOrDefault();
 
                 if (WHDto != null)
                 {

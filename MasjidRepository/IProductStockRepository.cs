@@ -9,7 +9,7 @@ namespace GravyFoodsApi.MasjidRepository
     public interface IProductStockRepository 
     {
         Task<ApiResponse<ProductStockDto>> GetProductStockByIdAsync(string productId,string branchId, string companyId);
-        Task<ApiResponse<IEnumerable<ProductStockDto>>> GetAllProductStockAsync(string branchId, string companyId);
+        Task<ApiResponse<IEnumerable<LowStockProductsDto>>> GetAllProductStockAsync();
 
         Task<ApiResponse<IEnumerable<LowStockProductsDto>>> GetLowStockProductsAsync(int totalProducts, string branchId, string companyId);
 

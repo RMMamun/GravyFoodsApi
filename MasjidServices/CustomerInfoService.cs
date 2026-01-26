@@ -64,7 +64,17 @@ namespace GravyFoodsApi.MasjidServices
         private string GenerateCustomerId(string companyCode)
         {
             // Generate a unique CustomerId, e.g., using GUID
-            return companyCode + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper();
+            string str = companyCode + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 10).ToUpper();
+
+            var isExist = _context.CustomerInfo.Any(c => c.CustomerId == str && c.CompanyId == _tenant.CompanyId);
+            if (isExist)
+            {
+                //recursively call the function until a unique ID is found
+                return GenerateCustomerId(companyCode);
+            }
+
+            return str;
+
         }
 
 

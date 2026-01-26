@@ -18,7 +18,7 @@ namespace GravyFoodsApi.MasjidServices
             _tenant = tenant;
         }
 
-        public Task<ExpenseInfoDto> CreateAsync(ExpenseInfoDto expenseInfo)
+        public async Task<ExpenseInfoDto?> CreateAsync(ExpenseInfoDto expenseInfo)
         {
             try
             {
@@ -36,20 +36,20 @@ namespace GravyFoodsApi.MasjidServices
 
 
                 _context.ExpenseInfo.Add(expense);
-                _context.SaveChangesAsync();
-                return Task.FromResult(expenseInfo);
+                await _context.SaveChangesAsync();
+                return (expenseInfo);
             }
             catch (Exception ex)
             {
-                return Task.FromResult<ExpenseInfoDto>(null);
+                return null;
             }
         }
 
-        public Task<IEnumerable<ExpenseInfoDto>?> GetAllExpenseInfoAsync(string branchId, string companyId)
+        public async Task<IEnumerable<ExpenseInfoDto>?> GetAllExpenseInfoAsync(string branchId, string companyId)
         {
             try
             {
-                var expenseInfos = _context.ExpenseInfo
+                var expenseInfos = await _context.ExpenseInfo
                     .Where(e => e.BranchId == _tenant.BranchId && e.CompanyId == _tenant.CompanyId)
                     .Select(e => new ExpenseInfoDto
                     {
@@ -64,22 +64,22 @@ namespace GravyFoodsApi.MasjidServices
                         UserId = e.UserId,
 
                     
-                    }).AsAsyncEnumerable();
+                    }).ToListAsync();
 
-                return Task.FromResult<IEnumerable<ExpenseInfoDto>?>((IEnumerable<ExpenseInfoDto>?)expenseInfos);
+                return expenseInfos;
             }
             catch (Exception ex)
             {
-                return Task.FromResult<IEnumerable<ExpenseInfoDto>?>(null);
+                return (null);
             }
         }
 
 
-        public Task<ExpenseInfoDto?> GetExpenseInfoById(int id, string branchId, string companyId)
+        public async Task<ExpenseInfoDto?> GetExpenseInfoById(int id, string branchId, string companyId)
         {
             try
             {
-                var expenseInfos = _context.ExpenseInfo
+                var expenseInfos = await _context.ExpenseInfo
                                     .Where(e => e.BranchId == _tenant.BranchId && e.CompanyId == _tenant.CompanyId)
                                     .Select(e => new ExpenseInfoDto
                                     {
@@ -96,7 +96,7 @@ namespace GravyFoodsApi.MasjidServices
 
                                     }).FirstOrDefaultAsync();
 
-                return Task.FromResult<ExpenseInfoDto?>(expenseInfos.Result);
+                return expenseInfos;
 
 
             }

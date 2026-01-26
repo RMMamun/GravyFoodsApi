@@ -13,24 +13,27 @@ namespace GravyFoodsApi.MasjidServices
     {
         CommonMethods commonMethods = new CommonMethods();
         private readonly MasjidDBContext _dbContext;
-        public UserInfoService(MasjidDBContext dbContext)
+        private readonly ITenantContextRepository _tenant;
+
+        public UserInfoService(MasjidDBContext dbContext, ITenantContextRepository tenant)
         {
             _dbContext = dbContext;
+            _tenant = tenant;
         }
 
         public async Task<long> GetNextUserIDAsync()
         {
-            return NextUserID();
+            return await NextUserID();
         }
 
-        private long NextUserID()
+        private async Task<long> NextUserID()
         {
-            var maxId = _dbContext.UserInfo.Max(u => u.Id);
+            var maxId = await _dbContext.UserInfo.Where(w => w.BranchId == _tenant.BranchId && w.CompanyId == _tenant.CompanyId).MaxAsync(u => u.Id);
             maxId = maxId == 0 ? 1 : maxId + 1;
             return maxId;
         }
 
-        public async Task<UserInfo> GetUserById(string userid)
+        public async Task<UserInfo?> GetUserById(string userid)
         {
 
             try
@@ -48,7 +51,7 @@ namespace GravyFoodsApi.MasjidServices
                 //_dbContext.Database.SetCommandLoggerFactory(loggerFactory);
 
 
-                var result = await _dbContext.UserInfo.Where(x => x.UserId == userid).FirstOrDefaultAsync();
+                var result = await _dbContext.UserInfo.Where(w => w.UserId == userid && w.BranchId == _tenant.BranchId && w.CompanyId == _tenant.CompanyId).FirstOrDefaultAsync();
                 return result;
 
             }
@@ -65,7 +68,7 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
                 List<UserBasicInfoDTO> result = await _dbContext.UserInfo
-                    .Where(x => x.BranchId == branchId && x.CompanyId == companyId)
+                    .Where(w => w.BranchId == _tenant.BranchId && w.CompanyId == _tenant.CompanyId)
                     .Select(user => new UserBasicInfoDTO
                     {
                         UserId = user.UserId,
@@ -106,7 +109,7 @@ namespace GravyFoodsApi.MasjidServices
                     user.Password = Password;    //commonMethods.GenerateRandomString(10);
                 }
 
-                var isExisted = await _dbContext.UserInfo.Where(x => x.UserId == user.UserId).FirstOrDefaultAsync();
+                var isExisted = await GetUserById(user.UserId);
                 if (isExisted == null)
                 {
                     await _dbContext.UserInfo.AddAsync(user);

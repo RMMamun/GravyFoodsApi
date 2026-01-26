@@ -14,10 +14,12 @@ namespace GravyFoodsApi.MasjidServices
     public class SupplierService : ISupplierRepository
     {
         private readonly MasjidDBContext _context;
+        private readonly ITenantContextRepository _tenant;
 
-        public SupplierService(MasjidDBContext context)
+        public SupplierService(MasjidDBContext context, ITenantContextRepository tenant)
         {
             _context = context;
+            _tenant = tenant;
         }
 
         public async Task<SupplierInfo> Create(SupplierDTO supplierInfo)
@@ -25,10 +27,9 @@ namespace GravyFoodsApi.MasjidServices
             try
             {
 
-
                 // Implementation to add supplier info to database
                 // Check if email or phone number already exists
-                bool isExisted = await CheckSupplierByMobileOrEmail(supplierInfo.PhoneNo, supplierInfo.Email, supplierInfo.BranchId, supplierInfo.CompanyId);
+                bool isExisted = await CheckSupplierByMobileOrEmail(supplierInfo.PhoneNo, supplierInfo.Email);
                 if (isExisted == true)
                 {
                     return null;
@@ -64,7 +65,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             string str = companyCode + Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
             //check if already exists, 
-            var isExist = _context.SupplierInfo.Any(c => c.SupplierId == str);
+            var isExist = _context.SupplierInfo.Any(c => c.SupplierId == str && c.CompanyId == _tenant.CompanyId);
             if (isExist)
             {
                 //recursively call the function until a unique ID is found
@@ -73,28 +74,28 @@ namespace GravyFoodsApi.MasjidServices
             return str;
         }
 
-        public Task<bool> CheckSupplierByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
+        public Task<bool> CheckSupplierByMobileOrEmail(string PhoneNo, string email)
         {
             //c.Email == email ||
-            var isExisted = _context.SupplierInfo.Any(c =>  c.PhoneNo == PhoneNo && (c.BranchId == branchId && c.CompanyId == companyId));
+            var isExisted = _context.SupplierInfo.Any(c =>  c.PhoneNo == PhoneNo && (c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId));
             return Task.FromResult(isExisted);
         }
 
         public Task<IEnumerable<SupplierInfo>?> GetAllSuppliersAsync(string branchId, string companyId)
         {
-            IEnumerable<SupplierInfo>? suppliers = _context.SupplierInfo.Where(c => c.BranchId == branchId && c.CompanyId == companyId).ToImmutableList();
+            IEnumerable<SupplierInfo>? suppliers = _context.SupplierInfo.Where(c => c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId).ToImmutableList();
             return Task.FromResult(suppliers);
         }
 
         public Task<SupplierInfo?> GetSupplierInfoById(string Id, string branchId, string companyId)
         {
-            var supplier = _context.SupplierInfo.FirstOrDefault(c => c.SupplierId == Id && (c.BranchId == branchId && c.CompanyId == companyId));
+            var supplier = _context.SupplierInfo.FirstOrDefault(c => c.SupplierId == Id && (c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId));
             return Task.FromResult(supplier);
         }
 
         public Task<SupplierInfo?> GetSupplierByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
         {
-            var supplier = _context.SupplierInfo.FirstOrDefault(c => c.Email == email || c.PhoneNo == PhoneNo && (c.BranchId == branchId && c.CompanyId == companyId));
+            var supplier = _context.SupplierInfo.FirstOrDefault(c => c.Email == email || c.PhoneNo == PhoneNo && (c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId));
             return Task.FromResult(supplier);
         }
 
@@ -106,7 +107,7 @@ namespace GravyFoodsApi.MasjidServices
 
                 // Implementation to add supplier info to database
                 // Check if email or phone number already exists
-                SupplierInfo? newSupplier = await GetSupplierInfoById(supplierInfo.SupplierId, supplierInfo.BranchId, supplierInfo.CompanyId);
+                SupplierInfo? newSupplier = await GetSupplierInfoById(supplierInfo.SupplierId, _tenant.BranchId, _tenant.CompanyId);
                 if (newSupplier == null)
                 {
                     return false;
@@ -142,7 +143,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                var newSupplier = await this.GetSupplierInfoById(id,branchId,companyId);
+                var newSupplier = await this.GetSupplierInfoById(id,_tenant.BranchId,_tenant.CompanyId);
                 _context.SupplierInfo.Remove(newSupplier);
                 await _context.SaveChangesAsync();
 

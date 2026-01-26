@@ -581,18 +581,19 @@ namespace GravyFoodsApi.MasjidServices
 
         public async Task<ApiResponse<IEnumerable<BestSoldProductsDto>>> GetBestSoldProductsByDateRangeAsync(DateTime fromDate, DateTime toDate, string branchId, string companyId)
         {
+            string _branchId = _tenant.BranchId;
+            string _companyId = _tenant.CompanyId;
+
             ApiResponse<IEnumerable<BestSoldProductsDto>> apiRes = new ApiResponse<IEnumerable<BestSoldProductsDto>>();
 
             try
             {
-
-
                 var bestSoldProducts = await _context.SalesDetails
                 .Where(d =>
                     d.SalesInfo.CreatedDateTime.Date >= fromDate.Date &&
                     d.SalesInfo.CreatedDateTime.Date <= toDate.Date &&
-                    d.SalesInfo.BranchId == _tenant.BranchId &&
-                    d.SalesInfo.CompanyId == _tenant.CompanyId
+                    d.SalesInfo.BranchId == _branchId &&
+                    d.SalesInfo.CompanyId == _companyId
                 )
                 .GroupBy(d => new
                 {
@@ -610,8 +611,8 @@ namespace GravyFoodsApi.MasjidServices
                     TotalSalesAmount = g.Sum(x => x.TotalPrice),
                     TotalDiscount = g.Sum(x => x.TotalDiscount),
                     TotalVAT = g.Sum(x => x.TotalVAT),
-                    BranchId = _tenant.BranchId,
-                    CompanyId = _tenant.CompanyId
+                    BranchId = _branchId,
+                    CompanyId = _companyId
                 })
                 .OrderByDescending(x => x.TotalQuantitySold)
                 .ToListAsync();
