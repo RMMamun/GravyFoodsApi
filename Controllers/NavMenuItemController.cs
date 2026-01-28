@@ -25,54 +25,77 @@ namespace GravyFoodsApi.Controllers
 
             
 
-        [HttpGet("{companyId}/{branchId}")]
-        public async Task<IActionResult> GetHierarchicalMenus(string companyId, string branchId)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            companyId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
-            branchId = _tenant.BranchId;        //User.FindFirstValue("branchId");
-
-            var menus = await _repo.GetHierarchicalMenusAsync(companyId, branchId);
-            return Ok(menus);
-        }
-
-        [HttpGet("parents/{companyId}/{branchId}")]
-        public async Task<ActionResult<IEnumerable<NavMenuItemDto>>> GetParentMenus(string companyId, string branchId)
-        {
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            companyId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
-            branchId = _tenant.BranchId;        //User.FindFirstValue("branchId");
-
-            var parents = await _repo.GetParentMenusAsync(companyId, branchId);
-
-            return Ok(parents);
-        }
-
-        [HttpGet("menuitems/{userId}/{companyId}/{branchId}")]
-        public async Task<ActionResult<IEnumerable<NavMenuItemDto>>> GetMenuItems(string userId, string companyId, string branchId)
-        {
-            userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            companyId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
-            branchId = _tenant.BranchId;        //User.FindFirstValue("branchId");
-
-            var menus = await _repo.GetMenusByUserAsync(userId, companyId, branchId);
-            return Ok(menus);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<NavMenuItem>> PostMenuItem(NavMenuItem menuItem)
+        [HttpGet]
+        public async Task<ActionResult<ApiResponse<bool>>> GetHierarchicalMenus()
         {
             try
             {
+                var menus = await _repo.GetHierarchicalMenusAsync();
 
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var companyId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
-                var branchId = _tenant.BranchId;        //User.FindFirstValue("branchId");
+                return Ok(menus);
+            }
+            catch (Exception ex)
+            {
+                ApiResponse<bool> response = new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "Error fetching hierarchical menus",
+                    Data = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(response);
+            }
+            
+        }
 
-                menuItem.BranchId = branchId;
-                menuItem.CompanyId = companyId;
+        [HttpGet("parents")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<NavMenuItemDto>>>> GetParentMenus()
+        {
+            try
+            {
+                var parents = await _repo.GetParentMenusAsync();
 
+                return Ok(parents);
+            }
+            catch (Exception ex)
+            {
+                ApiResponse<IEnumerable<NavMenuItemDto>> response = new ApiResponse<IEnumerable<NavMenuItemDto>>
+                {
+                    Success = false,
+                    Message = "Error fetching parent menus",
+                    Data = null,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(response);
+            }
+        }
+
+        [HttpGet("menuitems/{userId}")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<NavMenuItemDto>>>> GetMenuItems(string userId)
+        {
+            try
+            {
+                var menus = await _repo.GetMenusByUserAsync(userId);
+                return Ok(menus);
+            }
+            catch (Exception ex)
+            {
+                ApiResponse<IEnumerable<NavMenuItemDto>> response = new ApiResponse<IEnumerable<NavMenuItemDto>>
+                {
+                    Success = false,
+                    Message = "Error fetching menu items",
+                    Data = null,
+                    Errors = new List<string> { ex.Message }
+                };
+                return BadRequest(response);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ApiResponse<NavMenuItemDto>>> PostMenuItem(NavMenuItemDto menuItem)
+        {
+            try
+            {
 
                 var result = await _repo.CreateAsync(menuItem);
 
@@ -81,25 +104,24 @@ namespace GravyFoodsApi.Controllers
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("already exists"))
-                    return Conflict(new { message = ex.Message }); // HTTP 409 Conflict
+                ApiResponse<NavMenuItemDto> response = new ApiResponse<NavMenuItemDto>
+                {
+                    Success = false,
+                    Message = "Error creating menu item",
+                    Data = null,
+                    Errors = new List<string> { ex.Message }
+                };
 
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(response);
+
             }
         }
 
         [HttpPut]
-        public async Task<ActionResult<NavMenuItem>> PuttMenuItem(NavMenuItem menuItem)
+        public async Task<ActionResult<ApiResponse<NavMenuItemDto>>> PuttMenuItem(NavMenuItemDto menuItem)
         {
             try
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var companyId = _tenant.CompanyId;     //User.FindFirstValue("companyId");
-                var branchId = _tenant.BranchId;        //User.FindFirstValue("branchId");
-
-                menuItem.BranchId = branchId;
-                menuItem.CompanyId = companyId;
-
 
                 var result = await _repo.UpdateAsync(menuItem);
 
@@ -108,7 +130,16 @@ namespace GravyFoodsApi.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+
+                ApiResponse<NavMenuItemDto> response = new ApiResponse<NavMenuItemDto>
+                {
+                    Success = false,
+                    Message = "Error creating menu item",
+                    Data = null,
+                    Errors = new List<string> { ex.Message }
+                };
+
+                return BadRequest(response);
             }
         }
 

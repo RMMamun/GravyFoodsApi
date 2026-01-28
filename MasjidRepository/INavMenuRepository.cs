@@ -5,15 +5,15 @@ namespace GravyFoodsApi.MasjidRepository
 {
     public interface INavMenuRepository
     {
-        Task<List<NavMenuItem>> GetAllMenusAsync(string companyId, string branchId);
-        Task<List<NavMenuItemDto>> GetHierarchicalMenusAsync(string companyId, string branchId);
+        Task<ApiResponse<List<NavMenuItemDto>>> GetAllMenusAsync();
+        Task<ApiResponse<List<NavMenuItemDto>>> GetHierarchicalMenusAsync();
 
-        Task<List<NavMenuItemDto>> GetParentMenusAsync(string companyId, string branchId);
+        Task<ApiResponse<List<NavMenuItemDto>>> GetParentMenusAsync();
 
-        Task<NavMenuItem> CreateAsync(NavMenuItem navMenuItem);
-        Task<NavMenuItem> UpdateAsync(NavMenuItem menuItem);
+        Task<ApiResponse<NavMenuItemDto>> CreateAsync(NavMenuItemDto navMenuItem);
+        Task<ApiResponse<NavMenuItemDto>> UpdateAsync(NavMenuItemDto menuItem);
 
-        Task<IEnumerable<NavMenuItemDto>> GetMenusByUserAsync(string userId, string companyId, string branchId);
+        Task<ApiResponse<IEnumerable<NavMenuItemDto>>> GetMenusByUserAsync(string userId);
     }
 
 }

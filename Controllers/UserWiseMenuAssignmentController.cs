@@ -22,7 +22,7 @@ namespace GravyFoodsApi.Controllers
         public async Task<IActionResult> GetUserMenus(string userId, string companyId, string branchId)
         {
             var assignedMenus = await _repo.GetUserMenusAsync(userId, companyId, branchId);
-            var allMenus = await _menuRepo.GetHierarchicalMenusAsync(companyId, branchId);
+            var allMenus = await _menuRepo.GetHierarchicalMenusAsync();
 
             var assignedIds = assignedMenus.Select(x => x.MenuId).ToList();
             return Ok(new { AllMenus = allMenus, AssignedIds = assignedIds });

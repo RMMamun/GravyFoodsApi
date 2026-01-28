@@ -17,159 +17,312 @@ namespace GravyFoodsApi.MasjidServices
             _tenant = tenant;
         }
 
-        public async Task<List<NavMenuItem>> GetAllMenusAsync(string companyId, string branchId)
+        public async Task<ApiResponse<List<NavMenuItemDto>>> GetAllMenusAsync()
         {
-            return await _context.NavMenuItems
-                .Where(x => x.CompanyId == _tenant.CompanyId && x.BranchId == _tenant.BranchId)
-                .OrderBy(x => x.DisplayOrder)
-                .ToListAsync();
-        }
-
-        public async Task<List<NavMenuItemDto>> GetHierarchicalMenusAsync(string companyId, string branchId)
-        {
-            var items = await GetAllMenusAsync(_tenant.CompanyId, _tenant.BranchId);
-
-            List<NavMenuItemDto> ToDtoTree(int? parentId)
+            ApiResponse<List<NavMenuItemDto>> apiRes = new ApiResponse<List<NavMenuItemDto>>();
+            try
             {
-                return items
-                    .Where(x => x.ParentId == parentId)
+                var menus = await _context.NavMenuItems
+                    .Where(x => x.CompanyId == _tenant.CompanyId && x.BranchId == _tenant.BranchId)
                     .OrderBy(x => x.DisplayOrder)
-                    .Select(x => new NavMenuItemDto
-                    {
-                        MenuId = x.MenuId,
-                        Title = x.Title,
-                        Url = x.Url,
-                        IconCss = x.IconCss,
-                        IconImagePath = x.IconImagePath,
-                        IsSeparator = x.IsSeparator,
-                        BranchId = x.BranchId,
-                        CompanyId = x.CompanyId,
-                        DisplayOrder = x.DisplayOrder,
-                        IsActive = x.IsActive,
-                        ParentId = x.ParentId,
-                        Children = ToDtoTree(x.MenuId),
-                        
+                    .ToListAsync();
+                
+                if (menus.Count == 0) {
+                    apiRes.Success = false;
+                    apiRes.Message = "No menu items found.";
+                    return apiRes;
+                }
 
+                var menuDtos = menus.Select(m => new NavMenuItemDto
+                {
+                    MenuId = m.MenuId,
+                    Title = m.Title,
+                    Url = m.Url,
+                    IconCss = m.IconCss,
+                    IconImagePath = m.IconImagePath,
+                    IsSeparator = m.IsSeparator,
+                    DisplayOrder = m.DisplayOrder,
+                    IsActive = m.IsActive,
+                    ParentId = m.ParentId,
+                    
+                }).ToList();
+                
+                apiRes.Success = true;
+                apiRes.Data = menuDtos;
+                apiRes.Message = "Menu items retrieved successfully.";
 
-                    }).ToList();
+                return apiRes;
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = "Error retrieving menu items.";
+                apiRes.Errors = new List<string> { ex.Message };
+                return apiRes;
             }
 
-            return ToDtoTree(null);
         }
 
-
-        public async Task<List<NavMenuItemDto>> GetParentMenusAsync(string companyId, string branchId)
+        public async Task<ApiResponse<List<NavMenuItemDto>>> GetHierarchicalMenusAsync()
         {
-            //Initial design was to get only parent menus, but changed to get all menus
-            //.Where(m => m.ParentId == null && m.BranchId == branchId && m.CompanyId == companyId)
+            ApiResponse<List<NavMenuItemDto>> apiRes = new ApiResponse<List<NavMenuItemDto>>();
 
-            var parents = await _context.NavMenuItems
-            .Where(m => m.BranchId == _tenant.BranchId && m.CompanyId == _tenant.CompanyId)
-            .Select(m => new NavMenuItemDto { 
-                MenuId = m.MenuId, 
-                Title = m.Title,
-                DisplayOrder = m.DisplayOrder,
-                CompanyId = m.CompanyId,
-                BranchId = m.BranchId,
-                IconCss = m.IconCss,
-                IconImagePath = m.IconImagePath,
-                IsActive = m.IsActive,
-                IsSeparator = m.IsSeparator,
-                Url = m.Url,
-                ParentId = m.ParentId
+            try
+            {
+                var items = await GetAllMenusAsync();
+                if (items.Data == null)
+                {
+                    apiRes.Success = false;
+                    apiRes.Message = "No menu items found.";
 
-            })
-            .ToListAsync();
+                    return apiRes;
+                }
 
+                List<NavMenuItemDto> ToDtoTree(int? parentId)
+                {
+                    return items.Data
+                        .Where(x => x.ParentId == parentId)
+                        .OrderBy(x => x.DisplayOrder)
+                        .Select(x => new NavMenuItemDto
+                        {
+                            MenuId = x.MenuId,
+                            Title = x.Title,
+                            Url = x.Url,
+                            IconCss = x.IconCss,
+                            IconImagePath = x.IconImagePath,
+                            IsSeparator = x.IsSeparator,
+                            DisplayOrder = x.DisplayOrder,
+                            IsActive = x.IsActive,
+                            ParentId = x.ParentId,
+                            Children = ToDtoTree(x.MenuId),
 
+                        }).ToList();
+                }
 
-            return parents;
+                apiRes.Success = true;
+                apiRes.Message = "Hierarchical menu items retrieved successfully.";
+                apiRes.Data = ToDtoTree(null);
+
+                return apiRes;
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = "Error retrieving hierarchical menu items.";
+                apiRes.Errors = new List<string> { ex.Message };
+                return apiRes;
+            }
         }
 
-        public async Task<NavMenuItem> CreateAsync(NavMenuItem menuItem)
+        public async Task<ApiResponse<List<NavMenuItemDto>>> GetParentMenusAsync()
         {
+            ApiResponse<List<NavMenuItemDto>> apiRes = new ApiResponse<List<NavMenuItemDto>>();
+
+            try
+            {
+
+                //Initial design was to get only parent menus, but changed to get all menus
+                //.Where(m => m.ParentId == null && m.BranchId == branchId && m.CompanyId == companyId)
+
+                var parents = await _context.NavMenuItems
+                .Where(m => m.BranchId == _tenant.BranchId && m.CompanyId == _tenant.CompanyId)
+                .Select(m => new NavMenuItemDto
+                {
+                    MenuId = m.MenuId,
+                    Title = m.Title,
+                    DisplayOrder = m.DisplayOrder,
+                    IconCss = m.IconCss,
+                    IconImagePath = m.IconImagePath,
+                    IsActive = m.IsActive,
+                    IsSeparator = m.IsSeparator,
+                    Url = m.Url,
+                    ParentId = m.ParentId
+
+                })
+                .ToListAsync();
+
+
+                apiRes.Data = parents;
+                apiRes.Success = true;
+                apiRes.Message = "Parent menus retrieved successfully.";
+
+                return apiRes;
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = "Error retrieving parent menus.";
+                apiRes.Errors = new List<string> { ex.Message };
+                return apiRes;
+            }
+
+        }
+
+        public async Task<ApiResponse<NavMenuItemDto>> CreateAsync(NavMenuItemDto menuItem)
+        {
+            ApiResponse<NavMenuItemDto> apiRes = new ();
+
+            string _branchId = _tenant.BranchId;
+            string _companyId = _tenant.CompanyId;
+
             try
             {
                 //check the existence
                 var exists = await _context.NavMenuItems
                     .AnyAsync(m => m.Title == menuItem.Title
-                    && m.CompanyId == _tenant.CompanyId
-                    && m.BranchId == _tenant.BranchId);
+                    && m.CompanyId == _companyId
+                    && m.BranchId == _branchId);
 
                 if (exists)
                 {
-                    throw new Exception("Menu item with the same title already exists in this company and branch.");
+                    apiRes.Success = false;
+                    apiRes.Message = "Menu with the same title already exists.";
+
+                    return apiRes;
                     
                 }
 
                 //create menuid as last menuid + 1
                 var lastMenu = await _context.NavMenuItems
-                    .Where(m => m.CompanyId == _tenant.CompanyId && m.BranchId == _tenant.BranchId)
+                    .Where(m => m.CompanyId == _companyId && m.BranchId == _branchId)
                     .OrderByDescending(m => m.MenuId)
                     .FirstOrDefaultAsync();
 
                 menuItem.MenuId = lastMenu != null ? lastMenu.MenuId + 1 : 1;
 
+                var newMenus = new NavMenuItem
+                {
+                    MenuId = menuItem.MenuId,
+                    ParentId = menuItem.ParentId,
+                    Title = menuItem.Title,
+                    Url = menuItem.Url,
+                    IconCss = menuItem.IconCss,
+                    IconImagePath = menuItem.IconImagePath,
+                    DisplayOrder = menuItem.DisplayOrder,
+                    IsActive = menuItem.IsActive,
+                    IsSeparator = menuItem.IsSeparator,
+                    CompanyId = _companyId,
+                    BranchId = _branchId
+                };
 
-
-                _context.NavMenuItems.Add(menuItem);
+                _context.NavMenuItems.Add(newMenus);
                 await _context.SaveChangesAsync();
 
 
                 var createdItem = await _context.NavMenuItems
                     .FirstOrDefaultAsync(m => m.Title == menuItem.Title
-                    && m.CompanyId == _tenant.CompanyId
-                    && m.BranchId == _tenant.BranchId);
+                    && m.CompanyId == _companyId
+                    && m.BranchId == _branchId);
+                
+                
 
                 if (createdItem != null)
                 {
-                    return createdItem;
+                    var createdMenuDto = new NavMenuItemDto
+                    {
+                        MenuId = createdItem.MenuId,
+                        ParentId = createdItem.ParentId,
+                        Title = createdItem.Title,
+                        Url = createdItem.Url,
+                        IconCss = createdItem.IconCss,
+                        IconImagePath = createdItem.IconImagePath,
+                        DisplayOrder = createdItem.DisplayOrder,
+                        IsActive = createdItem.IsActive,
+                        IsSeparator = createdItem.IsSeparator,
+                        
+                    };
+
+                    apiRes.Success = true;
+                    apiRes.Message = "Menu item created successfully.";
+                    apiRes.Data = createdMenuDto;
                 }
                 else
                 {
-                    throw new Exception("Error creating menu item.");
+                    apiRes.Success = false;
+                    apiRes.Message = "Error retrieving the created menu item.";
+                    apiRes.Data = null;
                 }
+
+                return apiRes;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error creating menu item: {ex.Message}");
+                apiRes.Success = false;
+                apiRes.Message = "Error creating menu item." + ex.Message;
 
+                return apiRes;
             }
         }
 
 
-        public async Task<NavMenuItem> UpdateAsync(NavMenuItem menuItem)
+        public async Task<ApiResponse<NavMenuItemDto>> UpdateAsync(NavMenuItemDto menuItem)
         {
+            ApiResponse<NavMenuItemDto> apiRes = new();
+
+            string _branchId = _tenant.BranchId;
+            string _companyId = _tenant.CompanyId;
+
             try
             {
                 //check the existence
                 var exists = await _context.NavMenuItems
                     .AnyAsync(m => m.MenuId == menuItem.MenuId
-                    && m.CompanyId == _tenant.CompanyId
-                    && m.BranchId == _tenant.BranchId);
+                    && m.CompanyId == _companyId
+                    && m.BranchId == _branchId);
 
                 if (exists == false)
                 {
-                    throw new Exception("Menu not found.");
+                    apiRes.Success = false;
+                    apiRes.Message = "Menu item does not exist.";
+
+                    return apiRes;
 
                 }
 
-                _context.NavMenuItems.Update(menuItem);
+                var updated = new NavMenuItem
+                    {
+                    MenuId = menuItem.MenuId,
+                    ParentId = menuItem.ParentId,
+                    Title = menuItem.Title,
+                    Url = menuItem.Url,
+                    IconCss = menuItem.IconCss,
+                    IconImagePath = menuItem.IconImagePath,
+                    DisplayOrder = menuItem.DisplayOrder,
+                    IsActive = menuItem.IsActive,
+                    IsSeparator = menuItem.IsSeparator,
+                    CompanyId = _companyId,
+                    BranchId = _branchId
+                };
+
+
+                _context.NavMenuItems.Update(updated);
                 await _context.SaveChangesAsync();
 
-                return menuItem;
+
+                apiRes.Success = true;
+                apiRes.Message = "Menu item updated successfully.";
+                apiRes.Data = menuItem;
+
+                return apiRes;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error updating menu item: {ex.Message}");
+                apiRes.Success = false;
+                apiRes.Message = "Error updating menu item." + ex.Message;
 
+                return apiRes;
             }
         }
 
 
         //Copilot Suggested Implementation
-        public async Task<IEnumerable<NavMenuItemDto>> GetMenusByUserAsync(string userId, string companyId, string branchId)
+        public async Task<ApiResponse<IEnumerable<NavMenuItemDto>>> GetMenusByUserAsync(string userId)
         {
+            string _branchId = _tenant.BranchId;
+            string _companyId = _tenant.CompanyId;
+
+            ApiResponse<IEnumerable<NavMenuItemDto>> apiRes = new ();
+
             try
             {
                 // Query menus by joining to UserWiseMenuAssignment so EF emits a JOIN (no OPENJSON)
@@ -177,8 +330,8 @@ namespace GravyFoodsApi.MasjidServices
                                    join a in _context.UserWiseMenuAssignment
                                       on new { m.MenuId, m.CompanyId, m.BranchId } equals new { MenuId = a.MenuId, a.CompanyId, a.BranchId }
                                    where a.UserId == userId
-                                         && a.CompanyId == _tenant.CompanyId
-                                         && a.BranchId == _tenant.BranchId
+                                         && a.CompanyId == _companyId
+                                         && a.BranchId == _branchId
                                          && m.IsActive
                                    orderby m.DisplayOrder
                                    select m)
@@ -186,7 +339,12 @@ namespace GravyFoodsApi.MasjidServices
                                   .ToListAsync();
 
                 if (menus == null || menus.Count == 0)
-                    return Enumerable.Empty<NavMenuItemDto>();
+                {
+                    apiRes.Success = false;
+                    apiRes.Message = "No menu items found for the user.";
+
+                    return apiRes;
+                }
 
                 var menuLookup = menus.ToLookup(m => m.ParentId);
 
@@ -201,8 +359,6 @@ namespace GravyFoodsApi.MasjidServices
                             IconCss = m.IconCss,
                             IconImagePath = m.IconImagePath,
                             IsSeparator = m.IsSeparator,
-                            CompanyId = m.CompanyId,
-                            BranchId = m.BranchId,
                             Children = BuildHierarchy(m.MenuId)
                         })
                         .OrderBy(x => menus.FirstOrDefault(mm => mm.MenuId == x.MenuId)?.DisplayOrder ?? 0)
@@ -210,14 +366,20 @@ namespace GravyFoodsApi.MasjidServices
                 }
 
                 var parentMenus = BuildHierarchy(null);
-                return parentMenus;
+                apiRes.Data = parentMenus;
+                apiRes.Success = true;
+                apiRes.Message = "Menu items retrieved successfully for the user.";
+
+                return apiRes;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error retrieving menus for user '{userId}': {ex.Message}", ex);
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
+
+                return apiRes;
             }
         }
-
 
 
         //Chat GPT Suggested Implementation - commented out for reference

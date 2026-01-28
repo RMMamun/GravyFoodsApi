@@ -5,6 +5,7 @@
     {
         string CompanyId { get; }
         string BranchId { get; }
+        string UserId { get; }
     }
 
 

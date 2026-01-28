@@ -24,9 +24,6 @@ namespace GravyFoodsApi.Models.DTOs
         public bool IsActive { get; set; } = true;
         public bool IsSeparator { get; set; } = false;
 
-        public string BranchId { get; set; }
-        public string CompanyId { get; set; }
-
         public List<NavMenuItemDto>? Children { get; set; } = new();
 
 
