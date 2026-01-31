@@ -15,6 +15,8 @@ namespace GravyFoodsApi.Models
 
         [MaxLength(100)]
         public string? CountryOfOrigin { get; set; }
+        public string? LogoUrl { get; set; }
+        public bool IsActive { get; set; }
 
         public string BranchId { get; set; } = string.Empty;
         public string CompanyId { get; set; } = string.Empty;
@@ -35,6 +37,10 @@ namespace GravyFoodsApi.Models
 
         [MaxLength(100)]
         public string? CountryOfOrigin { get; set; }
+
+        public string? LogoUrl { get; set; }
+        public bool IsActive { get; set; }
+
 
     }
 

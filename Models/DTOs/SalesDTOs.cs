@@ -14,6 +14,7 @@
         public double TotalDiscountAmount { get; set; }
         public double TotalPaidAmount { get; set; }
 
+        public string Description { get; set; } = string.Empty;
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
 
         public List<SalesDetailDto> SalesDetails { get; set; } = new();

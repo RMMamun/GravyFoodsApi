@@ -16,8 +16,6 @@ namespace GravyFoodsApi.MasjidServices
         private readonly IProductStockRepository _StockRepo;
         private readonly ITenantContextRepository _tenant;
 
-
-
         public SalesService(MasjidDBContext context, IProductStockRepository stockRepo, ITenantContextRepository tenant)
         {
             _context = context;
@@ -61,6 +59,8 @@ namespace GravyFoodsApi.MasjidServices
                             BranchId = _branchId,
                             CompanyId = _companyId,
                             UserId = saleDto.UserId,
+                            Description = saleDto.Description,
+                            
 
 
                             SalesDetails = saleDto.SalesDetails.Select(d => new SalesDetails
@@ -265,7 +265,7 @@ namespace GravyFoodsApi.MasjidServices
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
                     CreatedDateTime = s.CreatedDateTime,
-
+                    Description = s.Description,
 
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
@@ -358,9 +358,10 @@ namespace GravyFoodsApi.MasjidServices
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
                     CreatedDateTime = s.CreatedDateTime,
+                    Description = s.Description,
 
 
-                    SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
+                        SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
@@ -426,7 +427,7 @@ namespace GravyFoodsApi.MasjidServices
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
                     CreatedDateTime = s.CreatedDateTime,
-
+                    Description = s.Description,
 
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
@@ -487,7 +488,7 @@ namespace GravyFoodsApi.MasjidServices
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
                     CreatedDateTime = s.CreatedDateTime,
-                    
+                    Description = s.Description,
 
 
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
