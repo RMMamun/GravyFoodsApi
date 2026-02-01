@@ -20,12 +20,33 @@ public class UserWiseMenuItemService : IUserWiseMenuItemRepository
         _tenant = tenant;
     }
 
-    public async Task<List<UserWiseMenuAssignment>> GetUserMenusAsync(string userId, string companyId, string branchId)
+    public async Task<ApiResponse<List<UserWiseMenuAssignment>>> GetUserMenusAsync(string userId)
     {
-        return await _context.UserWiseMenuAssignment
-            .Include(x => x.Menu)
-            .Where(x => x.UserId == userId && x.CompanyId == _tenant.CompanyId && x.BranchId == _tenant.BranchId)
-            .ToListAsync();
+        ApiResponse<List<UserWiseMenuAssignment>> apiRes = new ();
+        try
+        {
+
+            var result = await _context.UserWiseMenuAssignment
+                .Include(x => x.Menu)
+                .Where(x => x.UserId == userId && x.CompanyId == _tenant.CompanyId && x.BranchId == _tenant.BranchId)
+                .ToListAsync();
+
+            apiRes.Success = true;
+            apiRes.Message = "User menus fetched successfully";
+            apiRes.Data = result;
+
+            return apiRes;
+        }
+        catch (Exception ex)
+        {
+
+            apiRes.Success = false;
+            apiRes.Message = $"Error fetching user menus: {ex.Message}";
+            apiRes.Data = null;
+            apiRes.Errors = new List<string> { ex.Message };
+
+            return apiRes;
+        }
     }
 
     public async Task AssignMenusAsync(UserMenuAssignmentRequest request)

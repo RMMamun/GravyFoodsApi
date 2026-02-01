@@ -5,7 +5,7 @@ namespace GravyFoodsApi.MasjidRepository
 {
     public interface IUserWiseMenuItemRepository
     {
-        Task<List<UserWiseMenuAssignment>> GetUserMenusAsync(string userId, string companyId, string branchId);
+        Task<ApiResponse<List<UserWiseMenuAssignment>>> GetUserMenusAsync(string userId);
         Task AssignMenusAsync(UserMenuAssignmentRequest request);
 
 

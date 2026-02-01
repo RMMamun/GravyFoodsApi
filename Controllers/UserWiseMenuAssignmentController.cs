@@ -18,15 +18,27 @@ namespace GravyFoodsApi.Controllers
             _menuRepo = menuRepo;
         }
 
-        [HttpGet("{userId}/{companyId}/{branchId}")]
-        public async Task<IActionResult> GetUserMenus(string userId, string companyId, string branchId)
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetUserMenus(string userId)
         {
-            var assignedMenus = await _repo.GetUserMenusAsync(userId, companyId, branchId);
-            var allMenus = await _menuRepo.GetHierarchicalMenusAsync();
+            try
+            {
+                var assignedMenus = await _repo.GetUserMenusAsync(userId);
+                var allMenus = await _menuRepo.GetHierarchicalMenusAsync();
 
-            var assignedIds = assignedMenus.Select(x => x.MenuId).ToList();
-            return Ok(new { AllMenus = allMenus, AssignedIds = assignedIds });
+                if (assignedMenus.Data != null && allMenus.Data != null)
+                {
+                    var assignedIds = assignedMenus.Data.Select(x => x.MenuId).ToList();
+                    return Ok(new { AllMenus = allMenus, AssignedIds = assignedIds });
+                }
+                return Ok(new { AllMenus = allMenus, AssignedIds = new List<int>() });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { Message = $"Error fetching user menus: {ex.Message}" });
+            }
         }
+
 
         [HttpPost("assign")]
         public async Task<IActionResult> AssignMenus(UserMenuAssignmentRequest request)
