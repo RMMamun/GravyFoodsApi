@@ -183,12 +183,15 @@ namespace GravyFoodsApi.MasjidServices
                 }
 
                 //create menuid as last menuid + 1
-                var lastMenu = await _context.NavMenuItems
-                    .Where(m => m.CompanyId == _companyId && m.BranchId == _branchId)
-                    .OrderByDescending(m => m.MenuId)
-                    .FirstOrDefaultAsync();
+                //var lastMenu = await _context.NavMenuItems
+                //    .Where(m => m.CompanyId == _companyId && m.BranchId == _branchId)
+                //    .OrderByDescending(m => m.MenuId)
+                //    .FirstOrDefaultAsync();
 
-                menuItem.MenuId = lastMenu != null ? lastMenu.MenuId + 1 : 1;
+                var maxId = await _context.NavMenuItems
+                    .MaxAsync(m => (int?)m.MenuId) ?? 0;
+
+                menuItem.MenuId = maxId + 1;
 
                 var newMenus = new NavMenuItem
                 {
