@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Data.SqlClient;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GravyFoodsApi.Models
@@ -16,8 +17,17 @@ namespace GravyFoodsApi.Models
         [MaxLength(500)]
         public string? Description { get; set; }
 
+        public bool IsActive { get; set; } = true;
+
+        public int SortOrder { get; set; } = 0;
+
         public string BranchId { get; set; } = string.Empty;
         public string CompanyId { get; set; } = string.Empty;
+
+        public int? ParentId { get; set; }
+        public ProductCategory ParentCategory { get; set; }
+
+        public ICollection<ProductCategory> Children { get; set; } = new List<ProductCategory>();
 
         // Navigation
         public ICollection<Product> Products { get; set; } = new List<Product>();
