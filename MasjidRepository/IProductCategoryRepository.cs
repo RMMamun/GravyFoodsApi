@@ -12,6 +12,8 @@ namespace GravyFoodsApi.Repositories
         Task<ApiResponse<bool>> CreateCategoryAsync(ProductCategoryDto productCategory);
         Task<ApiResponse<ProductCategoryDto?>> GetCategoryById(int Id);
         Task<ApiResponse<IEnumerable<ProductCategoryDto>>> GetAllCategoriesAsync();
+
+        Task<ApiResponse<List<CategoryTreeDto>>> GetCategoryTreeAsync();
     }
 
 }

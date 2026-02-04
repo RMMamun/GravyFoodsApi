@@ -125,5 +125,51 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
+        public async Task<ApiResponse<List<CategoryTreeDto>>> GetCategoryTreeAsync()
+        {
+            ApiResponse<List<CategoryTreeDto>> apiRes = new();
+
+            try
+            {
+                var categories = await _context.ProductCategory
+                    .Where(c => c.BranchId == _tenant.BranchId && c.CompanyId == _tenant.CompanyId && c.IsActive == true)
+                    .OrderBy(x => x.SortOrder)
+                    .ToListAsync();
+
+                List<CategoryTreeDto> Build(int? parentId, int depth)
+                {
+                    return categories
+                        .Where(c => c.ParentId == parentId)
+                        .Select(c => new CategoryTreeDto
+                        {
+                            Id = c.Id,
+                            Name = c.Name,
+                            Depth = depth,
+                            Children = Build(c.Id, depth + 1)
+                        })
+                        .ToList();
+                }
+
+                // Build the tree starting from root categories (ParentId == null)
+                var categoryTree = Build(null, 0);
+                apiRes.Data = categoryTree;
+
+                apiRes.Message = "Category tree retrieved successfully";
+                apiRes.Success = true;
+
+                return apiRes;
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
+                return apiRes;
+            }
+        }
+
+
+
+
+
     }
 }

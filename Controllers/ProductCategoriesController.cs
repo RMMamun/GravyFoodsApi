@@ -1,6 +1,9 @@
 ﻿using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Repositories;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MasjidWorldwide.Controllers
 {
@@ -8,49 +11,69 @@ namespace MasjidWorldwide.Controllers
     [ApiController]
     public class ProductCategoriesController : ControllerBase
     {
-        private readonly IProductCategoryRepository _repository;
+        private readonly IProductCategoryRepository _repo;
 
-        public ProductCategoriesController(IProductCategoryRepository repository)
+        public ProductCategoriesController(IProductCategoryRepository repo)
         {
-            _repository = repository;
+            _repo = repo;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductCategory>>> GetAll()
+        public async Task<ActionResult<ApiResponse<IEnumerable<ProductCategoryDto>>>> GetAll()
         {
-            var categories = await _repository.GetAllCategoriesAsync();
-            return Ok(categories);
+            var result = await _repo.GetAllCategoriesAsync();
+            if (result.Success == false) return NotFound(result);
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductCategory>> Get(int id)
+        public async Task<ActionResult<ApiResponse<ProductCategoryDto>>> Get(int id)
         {
-            var category = await _repository.GetByIdAsync(id);
-            if (category == null) return NotFound();
-            return Ok(category);
+            var result = await _repo.GetCategoryById(id);
+            if (result.Success == false) return NotFound(result);
+
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductCategory>> Create(ProductCategory category)
+        public async Task<ActionResult<ApiResponse<ProductCategoryDto>>> Create(ProductCategoryDto category)
         {
-            var created = await _repository.AddAsync(category);
-            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+            var result = await _repo.CreateCategoryAsync(category);
+            if (result.Success == false) return NotFound(result);
+
+            return Ok(result);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, ProductCategory category)
-        {
-            if (id != category.Id) return BadRequest();
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> Update(int id, ProductCategoryDto category)
+        //{
+        //    if (id != category.Id) return BadRequest();
 
-            await _repository.UpdateAsync(category);
-            return NoContent();
+        //    var result = await _repo.up(category);
+        //    if (result == null) return NotFound(result);
+
+        //    return Ok(result);
+        //}
+
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> Delete(int id)
+        //{
+        //    await _repo.DeleteAsync(id);
+        //    return NoContent();
+        //}
+
+
+
+        [HttpGet("tree")]
+        public async Task<ActionResult<ApiResponse<CategoryTreeDto>>> GetTree()
+        {
+            var result = await _repo.GetCategoryTreeAsync();
+            if (result.Success == false) return NotFound(result);
+
+            return Ok(result);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            await _repository.DeleteAsync(id);
-            return NoContent();
-        }
+
     }
 }

@@ -40,7 +40,7 @@ namespace MasjidWorldwide.Controllers
         //[HttpGet("by-productid/{id}/{branchId}/{companyId}")]
         //public async Task<ActionResult<ApiResponse<ProductDto>>> Get(string id, string branchId, string companyId)
         //{
-        //    var product = await _repository.GetProductByIdAsync(id, branchId, companyId);
+        //    var product = await _repo.GetProductByIdAsync(id, branchId, companyId);
         //    if (product.Success == false) return NotFound(product);
         //    return Ok(product);
         //}

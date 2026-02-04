@@ -49,6 +49,12 @@ namespace GravyFoodsApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ProductCategory>()
+            .HasOne(x => x.ParentCategory)
+            .WithMany(x => x.Children)
+            .HasForeignKey(x => x.ParentId)   // 👈 tell EF the real FK
+            .OnDelete(DeleteBehavior.Restrict);
+
 
             modelBuilder.Entity<Warehouse>()
             .HasKey(c => new { c.WHId });

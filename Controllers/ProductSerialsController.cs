@@ -29,7 +29,7 @@ namespace GravyFoodsApi.Controllers
         //[HttpGet("{id}")]
         //public async Task<ActionResult<ProductSerial>> Get(int id)
         //{
-        //    var serial = await _repository.GetByIdAsync(id);
+        //    var serial = await _repo.GetByIdAsync(id);
         //    if (serial == null) return NotFound();
         //    return Ok(serial);
         //}
@@ -50,14 +50,14 @@ namespace GravyFoodsApi.Controllers
         //public async Task<IActionResult> Update(int id, ProductSerial serial)
         //{
         //    if (id != serial.Id) return BadRequest();
-        //    await _repository.UpdateAsync(serial);
+        //    await _repo.UpdateAsync(serial);
         //    return NoContent();
         //}
 
         //[HttpDelete("{id}")]
         //public async Task<IActionResult> Delete(int id)
         //{
-        //    await _repository.DeleteAsync(id);
+        //    await _repo.DeleteAsync(id);
         //    return NoContent();
         //}
     }
