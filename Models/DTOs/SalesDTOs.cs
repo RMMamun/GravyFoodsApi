@@ -22,6 +22,7 @@
 
     public class SalesDetailDto
     {
+        public string SalesId { get; set; } = string.Empty;
         public string ProductId { get; set; } = string.Empty;
         public string ProductName { get; set; } = string.Empty;
         public double Quantity { get; set; }

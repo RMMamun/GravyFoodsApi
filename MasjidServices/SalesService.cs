@@ -269,6 +269,7 @@ namespace GravyFoodsApi.MasjidServices
 
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
+                        SalesId = d.SalesId.ToString(),
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
@@ -361,8 +362,9 @@ namespace GravyFoodsApi.MasjidServices
                     Description = s.Description,
 
 
-                        SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
+                    SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
+                        SalesId = d.SalesId.ToString(),
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
@@ -431,6 +433,7 @@ namespace GravyFoodsApi.MasjidServices
 
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
+                        SalesId = d.SalesId.ToString(),
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
@@ -493,6 +496,7 @@ namespace GravyFoodsApi.MasjidServices
 
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
+                        SalesId = d.SalesId,
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
