@@ -145,7 +145,7 @@ namespace GravyFoodsApi.MasjidServices
 
                 //var unitInfo = _UnitRepo.GetUnitsById(UnitId, BranchId, CompanyId).Result;
 
-                if (result == null)
+                if (result.Result == null)
                 {
                     //response.Success = false;
                     //response.Message = "Stock update failed!! Unit details not found for unit: " + Unit;
