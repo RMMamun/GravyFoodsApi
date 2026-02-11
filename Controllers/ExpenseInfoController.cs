@@ -2,6 +2,7 @@
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace GravyFoodsApi.Controllers
 {
@@ -23,58 +24,96 @@ namespace GravyFoodsApi.Controllers
         {
             try
             {
-                var created = await _repository.CreateAsync(expenseHead);
-                return Ok(created);
-                //return CreatedAtAction(nameof(GetExpenseHeadById), new { id = created.Data.Id, branchId = created.Data.BranchId, companyId = created.Data.CompanyId }, created.Data);
-
+                var expense = await _repository.CreateAsync(expenseHead);
+                if (expense.Success == false)
+                {
+                    return NotFound(expense);
+                }
+                return Ok(expense);
             }
             catch (Exception ex)
             {
-                //return BadRequest("Not found");
-                return BadRequest(ex);
-            }
+                ApiResponse<ExpenseInfoDto> apiRes = new();
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
 
+                return BadRequest(apiRes);
+            }
         }
 
 
         [HttpGet("{id:int}/{branchId}/{companyId}")]
-        public async Task<ActionResult<ExpenseInfoDto>> GetExpenseInfoByIdAsync(int id, string branchId, string companyId)
+        public async Task<ActionResult<ApiResponse<ExpenseInfoDto>>> GetExpenseInfoByIdAsync(int id, string branchId, string companyId)
         {
             try
             {
-
-
-                var expenseHead = await _repository.GetExpenseInfoById(id, branchId, companyId);
-                if (expenseHead == null)
+                var expense = await _repository.GetExpenseInfoById(id, branchId, companyId);
+                if (expense.Success == false)
                 {
-                    return NotFound();
+                    return NotFound(expense);
                 }
-                return Ok(expenseHead);
+                return Ok(expense);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                ApiResponse<ExpenseInfoDto> apiRes = new();
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
+
+                return BadRequest(apiRes);
             }
         }
 
 
         [HttpGet("{branchId}/{companyId}")]
-        public async Task<ActionResult<IEnumerable<ExpenseInfoDto>>> GetAllExpenseInfoAsync(string branchId, string companyId)
+        public async Task<ActionResult<ApiResponse<IEnumerable<ExpenseInfoDto>>>> GetAllExpenseInfoAsync(string branchId, string companyId)
         {
             try
             {
-                var expenseHead = await _repository.GetAllExpenseInfoAsync(branchId, companyId);
-                if (expenseHead == null)
+                var expense = await _repository.GetAllExpenseInfoAsync(branchId, companyId);
+                if (expense.Success == false)
                 {
-                    return NotFound();
+                    return NotFound(expense);
                 }
-                return Ok(expenseHead);
+                return Ok(expense);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                ApiResponse<IEnumerable<ExpenseInfoDto>> apiRes = new();
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
+
+                return BadRequest(apiRes);
             }
         }
+
+
+        [HttpGet("GetExpensesDateWiseAsync/{strSearch}/{fromDate:Datetime}/{toDate:Datetime}")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<ExpenseInfoDto>>>> GetExpensesDateWiseAsync(string strSearch, DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                if (strSearch == "-")
+                {
+                    strSearch = "";
+                }
+                var expense = await _repository.GetExpensesInDateRangeAsync(strSearch,fromDate,toDate);
+                if (expense.Success == false)
+                {
+                    return NotFound(expense);
+                }
+                return Ok(expense);
+            }
+            catch (Exception ex)
+            {
+                ApiResponse<IEnumerable<ExpenseInfoDto>> apiRes = new();
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
+                
+                return BadRequest(apiRes);
+            }
+        }
+
 
     }
 }

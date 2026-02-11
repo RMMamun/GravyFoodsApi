@@ -18,8 +18,10 @@ namespace GravyFoodsApi.MasjidServices
             _tenant = tenant;
         }
 
-        public async Task<ExpenseInfoDto?> CreateAsync(ExpenseInfoDto expenseInfo)
+        public async Task<ApiResponse<bool>> CreateAsync(ExpenseInfoDto expenseInfo)
         {
+            ApiResponse<bool> apiRes = new ();
+
             try
             {
                 ExpenseInfo expense = new ExpenseInfo();
@@ -37,16 +39,26 @@ namespace GravyFoodsApi.MasjidServices
 
                 _context.ExpenseInfo.Add(expense);
                 await _context.SaveChangesAsync();
-                return (expenseInfo);
+
+                apiRes.Data = true;
+                apiRes.Success = true;
+                apiRes.Message = "Expense info created successfully.";
+
+                return apiRes;
             }
             catch (Exception ex)
             {
-                return null;
+                apiRes.Success = false;
+                apiRes.Message = "Failed to create expense info. Error: " + ex.Message;
+
+                return apiRes;
             }
         }
 
-        public async Task<IEnumerable<ExpenseInfoDto>?> GetAllExpenseInfoAsync(string branchId, string companyId)
+        public async Task<ApiResponse<IEnumerable<ExpenseInfoDto>?>> GetAllExpenseInfoAsync(string branchId, string companyId)
         {
+            ApiResponse<IEnumerable<ExpenseInfoDto>?> apiRes = new ();
+
             try
             {
                 var expenseInfos = await _context.ExpenseInfo
@@ -66,17 +78,26 @@ namespace GravyFoodsApi.MasjidServices
                     
                     }).ToListAsync();
 
-                return expenseInfos;
+                apiRes.Data = expenseInfos;
+                apiRes.Success = true;
+                apiRes.Message = "Expense info retrieved successfully.";
+
+                return apiRes;
             }
             catch (Exception ex)
             {
-                return (null);
+                apiRes.Success = false;
+                apiRes.Message = "Failed to retrieve expense info. Error: " + ex.Message;
+
+                return apiRes;
             }
         }
 
 
-        public async Task<ExpenseInfoDto?> GetExpenseInfoById(int id, string branchId, string companyId)
+        public async Task<ApiResponse<ExpenseInfoDto?>> GetExpenseInfoById(int id, string branchId, string companyId)
         {
+            ApiResponse<ExpenseInfoDto?> apiRes = new ();
+
             try
             {
                 var expenseInfos = await _context.ExpenseInfo
@@ -96,15 +117,71 @@ namespace GravyFoodsApi.MasjidServices
 
                                     }).FirstOrDefaultAsync();
 
-                return expenseInfos;
+                apiRes.Data = expenseInfos;
+                apiRes.Success = true;
+                apiRes.Message = "Expense info retrieved successfully.";
+
+                return apiRes;
 
 
             }
             catch (Exception ex)
             {
-                return null;
+                apiRes.Success = false;
+                apiRes.Message = "Failed to retrieve expense info. Error: " + ex.Message;
+
+                return apiRes;
             }
         }
+
+
+        public async Task<ApiResponse<IEnumerable<ExpenseInfoDto>?>> GetExpensesInDateRangeAsync(string strSearch, DateTime fromDate, DateTime toDate)
+        {
+            ApiResponse<IEnumerable<ExpenseInfoDto>?> apiRes = new();
+
+            try
+            {
+                if (string.IsNullOrEmpty(strSearch))
+                {
+                    strSearch = ""; 
+                }
+
+                var expenseInfos = await _context.ExpenseInfo
+                    .Where(e => e.BranchId == _tenant.BranchId && e.CompanyId == _tenant.CompanyId
+                    && (e.ExpenseDate >= fromDate && e.ExpenseDate <= toDate)
+                    && ((e.Description + " " + e.Amount.ToString() + " " + e.ExpenseDate.ToString()).Contains(strSearch))
+                    )
+
+                    .Select(e => new ExpenseInfoDto
+                    {
+                        Id = e.Id,
+                        ExpenseHeadId = e.ExpenseHeadId,
+                        Description = e.Description,
+                        Amount = e.Amount,
+                        ExpenseDate = e.ExpenseDate,
+                        EntryDate = e.EntryDate,
+                        BranchId = e.BranchId,
+                        CompanyId = e.CompanyId,
+                        UserId = e.UserId,
+
+
+                    }).ToListAsync();
+
+                apiRes.Data = expenseInfos;
+                apiRes.Success = true;
+                apiRes.Message = "Expense info retrieved successfully.";
+
+                return apiRes;
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = "Failed to retrieve expense info. Error: " + ex.Message;
+
+                return apiRes;
+            }
+        }
+
     }
 
 }
