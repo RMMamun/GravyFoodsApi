@@ -1,10 +1,13 @@
-﻿using GravyFoodsApi.MasjidRepository;
+﻿using Azure;
+using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.Models;
+using GravyFoodsApi.Data;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace GravyFoodsApi.MasjidServices
 {
@@ -12,6 +15,7 @@ namespace GravyFoodsApi.MasjidServices
     {
         private readonly ILoginService _loginService;
         private readonly string _jwtKey;
+        private readonly MasjidDBContext _db;
 
         private readonly IConfiguration _config;
 
@@ -72,12 +76,58 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
+        private async Task GenerateRefreshTocken()
+        {
+            var refreshToken = RefreshTokenGenerator.Generate();
+            var refreshTokenHash = RefreshTokenGenerator.Hash(refreshToken);
 
+            //_db.RefreshTokens.Add(new RefreshTokens
+            //{
+            //    UserId = User.UserId,
+            //    TokenHash = refreshTokenHash,
+            //    ExpiresAt = DateTime.UtcNow.AddDays(7)
+            //});
+
+            //await _db.SaveChangesAsync();
+
+            //// Send as HttpOnly cookie
+            //Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
+            //{
+            //    HttpOnly = true,
+            //    Secure = true,
+            //    SameSite = SameSiteMode.None,
+            //    Expires = DateTime.UtcNow.AddDays(7)
+            //});
+
+        }
+
+        //public Task<string?> ValidateRefreshToken(string refreshToken)
+        //{
+
+        //    return null;
+        //}
+
+        public async Task<UserInfoDTO?> ValidateRefreshTokenAsync(string refreshToken)
+        {
+            if (string.IsNullOrEmpty(refreshToken))
+                return null;
+
+            var tokenHash = RefreshTokenGenerator.Hash(refreshToken);
+
+            var storedToken = await _db.RefreshTokens
+                .Include(rt => rt.User)
+                .FirstOrDefaultAsync(rt =>
+                    rt.TokenHash == tokenHash &&
+                    !rt.IsRevoked &&
+                    rt.ExpiresAt > DateTime.UtcNow);
+
+            //return storedToken.User;
+            return null;
+        }
 
         public Task<string?> ValidateRefreshToken(string refreshToken)
         {
-
-            return null;
+            throw new NotImplementedException();
         }
     }
 

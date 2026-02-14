@@ -45,7 +45,7 @@ namespace GravyFoodsApi.Data
         public DbSet<Warehouse> Warehouse { get; set; }
         public DbSet<AppOptions> AppOptions { get; internal set; }
 
-        public DbSet<RefreshToken> RefreshToken { get; set; }
+        public DbSet<RefreshTokens> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
