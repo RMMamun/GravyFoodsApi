@@ -212,7 +212,7 @@ app.UseRouting();
 app.UseCors(builder =>
 {
     builder
-    .WithOrigins("https://localhost:7065", "https://localhost:7006")         //.AllowAnyOrigin()
+    .WithOrigins("https://localhost:7065", "https://localhost:7006", "https://goooget.com/")         //.AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials(); 
