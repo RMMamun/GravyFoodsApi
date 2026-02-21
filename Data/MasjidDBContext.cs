@@ -1,4 +1,5 @@
 ﻿using GravyFoodsApi.Models;
+using GravyFoodsApi.Models.Accounting;
 using GravyFoodsApi.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,12 @@ namespace GravyFoodsApi.Data
         public MasjidDBContext(DbContextOptions<MasjidDBContext> options) : base(options)
         {
         }
+
+        public DbSet<AccountInfo> AccountInfo { get; set; } = null!;
+        public DbSet<JournalDetails> JournalDetails { get; set; } = null!;  
+        public DbSet<JournalInfo> journalInfo { get; set; } = null!;  // <-- Add this line for
+
+        
 
         public DbSet<UserInfo> UserInfo { get; set; } = null!;
         public DbSet<Country> Country { get; set; }

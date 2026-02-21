@@ -3,7 +3,9 @@ using GravyFoodsApi.Common;
 using GravyFoodsApi.Data;
 using GravyFoodsApi.Mappings;
 using GravyFoodsApi.MasjidRepository;
+using GravyFoodsApi.MasjidRepository.Accounting;
 using GravyFoodsApi.MasjidServices;
+using GravyFoodsApi.MasjidServices.Accounting;
 using GravyFoodsApi.MasjidServices.RegContext;
 using GravyFoodsApi.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -112,6 +114,7 @@ builder.Services.AddScoped<IProductSerialRepository, ProductSerialService>();
 
 builder.Services.AddScoped<IWarehouseRepository, WarehouseService>();
 builder.Services.AddScoped<IAppOptionsRepository, AppOptionsService>();
+builder.Services.AddScoped<IAccountInfoRepository, AccountInfoService>();
 
 builder.Services.AddScoped<IContextCookieService, ContextCookieService>();
 builder.Services.AddDataProtection();
