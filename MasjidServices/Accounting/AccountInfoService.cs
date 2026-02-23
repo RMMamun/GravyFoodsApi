@@ -3,6 +3,8 @@ using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidRepository.Accounting;
 using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Models.DTOs.Accounting;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace GravyFoodsApi.MasjidServices.Accounting
 {
@@ -39,6 +41,107 @@ namespace GravyFoodsApi.MasjidServices.Accounting
         public async Task<ApiResponse<bool>> UpdateAccountAsync(AccountInfoDto account)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<ApiResponse<List<AccountInfoDto>>> GetParentAccountsAsync()
+        {
+            ApiResponse<List<AccountInfoDto>> apiRes = new ApiResponse<List<AccountInfoDto>>();
+            try
+            {
+                
+                var parentAccounts = await _context.AccountInfo
+                    .Where(a => a.CompanyId == _tenant.CompanyId & a.BranchId == _tenant.BranchId && a.ParentId == null)
+                    .Select(a => new AccountInfoDto
+                    {
+                        Id = a.Id.ToString(),
+                        ACCode = a.ACCode,
+                        ACName = a.ACName,
+                        ACType = a.ACType,
+                        Description = a.Description,
+                        ParentId = a.ParentId,
+                        IsControlAccount = a.IsControlAccount,
+                        IsActive = a.IsActive
+                    })
+                    .ToListAsync();
+
+
+                apiRes.Success = true;
+                apiRes.Data = parentAccounts;
+
+                return apiRes;
+
+
+            }
+            catch (Exception ex)
+            {
+
+                apiRes.Success = false;
+                apiRes.Message = "An error occurred while fetching parent accounts.";
+                apiRes.Errors = new List<string> { ex.Message };
+                
+                return apiRes;
+            }
+        }
+
+        public async Task<ApiResponse<List<AccountInfoDto>>> SearchAccountsAsync(string strSearch)
+        {
+
+            ApiResponse<List<AccountInfoDto>> apiRes = new ApiResponse<List<AccountInfoDto>>();
+
+            try
+            {
+                if (strSearch == "ALL")
+                {
+                    strSearch = "";
+                }
+
+                var query = _context.AccountInfo
+                .Select(acc => new AccountInfoDto
+                {
+                    Id = acc.Id.ToString(),
+                    ACCode = acc.ACCode,
+                    ACName = acc.ACName,
+                    ACType = acc.ACType,
+                    Description = acc.Description,
+                    ParentId = acc.ParentId,
+                    ParentName = acc.Parent.ACName,
+                    IsControlAccount = acc.IsControlAccount,
+                    IsActive = acc.IsActive
+                });
+
+                if (query != null)
+                {
+                    if (string.IsNullOrEmpty(strSearch) == false)
+                    {
+
+                        if (!string.IsNullOrWhiteSpace(strSearch))
+                        {
+                            query = query.Where(x =>
+                                x.ACName.Contains(strSearch) ||
+                                x.ACCode.Contains(strSearch) ||
+                                x.ParentName.Contains(strSearch));
+                        }
+                    }
+                }
+
+
+                apiRes.Success = true;
+                apiRes.Data = await query.ToListAsync();
+                apiRes.Message = apiRes.Data.Count > 0 ? "Accounts fetched successfully." : "No accounts found matching the search criteria.";
+
+                return apiRes;
+
+
+            }
+            catch (Exception ex)
+            {
+
+                apiRes.Success = false;
+                apiRes.Message = "An error occurred while fetching parent accounts.";
+                apiRes.Errors = new List<string> { ex.Message };
+
+                return apiRes;
+            }
         }
     }
 }

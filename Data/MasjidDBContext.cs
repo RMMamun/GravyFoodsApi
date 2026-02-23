@@ -56,6 +56,13 @@ namespace GravyFoodsApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AccountInfo>()
+            .HasOne(a => a.Parent)
+            .WithMany(a => a.Children)
+            .HasForeignKey(a => a.ParentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
             modelBuilder.Entity<ProductCategory>()
             .HasOne(x => x.ParentCategory)
             .WithMany(x => x.Children)

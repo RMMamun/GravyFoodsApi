@@ -4,10 +4,20 @@
     {
         public string ACCode { get; set; } 
         public string ACName { get; set; }
-        public AccountType AccountType { get; set; }
+        public AccountType ACType { get; set; }
+        public string? Description { get; set; }
 
-        public Guid? ParentId { get; set; }
+        
         public bool IsControlAccount { get; set; }
         public bool IsActive { get; set; }
+
+
+        public Guid? ParentId { get; set; }
+        // ⭐ navigation property (self reference)
+        public AccountInfo? Parent { get; set; }
+
+        // ⭐ optional but recommended (children collection)
+        public ICollection<AccountInfo>? Children { get; set; }
+
     }
 }
