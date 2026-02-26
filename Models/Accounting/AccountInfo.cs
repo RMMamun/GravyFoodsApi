@@ -12,7 +12,7 @@
         public bool IsActive { get; set; }
 
 
-        public Guid? ParentId { get; set; }
+        public string? ParentACCode { get; set; }
         // ⭐ navigation property (self reference)
         public AccountInfo? Parent { get; set; }
 

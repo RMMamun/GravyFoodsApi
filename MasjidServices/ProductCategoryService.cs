@@ -182,7 +182,7 @@ namespace GravyFoodsApi.MasjidServices
             //        List<CategoryTreeDto> Build(int? parentId, int depth)
             //        {
             //            return categories
-            //                .Where(c => c.ParentId == parentId)
+            //                .Where(c => c.ParentACCode == parentId)
             //                .Select(c => new CategoryTreeDto
             //                {
             //                    Id = c.Id,
@@ -193,7 +193,7 @@ namespace GravyFoodsApi.MasjidServices
             //                .ToList();
             //        }
 
-            //        // Build the tree starting from root categories (ParentId == null)
+            //        // Build the tree starting from root categories (ParentACCode == null)
             //        var categoryTree = Build(null, 0);
             //        apiRes.Data = categoryTree;
 

@@ -50,7 +50,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             {
                 
                 var parentAccounts = await _context.AccountInfo
-                    .Where(a => a.CompanyId == _tenant.CompanyId & a.BranchId == _tenant.BranchId && a.ParentId == null)
+                    .Where(a => a.CompanyId == _tenant.CompanyId & a.BranchId == _tenant.BranchId && a.ParentACCode == null)
                     .Select(a => new AccountInfoDto
                     {
                         Id = a.Id.ToString(),
@@ -58,7 +58,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                         ACName = a.ACName,
                         ACType = a.ACType,
                         Description = a.Description,
-                        ParentId = a.ParentId,
+                        ParentACCode = a.ParentACCode,
                         IsControlAccount = a.IsControlAccount,
                         IsActive = a.IsActive
                     })
@@ -95,35 +95,61 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     strSearch = "";
                 }
 
-                var query = _context.AccountInfo
-                .Select(acc => new AccountInfoDto
+                //var query = _context.AccountInfo
+                //.Select(acc => new AccountInfoDto
+                //{
+                //    Id = acc.Id.ToString(),
+                //    ACCode = acc.ACCode,
+                //    ACName = acc.ACName,
+                //    ACType = acc.ACType,
+                //    Description = acc.Description,
+                //    ParentACCode = acc.ParentACCode,
+                //    ParentName = acc.Parent.ACName,
+                //    IsControlAccount = acc.IsControlAccount,
+                //    IsActive = acc.IsActive
+                //});
+
+                //if (query != null)
+                //{
+                //    if (string.IsNullOrEmpty(strSearch) == false)
+                //    {
+
+                //        if (!string.IsNullOrWhiteSpace(strSearch))
+                //        {
+                //            query = query.Where(x =>
+                //                x.ACName.Contains(strSearch) ||
+                //                x.ACCode.Contains(strSearch) ||
+                //                x.ParentName.Contains(strSearch));
+                //        }
+                //    }
+                //}
+
+                var query =
+                from acc in _context.AccountInfo
+                join parent in _context.AccountInfo
+                    on acc.ParentACCode equals parent.ACCode into parentJoin
+                from parent in parentJoin.DefaultIfEmpty()
+                select new AccountInfoDto
                 {
                     Id = acc.Id.ToString(),
                     ACCode = acc.ACCode,
                     ACName = acc.ACName,
                     ACType = acc.ACType,
                     Description = acc.Description,
-                    ParentId = acc.ParentId,
-                    ParentName = acc.Parent.ACName,
+                    ParentACCode = acc.ParentACCode,
+                    ParentName = parent != null ? parent.ACName : null,
                     IsControlAccount = acc.IsControlAccount,
                     IsActive = acc.IsActive
-                });
+                };
 
-                if (query != null)
+
+                if (!string.IsNullOrWhiteSpace(strSearch))
                 {
-                    if (string.IsNullOrEmpty(strSearch) == false)
-                    {
-
-                        if (!string.IsNullOrWhiteSpace(strSearch))
-                        {
-                            query = query.Where(x =>
-                                x.ACName.Contains(strSearch) ||
-                                x.ACCode.Contains(strSearch) ||
-                                x.ParentName.Contains(strSearch));
-                        }
-                    }
+                    query = query.Where(x =>
+                        x.ACName.Contains(strSearch) ||
+                        x.ACCode.Contains(strSearch) ||
+                        (x.ParentName != null && x.ParentName.Contains(strSearch)));
                 }
-
 
                 apiRes.Success = true;
                 apiRes.Data = await query.ToListAsync();

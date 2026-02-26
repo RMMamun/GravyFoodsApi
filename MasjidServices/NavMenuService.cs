@@ -122,7 +122,7 @@ namespace GravyFoodsApi.MasjidServices
             {
 
                 //Initial design was to get only parent menus, but changed to get all menus
-                //.Where(m => m.ParentId == null && m.BranchId == branchId && m.CompanyId == companyId)
+                //.Where(m => m.ParentACCode == null && m.BranchId == branchId && m.CompanyId == companyId)
 
                 var parents = await _context.NavMenuItems
                 .Where(m => m.BranchId == _tenant.BranchId && m.CompanyId == _tenant.CompanyId)
@@ -411,7 +411,7 @@ namespace GravyFoodsApi.MasjidServices
 
         //        // Step 3: Build hierarchy
         //        var parentMenus = menus
-        //            .Where(m => m.ParentId == null)
+        //            .Where(m => m.ParentACCode == null)
         //            .Select(m => new NavMenuItemDto
         //            {
         //                MenuId = m.MenuId,
@@ -423,7 +423,7 @@ namespace GravyFoodsApi.MasjidServices
         //                CompanyId = m.CompanyId,
         //                BranchId = m.BranchId,
         //                Children = menus
-        //                    .Where(c => c.ParentId == m.MenuId)
+        //                    .Where(c => c.ParentACCode == m.MenuId)
         //                    .OrderBy(c => c.DisplayOrder)
         //                    .Select(c => new NavMenuItemDto
         //                    {
