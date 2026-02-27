@@ -16,8 +16,8 @@ namespace GravyFoodsApi.Controllers.Accounting
             _repo = repo;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        [HttpGet("GetAccountByIdAsync/{id}")]
+        public async Task<IActionResult> Get(string id)
         {
             var account = await _repo.GetAccountByIdAsync(id);
             if (account == null)

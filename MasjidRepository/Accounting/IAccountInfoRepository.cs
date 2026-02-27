@@ -7,7 +7,7 @@ namespace GravyFoodsApi.MasjidRepository.Accounting
     public interface IAccountInfoRepository
     {
         Task<ApiResponse<bool>> CreateAccountAsync(AccountInfoDto account);
-        Task<ApiResponse<AccountInfoDto>> GetAccountByIdAsync(Guid id);
+        Task<ApiResponse<AccountInfoDto>> GetAccountByIdAsync(string AccountId);
         Task<ApiResponse<List<AccountInfoDto>>> GetAllAccountsAsync();
         Task<ApiResponse<List<AccountInfoDto>>> SearchAccountsAsync(string strSearch);
         Task<ApiResponse<List<AccountInfoDto>>> GetParentAccountsAsync();

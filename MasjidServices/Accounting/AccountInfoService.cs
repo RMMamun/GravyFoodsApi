@@ -28,9 +28,47 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             throw new NotImplementedException();
         }
 
-        public async Task<ApiResponse<AccountInfoDto>> GetAccountByIdAsync(Guid id)
+        public async Task<ApiResponse<AccountInfoDto>> GetAccountByIdAsync(string AccountId)
         {
-            throw new NotImplementedException();
+            ApiResponse<AccountInfoDto> apiRes = new ApiResponse<AccountInfoDto>();
+
+            try
+            {
+
+                var query =
+                from acc in _context.AccountInfo.Where(a => a.Id.ToString() == AccountId && a.CompanyId == _tenant.CompanyId && a.BranchId == _tenant.BranchId)
+
+                select new AccountInfoDto
+                {
+                    Id = acc.Id.ToString(),
+                    ACCode = acc.ACCode,
+                    ACName = acc.ACName,
+                    ACType = acc.ACType,
+                    Description = acc.Description,
+                    ParentACCode = acc.ParentACCode,
+                    ParentName = null,
+                    IsControlAccount = acc.IsControlAccount,
+                    IsActive = acc.IsActive
+                };
+
+
+                apiRes.Success = true;
+                apiRes.Data = await query.FirstOrDefaultAsync();
+                apiRes.Message = apiRes.Data != null ? "Accounts fetched successfully." : "No accounts found matching the search criteria.";
+
+                return apiRes;
+
+
+            }
+            catch (Exception ex)
+            {
+
+                apiRes.Success = false;
+                apiRes.Message = "An error occurred while fetching parent accounts.";
+                apiRes.Errors = new List<string> { ex.Message };
+
+                return apiRes;
+            }
         }
 
         public async Task<ApiResponse<List<AccountInfoDto>>> GetAllAccountsAsync()
@@ -111,15 +149,15 @@ namespace GravyFoodsApi.MasjidServices.Accounting
 
                 //if (query != null)
                 //{
-                //    if (string.IsNullOrEmpty(strSearch) == false)
+                //    if (string.IsNullOrEmpty(AccountId) == false)
                 //    {
 
-                //        if (!string.IsNullOrWhiteSpace(strSearch))
+                //        if (!string.IsNullOrWhiteSpace(AccountId))
                 //        {
                 //            query = query.Where(x =>
-                //                x.ACName.Contains(strSearch) ||
-                //                x.ACCode.Contains(strSearch) ||
-                //                x.ParentName.Contains(strSearch));
+                //                x.ACName.Contains(AccountId) ||
+                //                x.ACCode.Contains(AccountId) ||
+                //                x.ParentName.Contains(AccountId));
                 //        }
                 //    }
                 //}
