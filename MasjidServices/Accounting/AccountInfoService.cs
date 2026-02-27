@@ -23,6 +23,11 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             throw new NotImplementedException();
         }
 
+        public async Task<ApiResponse<bool>> UpdateAccountAsync(AccountInfoDto account)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ApiResponse<bool>> DeleteAccountAsync(Guid id)
         {
             throw new NotImplementedException();
@@ -76,10 +81,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             throw new NotImplementedException();
         }
 
-        public async Task<ApiResponse<bool>> UpdateAccountAsync(AccountInfoDto account)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public async Task<ApiResponse<List<AccountInfoDto>>> GetParentAccountsAsync()
         {
@@ -88,7 +90,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             {
                 
                 var parentAccounts = await _context.AccountInfo
-                    .Where(a => a.CompanyId == _tenant.CompanyId & a.BranchId == _tenant.BranchId && a.ParentACCode == null)
+                    .Where(a => a.CompanyId == _tenant.CompanyId & a.BranchId == _tenant.BranchId)
                     .Select(a => new AccountInfoDto
                     {
                         Id = a.Id.ToString(),

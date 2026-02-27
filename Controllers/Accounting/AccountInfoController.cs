@@ -28,6 +28,13 @@ namespace GravyFoodsApi.Controllers.Accounting
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            var accounts = await _repo.GetAllAccountsAsync();
+            return Ok(accounts);
+        }
+
+        [HttpGet("GetParentAccountsAsync")]
+        public async Task<IActionResult> GetParentAccountsAsync()
+        {
             var accounts = await _repo.GetParentAccountsAsync();
             return Ok(accounts);
         }
