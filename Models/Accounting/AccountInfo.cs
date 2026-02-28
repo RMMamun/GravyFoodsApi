@@ -15,6 +15,8 @@
 
         public string? ParentACCode { get; set; }
         // ⭐ navigation property (self reference)
+
+        public Guid? ParentId { get; set; }
         public AccountInfo? Parent { get; set; }
 
         // ⭐ optional but recommended (children collection)

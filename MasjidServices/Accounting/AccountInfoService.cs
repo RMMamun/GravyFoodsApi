@@ -30,6 +30,8 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     ACName = account.ACName,
                     ACType = account.ACType,
                     Description = account.Description,
+
+                    ParentId = account.ParentId != null ? Guid.Parse(account.ParentId) : Guid.Empty,
                     ParentACCode = account.ParentACCode,
                     IsControlAccount = account.IsControlAccount,
                     IsActive = account.IsActive,
@@ -84,6 +86,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 existingAccount.ACName = account.ACName;
                 existingAccount.ACType = account.ACType;
                 existingAccount.Description = account.Description;
+                existingAccount.ParentId = account.ParentId != null ? Guid.Parse(account.ParentId) : Guid.Empty;
                 existingAccount.ParentACCode = account.ParentACCode;
                 existingAccount.IsControlAccount = account.IsControlAccount;
                 existingAccount.IsActive = account.IsActive;
@@ -132,6 +135,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     ACName = acc.ACName,
                     ACType = acc.ACType,
                     Description = acc.Description,
+                    ParentId = acc.ParentId != Guid.Empty ? acc.ParentId.ToString() : null,
                     ParentACCode = acc.ParentACCode,
                     ParentName = null,
                     IsControlAccount = acc.IsControlAccount,
@@ -180,6 +184,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                         ACName = a.ACName,
                         ACType = a.ACType,
                         Description = a.Description,
+                        ParentId = a.ParentId != Guid.Empty ? a.ParentId.ToString() : null,
                         ParentACCode = a.ParentACCode,
                         IsControlAccount = a.IsControlAccount,
                         IsActive = a.IsActive
@@ -258,6 +263,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     ACName = acc.ACName,
                     ACType = acc.ACType,
                     Description = acc.Description,
+                    ParentId = acc.ParentId != Guid.Empty ? acc.ParentId.ToString() : null,
                     ParentACCode = acc.ParentACCode,
                     ParentName = parent != null ? parent.ACName : null,
                     IsControlAccount = acc.IsControlAccount,
