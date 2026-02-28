@@ -1,6 +1,7 @@
 ﻿using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidRepository.Accounting;
+using GravyFoodsApi.Models.Accounting;
 using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Models.DTOs.Accounting;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +21,93 @@ namespace GravyFoodsApi.MasjidServices.Accounting
 
         public async Task<ApiResponse<bool>> CreateAccountAsync(AccountInfoDto account)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var newAccount = new AccountInfo
+                {
+                    Id = Guid.NewGuid(),
+                    ACCode = account.ACCode,
+                    ACName = account.ACName,
+                    ACType = account.ACType,
+                    Description = account.Description,
+                    ParentACCode = account.ParentACCode,
+                    IsControlAccount = account.IsControlAccount,
+                    IsActive = account.IsActive,
+                    CompanyId = _tenant.CompanyId,
+                    BranchId = _tenant.BranchId,
+
+                    CreatedAt = DateTime.UtcNow,
+                };
+
+                _context.AccountInfo.Add(newAccount);
+                await _context.SaveChangesAsync();
+
+                ApiResponse<bool> apiRes = new ApiResponse<bool>
+                {
+                    Success = true,
+                    Message = "Account created successfully.",
+                    Data = true
+                };
+                return apiRes;
+
+            }
+            catch (Exception ex)
+            {
+                ApiResponse<bool> apiRes = new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "An error occurred while creating the account.",
+                    Data = false,
+                    Errors = new List<string> { ex.Message }
+                };
+                return apiRes;
+            }
+
         }
 
         public async Task<ApiResponse<bool>> UpdateAccountAsync(AccountInfoDto account)
         {
-            throw new NotImplementedException();
+            try
+                {
+                var existingAccount = await _context.AccountInfo
+                    .FirstOrDefaultAsync(a => a.Id.ToString() == account.Id && a.CompanyId == _tenant.CompanyId && a.BranchId == _tenant.BranchId);
+                if (existingAccount == null)
+                {
+                    return new ApiResponse<bool>
+                    {
+                        Success = false,
+                        Message = "Account not found.",
+                        Data = false
+                    };
+                }
+                existingAccount.ACCode = account.ACCode;
+                existingAccount.ACName = account.ACName;
+                existingAccount.ACType = account.ACType;
+                existingAccount.Description = account.Description;
+                existingAccount.ParentACCode = account.ParentACCode;
+                existingAccount.IsControlAccount = account.IsControlAccount;
+                existingAccount.IsActive = account.IsActive;
+                existingAccount.CreatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return new ApiResponse<bool>
+                {
+                    Success = true,
+                    Message = "Account updated successfully.",
+                    Data = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<bool>
+                {
+                    Success = false,
+                    Message = "An error occurred while updating the account.",
+                    Data = false,
+                    Errors = new List<string> { ex.Message }
+                };
+            }
         }
 
         public async Task<ApiResponse<bool>> DeleteAccountAsync(Guid id)

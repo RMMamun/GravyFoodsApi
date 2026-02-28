@@ -1,5 +1,6 @@
 ﻿using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidRepository.Accounting;
+using GravyFoodsApi.Models.DTOs.Accounting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GravyFoodsApi.Controllers.Accounting
@@ -15,6 +16,29 @@ namespace GravyFoodsApi.Controllers.Accounting
         {
             _repo = repo;
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] AccountInfoDto accountInfoDto)
+        {
+            if (accountInfoDto == null)
+                return BadRequest("Account information is required.");
+            var createdAccount = await _repo.CreateAccountAsync(accountInfoDto);
+
+            return Ok(createdAccount);
+
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] AccountInfoDto accountInfoDto)
+        {
+            if (accountInfoDto == null || string.IsNullOrEmpty(accountInfoDto.Id))
+                return BadRequest("Valid account information with ID is required.");
+
+            var updatedAccount = await _repo.UpdateAccountAsync(accountInfoDto);
+            return Ok(updatedAccount);
+        }
+
 
         [HttpGet("GetAccountByIdAsync/{id}")]
         public async Task<IActionResult> Get(string id)
