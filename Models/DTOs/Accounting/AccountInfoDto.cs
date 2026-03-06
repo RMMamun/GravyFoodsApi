@@ -15,6 +15,8 @@ namespace GravyFoodsApi.Models.DTOs.Accounting
         public string? ParentName { get; set; }
         public bool IsControlAccount { get; set; }
         public bool IsActive { get; set; }
+
+        public AccountInfoDto? Children { get; set; }
     }
 
 
