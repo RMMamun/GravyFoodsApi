@@ -164,10 +164,42 @@ namespace GravyFoodsApi.MasjidServices.Accounting
 
         public async Task<ApiResponse<List<AccountInfoDto>>> GetAllAccountsAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var accounts = await _context.AccountInfo
+                    .Where(a => a.CompanyId == _tenant.CompanyId && a.BranchId == _tenant.BranchId)
+                    .Select(a => new AccountInfoDto
+                    {
+                        Id = a.Id.ToString(),
+                        ACCode = a.ACCode,
+                        ACName = a.ACName,
+                        ACType = a.ACType,
+                        Description = a.Description,
+                        ParentId = a.ParentId != Guid.Empty ? a.ParentId.ToString() : null,
+                        ParentACCode = a.ParentACCode,
+                        IsControlAccount = a.IsControlAccount,
+                        IsActive = a.IsActive
+                    })
+                    .ToListAsync();
+                return new ApiResponse<List<AccountInfoDto>>
+                {
+                    Success = true,
+                    Message = "Accounts fetched successfully.",
+                    Data = accounts
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<List<AccountInfoDto>>
+                {
+                    Success = false,
+                    Message = "An error occurred while fetching accounts.",
+                    Data = null,
+                    Errors = new List<string> { ex.Message }
+                };
+            }
+
         }
-
-
 
         public async Task<ApiResponse<List<AccountInfoDto>>> GetParentAccountsAsync()
         {
@@ -297,5 +329,62 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 return apiRes;
             }
         }
+
+
+
+        public async Task<ApiResponse<List<AccountInfoDto>>> GetHierarchicalAccountsAsync()
+        {
+            ApiResponse<List<AccountInfoDto>> apiRes = new ApiResponse<List<AccountInfoDto>>();
+
+            try
+            {
+                var items = await GetAllAccountsAsync();
+                if (items.Data == null)
+                {
+                    apiRes.Success = false;
+                    apiRes.Message = "No menu items found.";
+
+                    return apiRes;
+                }
+
+                List<AccountInfoDto> ToDtoTree(string? ParentACCode)
+                {
+                    return items.Data
+                        .Where(x => x.ParentACCode == ParentACCode)
+                        .OrderBy(x => x.ACCode)
+                        .Select(x => new AccountInfoDto
+                        {
+                            Id = x.Id,
+                            ACCode = x.ACCode,
+                            ACName = x.ACName,
+                            ACType = x.ACType,
+                            Description = x.Description,
+                            IsControlAccount = x.IsControlAccount,
+
+                            ParentId = x.ParentId,
+                            ParentACCode = x.ParentACCode,
+                            ParentName = x.ParentName,
+
+                            IsActive = x.IsActive,
+                            Children = ToDtoTree(x.ACCode),
+
+                        }).ToList();
+                }
+
+                apiRes.Success = true;
+                apiRes.Message = "Hierarchical menu items retrieved successfully.";
+                apiRes.Data = ToDtoTree(null);
+
+                return apiRes;
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = "Error retrieving hierarchical menu items.";
+                apiRes.Errors = new List<string> { ex.Message };
+                return apiRes;
+            }
+        }
+
     }
 }

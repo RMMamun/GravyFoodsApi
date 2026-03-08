@@ -4,10 +4,13 @@ using GravyFoodsApi.Data;
 using GravyFoodsApi.Mappings;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidRepository.Accounting;
+using GravyFoodsApi.MasjidRepository.Tasks;
 using GravyFoodsApi.MasjidServices;
 using GravyFoodsApi.MasjidServices.Accounting;
 using GravyFoodsApi.MasjidServices.RegContext;
+using GravyFoodsApi.MasjidServices.Tasks;
 using GravyFoodsApi.Repositories;
+using GravyFoodsApi.Repositories.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
@@ -83,6 +86,9 @@ options.UseSqlServer(GlobalVariable.ConnString,
     builder => builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(60), null)));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+
+builder.Services.AddScoped<ITaskRepository, TaskInfoService>();
 
 
 builder.Services.AddScoped<IUserInfoService, UserInfoService>();

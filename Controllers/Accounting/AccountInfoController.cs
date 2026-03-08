@@ -1,5 +1,6 @@
 ﻿using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidRepository.Accounting;
+using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Models.DTOs.Accounting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -69,6 +70,16 @@ namespace GravyFoodsApi.Controllers.Accounting
             var accounts = await _repo.SearchAccountsAsync(strSearch);
             return Ok(accounts);
         }
+
+
+
+        [HttpGet("GetHierarchicalAccountsAsync")]
+        public async Task<IActionResult> GetHierarchicalAccountsAsync()
+        {
+            var accounts = await _repo.GetHierarchicalAccountsAsync();
+            return Ok(accounts);
+        }
+
 
     }
 }

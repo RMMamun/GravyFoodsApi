@@ -5,9 +5,11 @@ namespace GravyFoodsApi.Models.DTOs.Accounting
     public class AccountInfoDto
     {
         public string Id { get; set; }
-        public string ACCode { get; set; }
-        public string ACName { get; set; }
-        public AccountType ACType { get; set; }
+        
+        public string ACCode { get; set; } = "";
+
+        public string ACName { get; set; } = "";
+        public required AccountType ACType { get; set; }
         public string? Description { get; set; }
 
         public string? ParentId { get; set; }
@@ -16,7 +18,7 @@ namespace GravyFoodsApi.Models.DTOs.Accounting
         public bool IsControlAccount { get; set; }
         public bool IsActive { get; set; }
 
-        public AccountInfoDto? Children { get; set; }
+        public List<AccountInfoDto>? Children { get; set; }
     }
 
 
