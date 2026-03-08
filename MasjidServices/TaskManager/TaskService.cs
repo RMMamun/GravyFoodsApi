@@ -3,7 +3,7 @@ using GravyFoodsApi.Models.Task;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace GravyFoodsApi.MasjidServices.Tasks
+namespace GravyFoodsApi.MasjidServices.TaskManager
 {
     public class TaskInfoService
     {

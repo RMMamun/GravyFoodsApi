@@ -1,6 +1,6 @@
 ﻿using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.Accounting;
-using GravyFoodsApi.Models.Task;
+using GravyFoodsApi.Models.TaskManager;
 using Microsoft.EntityFrameworkCore;
 
 namespace GravyFoodsApi.Data

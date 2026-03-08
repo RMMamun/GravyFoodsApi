@@ -1,9 +1,7 @@
-﻿namespace GravyFoodsApi.Models.Task
+﻿namespace GravyFoodsApi.Models.TaskManager
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-
-    using System.ComponentModel.DataAnnotations;
 
     public class TaskInfo
     {
