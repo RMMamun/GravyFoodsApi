@@ -88,9 +88,6 @@ options.UseSqlServer(GlobalVariable.ConnString,
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 
-//builder.Services.AddScoped<ITaskRepository, TaskInfoService>();
-
-
 builder.Services.AddScoped<IUserInfoService, UserInfoService>();
 builder.Services.AddScoped<ISubscriptionInfo, SubscriptionInfoService>();
 builder.Services.AddScoped<ILoggingService, LoggingService>();
@@ -131,6 +128,9 @@ builder.Services.AddScoped<ITenantContextRepository, TenantContextService>();
 
 
 builder.Services.AddScoped<RefreshTokenService>();
+
+builder.Services.AddScoped<ITaskInfoRepository, TaskInfoService>();
+
 
 //2028 08 21 <-
 //Gravy Foods/ POS ingegration <-

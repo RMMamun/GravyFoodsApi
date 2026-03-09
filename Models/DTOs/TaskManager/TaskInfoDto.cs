@@ -1,11 +1,10 @@
-﻿namespace GravyFoodsApi.Models.TaskManager
-{
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
-    public class TaskInfo
+namespace GravyFoodsApi.Models.DTOs.TaskManager
+{
+    public class TaskInfoDto
     {
-        [Key]
+
         public int Id { get; set; }
 
         [Required]
@@ -22,10 +21,5 @@
         public DateTime? DueDate { get; set; }
 
         public int OrderNo { get; set; }
-
-        public string CompanyId { get; set; }
-        public string BranchId { get; set; }
-
-
     }
 }
