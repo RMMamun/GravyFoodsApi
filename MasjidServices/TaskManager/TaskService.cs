@@ -22,14 +22,17 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
         {
             try
             {
+                //.Where(x => x.BranchId == _tenant.BranchId && x.CompanyId == _tenant.CompanyId)
                 var result = await _context.TaskInfo
-                    .Where(x => x.BranchId == _tenant.BranchId && x.CompanyId == _tenant.CompanyId)
+                    
                     .OrderByDescending(x => x.CreatedDate)
                     .ToListAsync();
 
                 var allTasks = result.Select(x => new TaskInfoDto
                 {
                     Id = x.Id,
+                    TaskId = x.TaskId,
+                    ProjectId = x.ProjectId,
                     Title = x.Title,
                     Description = x.Description,
                     IsCompleted = x.IsCompleted,
@@ -62,6 +65,8 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
             var taskInfoDto = new TaskInfoDto
             {
                 Id = result.Id,
+                TaskId = result.TaskId,
+                ProjectId = result.ProjectId,
                 Title = result.Title,
                 Description = result.Description,
                 IsCompleted = result.IsCompleted,
@@ -84,6 +89,8 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                 {
                     var newTaskInfo = new TaskInfo
                     {
+                        TaskId = await GetTaskId(),
+                        ProjectId = taskInfo.ProjectId,
                         Title = taskInfo.Title,
                         Description = taskInfo.Description,
                         IsCompleted = taskInfo.IsCompleted,
@@ -114,6 +121,59 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
             }
         }
 
+        public async Task<bool> CopyTask(TaskInfoDto taskInfo)
+        {
+            try
+            {
+                var existingTask = await _context.TaskInfo
+                    .FirstOrDefaultAsync(t => t.Title == taskInfo.Title && t.Description == taskInfo.Description);
+                if (existingTask != null)
+                {
+                    var newTaskInfo = new TaskInfo
+                    {
+                        TaskId = taskInfo.TaskId,
+                        ProjectId = taskInfo.ProjectId,
+                        Title = taskInfo.Title,
+                        Description = taskInfo.Description,
+                        IsCompleted = taskInfo.IsCompleted,
+                        CreatedDate = taskInfo.CreatedDate,
+                        StartDate = taskInfo.StartDate,
+                        DueDate = taskInfo.DueDate,
+                        OrderNo = taskInfo.OrderNo,
+                        BranchId = _tenant.BranchId,
+                        CompanyId = _tenant.CompanyId
+                    };
+
+                    _context.TaskInfo.Add(newTaskInfo);
+                    await _context.SaveChangesAsync();
+
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine($"Task with title '{taskInfo.Title}' already exists.");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework like Serilog, NLog, etc.)
+                Console.WriteLine($"Error creating task: {ex.Message}");
+                return false;
+            }
+        }
+
+
+        private async Task<int> GetTaskId()
+        {
+            var lastTask = await _context.TaskInfo
+                .OrderByDescending(t => t.TaskId)
+                .FirstOrDefaultAsync();
+            return lastTask != null ? lastTask.TaskId + 1 : 1;
+        }
+
+
+
         public async Task<bool> Update(TaskInfoDto taskInfo)
         {
             try
@@ -121,6 +181,9 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                 var existingTask = await _context.TaskInfo.FindAsync(taskInfo.Id);
                 if (existingTask != null)
                 {
+                    existingTask.TaskId = taskInfo.TaskId;
+                    existingTask.ProjectId = taskInfo.ProjectId;
+
                     existingTask.Title = taskInfo.Title;
                     existingTask.Description = taskInfo.Description;
                     existingTask.IsCompleted = taskInfo.IsCompleted;

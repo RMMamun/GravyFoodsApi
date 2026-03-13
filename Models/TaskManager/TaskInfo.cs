@@ -8,6 +8,9 @@
         [Key]
         public int Id { get; set; }
 
+        public string ProjectId { get; set; }
+        public int TaskId { get; set; }
+
         [Required]
         [MaxLength(150)]
         public string Title { get; set; }

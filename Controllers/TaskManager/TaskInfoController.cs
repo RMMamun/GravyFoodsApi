@@ -49,6 +49,14 @@ namespace GravyFoodsApi.Controllers.TaskManager
             return BadRequest();
         }
 
+        [HttpPost("copyTask")]
+        public async Task<ActionResult> CopyTask([FromBody] TaskInfoDto _dto)
+        {
+            var created = await _repo.CopyTask(_dto);
+            if (created) return Ok();
+            return BadRequest();
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, [FromBody] TaskInfoDto _dto)
         {
