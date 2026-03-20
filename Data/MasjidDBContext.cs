@@ -14,6 +14,9 @@ namespace GravyFoodsApi.Data
 
         
         public DbSet<TaskInfo> TaskInfo { get; set; } = null!;
+        public DbSet<TasksLog> TasksLog { get; set; } = null!;
+
+
 
 
 

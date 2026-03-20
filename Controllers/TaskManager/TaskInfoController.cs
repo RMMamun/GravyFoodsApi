@@ -44,10 +44,25 @@ namespace GravyFoodsApi.Controllers.TaskManager
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] TaskInfoDto _dto)
         {
+            if (_dto == null)
+                return BadRequest("Task log data is required.");
+
             var created = await _repo.Create(_dto);
             if (created) return Ok();
             return BadRequest();
         }
+
+        [HttpPost("TaskLog")]
+        public async Task<ActionResult> CreateTaskLog([FromBody] TasksLogDto _dto)
+        {
+            if (_dto == null)
+                return BadRequest("Task log data is required.");
+
+            var created = await _repo.CreateTaskLogAsync(_dto);
+            if (created) return Ok();
+            return BadRequest();
+        }
+
 
         [HttpPost("copyTask")]
         public async Task<ActionResult> CopyTask([FromBody] TaskInfoDto _dto)

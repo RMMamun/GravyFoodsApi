@@ -9,6 +9,7 @@ namespace GravyFoodsApi.MasjidRepository.TaskManager
         Task<List<TaskInfoDto>> GetAll();
         Task<TaskInfoDto> GetById(int id);
         Task<bool> Create(TaskInfoDto _dto);
+        Task<bool> CreateTaskLogAsync(TasksLogDto _dto);
         Task<bool> CopyTask(TaskInfoDto _dto);
         Task<bool> Update(TaskInfoDto _dto);
         Task<bool> Delete(int id);

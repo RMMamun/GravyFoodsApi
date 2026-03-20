@@ -3,6 +3,7 @@ using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidRepository.TaskManager;
 using GravyFoodsApi.Models.DTOs.TaskManager;
 using GravyFoodsApi.Models.TaskManager;
+using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -18,13 +19,81 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
             _tenant = tenant;
         }
 
+        //public async Task<List<TaskInfoDto>> GetAll()
+        //{
+        //    try
+        //    {
+        //        // 🔥 1. Load tasks
+        //        var tasks = await _context.TaskInfo
+        //            .OrderByDescending(x => x.CreatedDate)
+        //            .ToListAsync();
+
+        //        // 🔥 2. Load ALL logs once
+        //        var logs = await _context.TasksLog.ToListAsync();
+
+        //        // 🔥 3. Group logs by Task Id
+        //        var logsByTask = logs
+        //            .GroupBy(x => x.Id)
+        //            .ToDictionary(g => g.Key, g => g.ToList());
+
+        //        // 🔥 4. Map DTO
+        //        var allTasks = tasks.Select(task =>
+        //        {
+        //            var taskLogs = logsByTask.ContainsKey(task.Id)
+        //                ? logsByTask[task.Id]
+        //                : new List<TasksLog>();
+
+        //            var elapsedMinutes = taskLogs
+        //                .Where(t => t.StartDateTime.HasValue && t.EndDateTime.HasValue)
+        //                .Sum(t => EF.Functions.DateDiffMinute(
+        //                    t.StartDateTime!.Value,
+        //                    t.EndDateTime!.Value));
+
+        //            return new TaskInfoDto
+        //            {
+        //                Id = task.Id,
+        //                TaskId = task.TaskId,
+        //                ProjectId = task.ProjectId,
+        //                Title = task.Title,
+        //                Description = task.Description,
+        //                IsCompleted = task.IsCompleted,
+        //                CreatedDate = task.CreatedDate,
+        //                StartDate = task.StartDate,
+        //                DueDate = task.DueDate,
+        //                OrderNo = task.OrderNo,
+        //                IsCopied = task.IsCopied,
+        //                IsShifted = task.IsShifted,
+
+        //                ProposedTimeInMinutes = task.ProposedTimeInMinutes,
+        //                ElapsedInMinutes = elapsedMinutes,
+
+        //                TasksLogs = taskLogs.Select(x => new TasksLogDto
+        //                {
+        //                    SLNo = x.SLNo,
+        //                    Id = x.Id,
+        //                    StartDateTime = x.StartDateTime,
+        //                    EndDateTime = x.EndDateTime
+        //                }).ToList()
+        //            };
+        //        }).ToList();
+
+        //        return allTasks;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Error retrieving tasks: {ex.Message}");
+        //        return new List<TaskInfoDto>();
+        //    }
+        //}
+
+
         public async Task<List<TaskInfoDto>> GetAll()
         {
             try
             {
                 //.Where(x => x.BranchId == _tenant.BranchId && x.CompanyId == _tenant.CompanyId)
                 var result = await _context.TaskInfo
-                    
+
                     .OrderByDescending(x => x.CreatedDate)
                     .ToListAsync();
 
@@ -39,8 +108,26 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                     CreatedDate = x.CreatedDate,
                     StartDate = x.StartDate,
                     DueDate = x.DueDate,
-                    OrderNo = x.OrderNo
+                    OrderNo = x.OrderNo,
+                    IsCopied = x.IsCopied,
+                    IsShifted = x.IsShifted,
+                    TasksLogs = _context.TasksLog?.Select(x => new TasksLogDto
+                    {
+                        SLNo = x.SLNo,
+                        Id = x.Id,
+                        StartDateTime = x.StartDateTime,
+                        EndDateTime = x.EndDateTime
+                    }).ToList(),
+                    ProposedTimeInMinutes = Math.Round(((int)x.ProposedTimeInMinutes / 60m),2),
+
+                    ElapsedInMinutes = Math.Round((_context.TasksLog
+                    .Where(t => t.Id == x.Id && t.StartDateTime.HasValue && t.EndDateTime.HasValue)
+                    .Sum(t => EF.Functions.DateDiffMinute(t.StartDateTime.Value, t.EndDateTime.Value)) / 60m),2)
+
+
+
                 }).ToList();
+
 
                 return allTasks;
             }
@@ -62,6 +149,19 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                 return null;
             }
 
+            // 🔥 Load logs ONCE (filtered)
+            var logs = await _context.TasksLog
+                .Where(t => t.Id == id)
+                .ToListAsync();
+
+            // 🔥 Calculate elapsed time
+            var elapsedMinutes = logs
+                .Where(t => t.StartDateTime.HasValue && t.EndDateTime.HasValue)
+                .Sum(t => EF.Functions.DateDiffMinute(
+                    t.StartDateTime!.Value,
+                    t.EndDateTime!.Value
+                ));
+
             var taskInfoDto = new TaskInfoDto
             {
                 Id = result.Id,
@@ -73,8 +173,38 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                 CreatedDate = result.CreatedDate,
                 StartDate = result.StartDate,
                 DueDate = result.DueDate,
-                OrderNo = result.OrderNo
+                OrderNo = result.OrderNo,
+                IsCopied = result.IsCopied,
+                IsShifted = result.IsShifted,
+                TasksLogs = logs.Select(x => new TasksLogDto
+                {
+                    SLNo = x.SLNo,
+                    Id = x.Id,
+                    StartDateTime = x.StartDateTime,
+                    EndDateTime = x.EndDateTime
+                }).ToList(),
+
+                ProposedTimeInMinutes = result.ProposedTimeInMinutes,
+
+                ElapsedInMinutes = _context.TasksLog
+                    .Where(t => t.Id == result.Id && t.StartDateTime.HasValue && t.EndDateTime.HasValue)
+                    .Sum(t => EF.Functions.DateDiffMinute(t.StartDateTime.Value, t.EndDateTime.Value))
+
+
             };
+
+            // 🔥 Convert minutes → hours (if needed)
+            if (taskInfoDto.ProposedTimeInMinutes is > 0)
+            {
+                taskInfoDto.ProposedTimeInMinutes =
+                    Math.Round(taskInfoDto.ProposedTimeInMinutes / 60m, 2);
+            }
+
+            if (taskInfoDto.ElapsedInMinutes is > 0)
+            {
+                taskInfoDto.ElapsedInMinutes =
+                    Math.Round(taskInfoDto.ElapsedInMinutes / 60m, 2);
+            }
 
             return taskInfoDto;
         }
@@ -99,7 +229,10 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                         DueDate = taskInfo.DueDate,
                         OrderNo = taskInfo.OrderNo,
                         BranchId = _tenant.BranchId,
-                        CompanyId = _tenant.CompanyId
+                        CompanyId = _tenant.CompanyId,
+                        IsShifted = taskInfo.IsShifted,
+                        IsCopied = taskInfo.IsCopied,
+                        ProposedTimeInMinutes =  (int)taskInfo.ProposedTimeInMinutes
                     };
 
                     _context.TaskInfo.Add(newTaskInfo);
@@ -121,6 +254,30 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
             }
         }
 
+        public async Task<bool> CreateTaskLogAsync(TasksLogDto _dto)
+        {
+            try
+            {
+                var newTaskLog = new TasksLog
+                {
+                    Id = _dto.Id,
+                    StartDateTime = _dto.StartDateTime,
+                    EndDateTime = _dto.EndDateTime,
+                    
+
+                };
+                _context.TasksLog.Add(newTaskLog);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework like Serilog, NLog, etc.)
+                Console.WriteLine($"Error creating task log: {ex.Message}");
+                return false;
+            }
+
+        }
         public async Task<bool> CopyTask(TaskInfoDto taskInfo)
         {
             try
@@ -141,7 +298,11 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                         DueDate = taskInfo.DueDate,
                         OrderNo = taskInfo.OrderNo,
                         BranchId = _tenant.BranchId,
-                        CompanyId = _tenant.CompanyId
+                        CompanyId = _tenant.CompanyId,
+                        IsCopied = taskInfo.IsCopied,
+                        IsShifted = taskInfo.IsShifted,
+                        ProposedTimeInMinutes = (int)taskInfo.ProposedTimeInMinutes  
+                        
                     };
 
                     _context.TaskInfo.Add(newTaskInfo);
@@ -193,6 +354,10 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                     existingTask.OrderNo = taskInfo.OrderNo;
                     existingTask.BranchId = _tenant.BranchId;
                     existingTask.CompanyId = _tenant.CompanyId;
+                    existingTask.IsCopied = taskInfo.IsCopied;
+                    existingTask.IsShifted = taskInfo.IsShifted;
+                    existingTask.ProposedTimeInMinutes = (int)taskInfo.ProposedTimeInMinutes;
+
 
 
                     _context.TaskInfo.Update(existingTask);

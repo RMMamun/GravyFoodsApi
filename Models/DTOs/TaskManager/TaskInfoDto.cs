@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GravyFoodsApi.Models.TaskManager;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 
 namespace GravyFoodsApi.Models.DTOs.TaskManager
 {
@@ -17,6 +19,8 @@ namespace GravyFoodsApi.Models.DTOs.TaskManager
         public string Description { get; set; }
 
         public bool IsCompleted { get; set; }
+        public bool IsCopied { get; set; }
+        public bool IsShifted { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
@@ -24,5 +28,11 @@ namespace GravyFoodsApi.Models.DTOs.TaskManager
         public DateTime? DueDate { get; set; }
 
         public int OrderNo { get; set; }
+
+        public decimal ProposedTimeInMinutes { get; set; } = 0;
+        public decimal ElapsedInMinutes { get; set; } = 0;
+
+        // Optional: include logs if needed
+        public List<TasksLogDto>? TasksLogs { get; set; }
     }
 }
