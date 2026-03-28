@@ -29,8 +29,8 @@ namespace GravyFoodsApi.Models.DTOs.TaskManager
 
         public int OrderNo { get; set; }
 
-        public decimal ProposedTimeInMinutes { get; set; } = 0;
-        public decimal ElapsedInMinutes { get; set; } = 0;
+        public decimal? ProposedTimeInMinutes { get; set; } = 0;
+        public decimal? ElapsedInMinutes { get; set; } = 0;
 
         // Optional: include logs if needed
         public List<TasksLogDto>? TasksLogs { get; set; }

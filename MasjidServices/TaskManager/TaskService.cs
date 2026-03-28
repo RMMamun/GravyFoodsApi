@@ -197,13 +197,13 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
             if (taskInfoDto.ProposedTimeInMinutes is > 0)
             {
                 taskInfoDto.ProposedTimeInMinutes =
-                    Math.Round(taskInfoDto.ProposedTimeInMinutes / 60m, 2);
+                    Math.Round(taskInfoDto.ProposedTimeInMinutes ?? 0 / 60m, 2);
             }
 
             if (taskInfoDto.ElapsedInMinutes is > 0)
             {
                 taskInfoDto.ElapsedInMinutes =
-                    Math.Round(taskInfoDto.ElapsedInMinutes / 60m, 2);
+                    Math.Round(taskInfoDto.ElapsedInMinutes ?? 0 / 60m, 2);
             }
 
             return taskInfoDto;
