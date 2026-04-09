@@ -28,6 +28,7 @@
         public int OrderNo { get; set; }
 
         public int ProposedTimeInMinutes { get; set; } = 0;
+        public string? TimeInputType { get; set; } = "Hour";
 
         public string CompanyId { get; set; }
         public string BranchId { get; set; }

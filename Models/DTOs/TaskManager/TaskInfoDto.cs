@@ -30,6 +30,7 @@ namespace GravyFoodsApi.Models.DTOs.TaskManager
         public int OrderNo { get; set; }
 
         public decimal ProposedTimeInMinutes { get; set; } = 0;
+        public string? TimeInputType { get; set; } = "Hour";
         public decimal ElapsedInMinutes { get; set; } = 0;
 
         // Optional: include logs if needed
