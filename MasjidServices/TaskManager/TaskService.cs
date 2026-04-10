@@ -119,6 +119,7 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                         EndDateTime = x.EndDateTime
                     }).ToList(),
                     ProposedTimeInMinutes = Math.Round(((int)x.ProposedTimeInMinutes / 60m),2),
+                    TimeInputType = x.TimeInputType,
 
                     ElapsedInMinutes = Math.Round((_context.TasksLog
                     .Where(t => t.Id == x.Id && t.StartDateTime.HasValue && t.EndDateTime.HasValue)
@@ -185,6 +186,7 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                 }).ToList(),
 
                 ProposedTimeInMinutes = result.ProposedTimeInMinutes,
+                TimeInputType = result.TimeInputType,
 
                 ElapsedInMinutes = _context.TasksLog
                     .Where(t => t.Id == result.Id && t.StartDateTime.HasValue && t.EndDateTime.HasValue)
@@ -232,7 +234,8 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                         CompanyId = _tenant.CompanyId,
                         IsShifted = taskInfo.IsShifted,
                         IsCopied = taskInfo.IsCopied,
-                        ProposedTimeInMinutes =  (int)taskInfo.ProposedTimeInMinutes
+                        ProposedTimeInMinutes =  (int)taskInfo.ProposedTimeInMinutes,
+                        TimeInputType = taskInfo.TimeInputType
                     };
 
                     _context.TaskInfo.Add(newTaskInfo);
@@ -301,8 +304,9 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                         CompanyId = _tenant.CompanyId,
                         IsCopied = taskInfo.IsCopied,
                         IsShifted = taskInfo.IsShifted,
-                        ProposedTimeInMinutes = (int)taskInfo.ProposedTimeInMinutes  
-                        
+                        ProposedTimeInMinutes = (int)taskInfo.ProposedTimeInMinutes,
+                        TimeInputType = taskInfo.TimeInputType
+
                     };
 
                     _context.TaskInfo.Add(newTaskInfo);
@@ -357,6 +361,7 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                     existingTask.IsCopied = taskInfo.IsCopied;
                     existingTask.IsShifted = taskInfo.IsShifted;
                     existingTask.ProposedTimeInMinutes = (int)taskInfo.ProposedTimeInMinutes;
+                    existingTask.TimeInputType = taskInfo.TimeInputType;
 
 
 
