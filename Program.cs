@@ -28,7 +28,7 @@ QuestPDF.Settings.License = LicenseType.Community;
 
 if (builder.Environment.IsDevelopment())
 {
-    GlobalVariable.ConnString = builder.Configuration.GetConnectionString("serverconn");
+    GlobalVariable.ConnString = builder.Configuration.GetConnectionString("remoteconn");
     //GlobalVariable.ConnString = builder.Configuration.GetConnectionString("laptopconn");
     //GlobalVariable.ConnString = builder.Configuration.GetConnectionString("desktopconn");
 }
@@ -131,12 +131,16 @@ builder.Services.AddScoped<RefreshTokenService>();
 
 builder.Services.AddScoped<ITaskInfoRepository, TaskInfoService>();
 
+builder.Services.AddScoped<IJournalRepository, JournalService>();
+
 
 //2028 08 21 <-
 //Gravy Foods/ POS ingegration <-
 
 ////2025 09 26 ->
 //// Add authentication 
+
+//2026 04 16 ->
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
@@ -152,7 +156,7 @@ builder.Services.AddAuthentication("Bearer")
                 System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
-
+//2026 04 16 ->
 builder.Services.AddAuthorization();
 ////2025 09 26 <-
 
@@ -162,6 +166,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+
+
 
 // Configure the HTTP request pipeline.
 if (builder.Environment.IsDevelopment())
@@ -222,19 +229,16 @@ app.UseRouting();
 
 //app.UseCors("AllowFrontend");  // must be before auth & MapControllers
 
+//.WithOrigins("https://goooget.com", "https://unipos.goooget.com", "https://taskmanager.goooget.com", "https://buysale.goooget.com", "https://localhost:7203", "https://localhost:7275", "https://localhost:7006", "https://localhost:7065")     //"https://localhost:7065", "https://localhost:7203", "https://localhost:7275", "https://localhost:7006", "https://goooget.com",""       //.AllowAnyOrigin() 
+
 app.UseCors(builder =>
 {
     builder
-    .WithOrigins("https://goooget.com", "https://unipos.goooget.com", "https://localhost:7203", "https://localhost:7275", "https://localhost:7006")     //"https://localhost:7065", "https://localhost:7203", "https://localhost:7275", "https://localhost:7006", "https://goooget.com",""       //.AllowAnyOrigin() 
+    .WithOrigins("https://goooget.com", "https://unipos.goooget.com", "https://taskmanager.goooget.com", "https://buysale.goooget.com", "https://localhost:7203", "https://localhost:7275", "https://localhost:7006", "https://localhost:7065")     //"https://localhost:7065", "https://localhost:7203", "https://localhost:7275", "https://localhost:7006", "https://goooget.com",""       //.AllowAnyOrigin() 
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials();
 });
-
-
-
-
-
 
 
 // Serve ProductImages as static files

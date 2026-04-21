@@ -20,60 +20,65 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             _tenant = tenant;
         }
 
-        public async Task<ApiResponse<bool>> PostJournal(JournalInfoDto journal)
+        public Task<ApiResponse<bool>> PostJournal(JournalInfoDto journal)
         {
-            try
-            {
-
-                if (journal.IsPosted)
-                    throw new Exception("Already posted");
-
-                var debit = journal.Lines.Sum(x => x.Debit);
-                var credit = journal.Lines.Sum(x => x.Credit);
-
-                if (debit != credit)
-                    throw new Exception("Journal not balanced");
-
-
-                JournalInfo newEntry = new JournalInfo
-                {
-                    Date = journal.Date,
-                    Description = journal.Description,
-                    ReferenceNo = journal.ReferenceNo,
-                    SourceModule = journal.SourceModule,
-                    IsPosted = true,
-                    PostedAt = DateTime.UtcNow,
-                    PostedBy = _tenant.UserId,
-                    Lines = journal.Lines.Select(x => new JournalDetails
-                    {
-                        AccountId = x.AccountId,
-                        Debit = x.Debit,
-                        Credit = x.Credit,
-                        Description = x.Description
-                    }).ToList()
-                };
-
-                
-                _context.journalInfo.Add(newEntry);
-
-                await _context.SaveChangesAsync();
-                return new ApiResponse<bool>
-                {
-                    Success = true,
-                    Message = "Journal posted successfully",
-                    Data = true
-                };
-
-            }
-            catch (Exception ex)
-            {
-                return new ApiResponse<bool>
-                {
-                    Success = false,
-                    Message = ex.Message,
-                    Data = false
-                };
-            }
+            throw new NotImplementedException();
         }
+
+        //public async Task<ApiResponse<bool>> PostJournal(JournalInfoDto journal)
+        //{
+        //    try
+        //    {
+
+        //        if (journal.IsPosted)
+        //            throw new Exception("Already posted");
+
+        //        var debit = journal.Lines.Sum(x => x.Debit);
+        //        var credit = journal.Lines.Sum(x => x.Credit);
+
+        //        if (debit != credit)
+        //            throw new Exception("Journal not balanced");
+
+
+        //        JournalInfo newEntry = new JournalInfo
+        //        {
+        //            Date = journal.Date,
+        //            Description = journal.Description,
+        //            ReferenceNo = journal.ReferenceNo,
+        //            SourceModule = journal.SourceModule,
+        //            IsPosted = true,
+        //            PostedAt = DateTime.UtcNow,
+        //            PostedBy = _tenant.UserId,
+        //            JournalDetails = journal.Lines.Select(x => new JournalDetails
+        //            {
+        //                AccountId = x.AccountId,
+        //                Debit = x.Debit,
+        //                Credit = x.Credit,
+        //                Description = x.Description
+        //            }).ToList()
+        //        };
+
+
+        //        _context.JournalInfo.Add(newEntry);
+
+        //        await _context.SaveChangesAsync();
+        //        return new ApiResponse<bool>
+        //        {
+        //            Success = true,
+        //            Message = "Journal posted successfully",
+        //            Data = true
+        //        };
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new ApiResponse<bool>
+        //        {
+        //            Success = false,
+        //            Message = ex.Message,
+        //            Data = false
+        //        };
+        //    }
+        //}
     }
 }

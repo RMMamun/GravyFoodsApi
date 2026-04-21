@@ -14,6 +14,6 @@ namespace GravyFoodsApi.Models.Accounting
         public string PostedBy { get; set; }
         public DateTime? PostedAt { get; set; }
 
-        public List<JournalDetails> Lines { get; set; }
+        public List<JournalDetails> JournalDetails { get; set; } = new();
     }
 }

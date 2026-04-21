@@ -22,7 +22,7 @@ namespace GravyFoodsApi.Data
 
         public DbSet<AccountInfo> AccountInfo { get; set; } = null!;
         public DbSet<JournalDetails> JournalDetails { get; set; } = null!;  
-        public DbSet<JournalInfo> journalInfo { get; set; } = null!;  // <-- Add this line for
+        public DbSet<JournalInfo> JournalInfo { get; set; } = null!;  // <-- Add this line for
 
         
 

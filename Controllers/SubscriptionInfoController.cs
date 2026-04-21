@@ -159,7 +159,7 @@ namespace GravyFoodsApi.Controllers
 
             var result = await _posSubs.GetCompanyRegistrationVerificationAsync(regCode);
             if (result.Success == false)
-                return NotFound(result);
+                return NotFound(result.Message);
 
             return Ok(result);
         }

@@ -31,7 +31,7 @@ namespace GravyFoodsApi.Controllers
                 //_cookieService.SetBranchContext(Response, (result.Data.CompanyCode), (result.Data.BranchCode));
 
 
-                if (result == null)
+                if (result.Success == false)
                     return NotFound();
 
                 LoginRequest loginRequest = new LoginRequest();
