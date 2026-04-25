@@ -270,15 +270,15 @@ namespace GravyFoodsApi.MasjidServices.Accounting
 
                 //if (query != null)
                 //{
-                //    if (string.IsNullOrEmpty(AccountId) == false)
+                //    if (string.IsNullOrEmpty(ACCode) == false)
                 //    {
 
-                //        if (!string.IsNullOrWhiteSpace(AccountId))
+                //        if (!string.IsNullOrWhiteSpace(ACCode))
                 //        {
                 //            query = query.Where(x =>
-                //                x.ACName.Contains(AccountId) ||
-                //                x.ACCode.Contains(AccountId) ||
-                //                x.ParentName.Contains(AccountId));
+                //                x.ACName.Contains(ACCode) ||
+                //                x.ACCode.Contains(ACCode) ||
+                //                x.ParentName.Contains(ACCode));
                 //        }
                 //    }
                 //}
@@ -386,5 +386,9 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             }
         }
 
+
+
     }
+
+
 }

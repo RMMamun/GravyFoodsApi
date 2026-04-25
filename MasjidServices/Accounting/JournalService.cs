@@ -7,6 +7,7 @@ using GravyFoodsApi.Models.DTOs.Accounting;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace GravyFoodsApi.MasjidServices.Accounting
 {
@@ -54,8 +55,8 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 var journal = new JournalInfo
                 {
                     Id = Guid.NewGuid(),
-                    CompanyId = dto.CompanyId,
-                    BranchId = dto.BranchId,
+                    CompanyId = _tenant.CompanyId,
+                    BranchId = _tenant.BranchId,
 
                     Date = dto.Date,
                     ReferenceNo = dto.ReferenceNo,
@@ -67,11 +68,12 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 journal.JournalDetails = dto.Details.Select(x => new JournalDetails
                 {
                     Id = Guid.NewGuid(),
-                    CompanyId = dto.CompanyId,
-                    BranchId = dto.BranchId,
+                    CompanyId = _tenant.CompanyId,
+                    BranchId = _tenant.BranchId,
 
+                    
                     JournalId = journal.Id,
-                    AccountId = x.AccountId,
+                    ACCode = x.ACCode,
                     Description = x.Description,
                     Debit = x.Debit,
                     Credit = x.Credit
@@ -131,10 +133,10 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 // OPTIONAL: prevent control account posting
                 var controlAccounts = await _context.AccountInfo
                     .Where(a => a.IsControlAccount)
-                    .Select(a => a.Id)
+                    .Select(a => a.ACCode)
                     .ToListAsync();
 
-                if (journal.JournalDetails.Any(x => controlAccounts.Contains(x.AccountId)))
+                if (journal.JournalDetails.Any(x => controlAccounts.Contains(x.ACCode)))
                 {
                     apiRes.Success = false;
                     apiRes.Message = "Cannot post to control account";
@@ -202,7 +204,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     BranchId = x.BranchId,
 
                     JournalId = reversal.Id,
-                    AccountId = x.AccountId,
+                    ACCode = x.ACCode,
                     Debit = x.Credit,   // 🔁 swap
                     Credit = x.Debit
                 }).ToList();

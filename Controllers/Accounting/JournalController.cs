@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GravyFoodsApi.Controllers.Accounting
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/journals")]
     public class JournalController : ControllerBase
     {
         private readonly IJournalRepository _repo;
@@ -16,7 +16,7 @@ namespace GravyFoodsApi.Controllers.Accounting
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(JournalInfoDto dto)
+        public async Task<IActionResult> Create([FromBody] JournalInfoDto dto)
         {
             var id = await _repo.CreateAsync(dto);
             return Ok(id);

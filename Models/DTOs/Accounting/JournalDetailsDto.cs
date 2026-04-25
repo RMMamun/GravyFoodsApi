@@ -4,7 +4,7 @@ namespace GravyFoodsApi.Models.DTOs.Accounting
 {
     public class JournalDetailsDto
     {
-        public Guid AccountId { get; set; }
+        public string ACCode { get; set; }
         public string? Description { get; set; }
 
         public decimal Debit { get; set; }

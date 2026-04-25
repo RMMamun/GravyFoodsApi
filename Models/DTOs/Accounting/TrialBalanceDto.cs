@@ -2,7 +2,7 @@
 {
     public class TrialBalanceDto
     {
-        public Guid AccountId { get; set; }
+        public string ACCode { get; set; }
         public string AccountName { get; set; }
 
         public decimal Debit { get; set; }

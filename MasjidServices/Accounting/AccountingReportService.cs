@@ -19,7 +19,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
         public async Task<List<LedgerDto>> GetLedger(Guid accountId)
         {
             //return await _context.JournalDetails
-            //    .Where(x => x.AccountId == accountId)
+            //    .Where(x => x.ACCode == accountId)
             //    .Select(x => new LedgerDto
             //    {
             //        Date = x.JournalInfo.Date,
@@ -37,10 +37,10 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             //{
             //    Accounts = accounts.Select(x => new AccountBalanceDto
             //    {
-            //        AccountId = x.Id,
+            //        ACCode = x.Id,
             //        AccountName = x.Name,
-            //        Debit = _context.JournalDetails.Where(j => j.AccountId == x.Id).Sum(j => j.Debit),
-            //        Credit = _context.JournalDetails.Where(j => j.AccountId == x.Id).Sum(j => j.Credit)
+            //        Debit = _context.JournalDetails.Where(j => j.ACCode == x.Id).Sum(j => j.Debit),
+            //        Credit = _context.JournalDetails.Where(j => j.ACCode == x.Id).Sum(j => j.Credit)
             //    }).ToList()
             //};
             //return trialBalance;
