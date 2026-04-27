@@ -7,6 +7,7 @@ namespace GravyFoodsApi.MasjidRepository.TaskManager
     {
 
         Task<List<TaskInfoDto>> GetAll();
+        Task<List<TaskInfoDto>> GetTasksByDateRage(string strSearch, DateTime fromDate, DateTime toDate);
         Task<TaskInfoDto> GetById(int id);
         Task<bool> Create(TaskInfoDto _dto);
         Task<bool> CreateTaskLogAsync(TasksLogDto _dto);

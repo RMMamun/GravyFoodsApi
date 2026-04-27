@@ -19,81 +19,101 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
             _tenant = tenant;
         }
 
-        //public async Task<List<TaskInfoDto>> GetAll()
-        //{
-        //    try
-        //    {
-        //        // 🔥 1. Load tasks
-        //        var tasks = await _context.TaskInfo
-        //            .OrderByDescending(x => x.CreatedDate)
-        //            .ToListAsync();
-
-        //        // 🔥 2. Load ALL logs once
-        //        var logs = await _context.TasksLog.ToListAsync();
-
-        //        // 🔥 3. Group logs by Task Id
-        //        var logsByTask = logs
-        //            .GroupBy(x => x.Id)
-        //            .ToDictionary(g => g.Key, g => g.ToList());
-
-        //        // 🔥 4. Map DTO
-        //        var allTasks = tasks.Select(task =>
-        //        {
-        //            var taskLogs = logsByTask.ContainsKey(task.Id)
-        //                ? logsByTask[task.Id]
-        //                : new List<TasksLog>();
-
-        //            var elapsedMinutes = taskLogs
-        //                .Where(t => t.StartDateTime.HasValue && t.EndDateTime.HasValue)
-        //                .Sum(t => EF.Functions.DateDiffMinute(
-        //                    t.StartDateTime!.Value,
-        //                    t.EndDateTime!.Value));
-
-        //            return new TaskInfoDto
-        //            {
-        //                Id = task.Id,
-        //                TaskId = task.TaskId,
-        //                ProjectId = task.ProjectId,
-        //                Title = task.Title,
-        //                Description = task.Description,
-        //                IsCompleted = task.IsCompleted,
-        //                CreatedDate = task.CreatedDate,
-        //                StartDate = task.StartDate,
-        //                DueDate = task.DueDate,
-        //                OrderNo = task.OrderNo,
-        //                IsCopied = task.IsCopied,
-        //                IsShifted = task.IsShifted,
-
-        //                ProposedTimeInMinutes = task.ProposedTimeInMinutes,
-        //                ElapsedInMinutes = elapsedMinutes,
-
-        //                TasksLogs = taskLogs.Select(x => new TasksLogDto
-        //                {
-        //                    SLNo = x.SLNo,
-        //                    Id = x.Id,
-        //                    StartDateTime = x.StartDateTime,
-        //                    EndDateTime = x.EndDateTime
-        //                }).ToList()
-        //            };
-        //        }).ToList();
-
-        //        return allTasks;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error retrieving tasks: {ex.Message}");
-        //        return new List<TaskInfoDto>();
-        //    }
-        //}
-
 
         public async Task<List<TaskInfoDto>> GetAll()
         {
             try
             {
                 //.Where(x => x.BranchId == _tenant.BranchId && x.CompanyId == _tenant.CompanyId)
-                var result = await _context.TaskInfo
+                //var result = await _context.TaskInfo
 
+                //    .OrderByDescending(x => x.CreatedDate)
+                //    .ToListAsync();
+
+                //var allTasks = result.Select(x => new TaskInfoDto
+                //{
+                //    Id = x.Id,
+                //    TaskId = x.TaskId,
+                //    ProjectId = x.ProjectId,
+                //    Title = x.Title,
+                //    Description = x.Description,
+                //    IsCompleted = x.IsCompleted,
+                //    CreatedDate = x.CreatedDate,
+                //    StartDate = x.StartDate,
+                //    DueDate = x.DueDate,
+                //    OrderNo = x.OrderNo,
+                //    IsCopied = x.IsCopied,
+                //    IsShifted = x.IsShifted,
+                //    TasksLogs = _context.TasksLog?.Select(x => new TasksLogDto
+                //    {
+                //        SLNo = x.SLNo,
+                //        Id = x.Id,
+                //        StartDateTime = x.StartDateTime,
+                //        EndDateTime = x.EndDateTime
+                //    }).ToList(),
+                //    ProposedTimeInMinutes = Math.Round(((int)x.ProposedTimeInMinutes / 60m),2),
+                //    TimeInputType = x.TimeInputType,
+
+                //    ElapsedInMinutes = Math.Round((_context.TasksLog
+                //    .Where(t => t.Id == x.Id && t.StartDateTime.HasValue && t.EndDateTime.HasValue)
+                //    .Sum(t => EF.Functions.DateDiffMinute(t.StartDateTime.Value, t.EndDateTime.Value)) / 60m),2)
+
+
+
+                //}).ToList();
+
+
+                
+
+                var allTasks = await _context.TaskInfo
+                .OrderByDescending(x => x.CreatedDate)
+                .Select(x => new TaskInfoDto
+                {
+                    Id = x.Id,
+                    TaskId = x.TaskId,
+                    ProjectId = x.ProjectId,
+                    Title = x.Title,
+                    Description = x.Description,
+                    IsCompleted = x.IsCompleted,
+                    CreatedDate = x.CreatedDate,
+                    StartDate = x.StartDate,
+                    DueDate = x.DueDate,
+                    OrderNo = x.OrderNo,
+                    IsCopied = x.IsCopied,
+                    IsShifted = x.IsShifted,
+
+                    ProposedTimeInMinutes = Math.Round(((int)x.ProposedTimeInMinutes / 60m), 2),
+                    TimeInputType = x.TimeInputType,
+
+                    // Aggregate directly in SQL
+                    ElapsedInMinutes = Math.Round(
+                        _context.TasksLog
+                            .Where(t => t.Id == x.Id && t.StartDateTime != null && t.EndDateTime != null)
+                            .Sum(t => (int?)EF.Functions.DateDiffMinute(t.StartDateTime.Value, t.EndDateTime.Value)) ?? 0
+                        / 60m, 2
+                    )
+                })
+                .ToListAsync();
+
+                return allTasks;
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework like Serilog, NLog, etc.)
+                Console.WriteLine($"Error retrieving tasks: {ex.Message}");
+                return new List<TaskInfoDto>();
+            }
+
+        }
+
+        public async Task<List<TaskInfoDto>> GetTasksByDateRage(string strSearch, DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                //.Where(x => x.BranchId == _tenant.BranchId && x.CompanyId == _tenant.CompanyId)
+                var result = await _context.TaskInfo
+                    .Where(x => x.CreatedDate.Date >= fromDate.Date && x.CreatedDate.Date <= toDate.Date)
                     .OrderByDescending(x => x.CreatedDate)
                     .ToListAsync();
 
@@ -118,12 +138,12 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                         StartDateTime = x.StartDateTime,
                         EndDateTime = x.EndDateTime
                     }).ToList(),
-                    ProposedTimeInMinutes = Math.Round(((int)x.ProposedTimeInMinutes / 60m),2),
+                    ProposedTimeInMinutes = Math.Round(((int)x.ProposedTimeInMinutes / 60m), 2),
                     TimeInputType = x.TimeInputType,
 
                     ElapsedInMinutes = Math.Round((_context.TasksLog
                     .Where(t => t.Id == x.Id && t.StartDateTime.HasValue && t.EndDateTime.HasValue)
-                    .Sum(t => EF.Functions.DateDiffMinute(t.StartDateTime.Value, t.EndDateTime.Value)) / 60m),2)
+                    .Sum(t => EF.Functions.DateDiffMinute(t.StartDateTime.Value, t.EndDateTime.Value)) / 60m), 2)
 
 
 

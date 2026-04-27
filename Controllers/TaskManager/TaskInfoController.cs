@@ -33,6 +33,15 @@ namespace GravyFoodsApi.Controllers.TaskManager
             return Ok(product);
         }
 
+        [HttpGet("GetTasksSearchAsync/{strSearch}/{fromDate:Datetime}/{toDate:Datetime}")]
+        public async Task<ActionResult<TaskInfoDto>> GetTasksSearchAsync()
+        {
+            var product = await _repo.GetAll();
+            if (product == null) return NotFound();
+            return Ok(product);
+        }
+
+
         [HttpGet("{id}")]
         public async Task<ActionResult<TaskInfoDto>> Get(int id)
         {
