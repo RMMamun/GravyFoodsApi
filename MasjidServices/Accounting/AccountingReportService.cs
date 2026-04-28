@@ -2,6 +2,7 @@
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidRepository.Accounting;
 using GravyFoodsApi.Models.DTOs.Accounting;
+using Microsoft.EntityFrameworkCore;
 
 namespace GravyFoodsApi.MasjidServices.Accounting
 {
@@ -16,18 +17,44 @@ namespace GravyFoodsApi.MasjidServices.Accounting
         }
 
 
-        public async Task<List<LedgerDto>> GetLedger(Guid accountId)
+        public async Task<List<LedgerDto>> GetLedger(string accountId, DateTime from, DateTime to)
         {
-            //return await _context.JournalDetails
-            //    .Where(x => x.ACCode == accountId)
-            //    .Select(x => new LedgerDto
-            //    {
-            //        Date = x.JournalInfo.Date,
-            //        Debit = x.Debit,
-            //        Credit = x.Credit
-            //    }).ToListAsync();
+            var query = await _context.JournalDetails
+                .Where(x => x.ACCode == accountId &&
+                            x.Journal.Date >= from &&
+                            x.Journal.Date <= to &&
+                            x.Journal.IsPosted)
+                .OrderBy(x => x.Journal.Date)
+                .Select(x => new
+                {
+                    x.Debit,
+                    x.Credit,
+                    x.Journal.Date,
+                    x.Journal.ReferenceNo,
+                    x.Journal.Description
+                })
+                .ToListAsync();
 
-            throw new NotImplementedException();
+            decimal running = 0;
+
+            var result = new List<LedgerDto>();
+
+            foreach (var item in query)
+            {
+                running += item.Debit - item.Credit;
+
+                result.Add(new LedgerDto
+                {
+                    Date = item.Date,
+                    ReferenceNo = item.ReferenceNo,
+                    Description = item.Description,
+                    Debit = item.Debit,
+                    Credit = item.Credit,
+                    Balance = running
+                });
+            }
+
+            return result;
         }
 
         public async Task<TrialBalanceDto> GetTrialBalance()

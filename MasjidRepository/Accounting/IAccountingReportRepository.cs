@@ -4,7 +4,7 @@ namespace GravyFoodsApi.MasjidRepository.Accounting
 {
     public interface IAccountingReportRepository
     {
-        Task<List<LedgerDto>> GetLedger(Guid accountId);
+        Task<List<LedgerDto>> GetLedger(string accountId, DateTime from, DateTime to);
         Task<TrialBalanceDto> GetTrialBalance();
     }
 }
