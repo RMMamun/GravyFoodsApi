@@ -120,6 +120,8 @@ builder.Services.AddScoped<IAppOptionsRepository, AppOptionsService>();
 builder.Services.AddScoped<IAccountInfoRepository, AccountInfoService>();
 builder.Services.AddScoped<IAccountingReportRepository, AccountingReportService>();
 
+builder.Services.AddScoped<ISalesAccountingRepository, SalesAccountingService>();
+
 builder.Services.AddScoped<IContextCookieService, ContextCookieService>();
 builder.Services.AddDataProtection();
 

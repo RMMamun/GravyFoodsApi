@@ -1,6 +1,7 @@
 ﻿
 using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
+using GravyFoodsApi.MasjidRepository.Accounting;
 using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,15 @@ namespace GravyFoodsApi.MasjidServices
     {
         private readonly MasjidDBContext _context;
         private readonly IProductStockRepository _StockRepo;
+        private readonly ISalesAccountingRepository _AccService;
         private readonly ITenantContextRepository _tenant;
 
-        public SalesService(MasjidDBContext context, IProductStockRepository stockRepo, ITenantContextRepository tenant)
+        public SalesService(MasjidDBContext context, IProductStockRepository stockRepo, ITenantContextRepository tenant,ISalesAccountingRepository AccService)
         {
             _context = context;
             _StockRepo = stockRepo;
             _tenant = tenant;
+            _AccService = AccService;
         }
 
 
@@ -94,13 +97,25 @@ namespace GravyFoodsApi.MasjidServices
                         var stockUpdate = await StockUpdate(saleDto);
                         if (!stockUpdate.Success)
                         {
-
                             apiRes.Success = false;
                             apiRes.Message = "Sale created but stock update failed: " + stockUpdate.Message;
 
                             await transaction.RollbackAsync();
                             return apiRes;
                         }
+
+
+                        //Post to Accounting
+                        var isPosted = await _AccService.PostSalesAsync(saleDto);
+                        if (isPosted.Success == false)
+                        {
+                            apiRes.Success = false;
+                            apiRes.Message = "Sale created but account posting failed: " + isPosted.Message;
+
+                            await transaction.RollbackAsync();
+                            return apiRes;
+                        }
+
 
                         await transaction.CommitAsync();
 

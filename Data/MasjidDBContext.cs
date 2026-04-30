@@ -24,7 +24,7 @@ namespace GravyFoodsApi.Data
         public DbSet<JournalDetails> JournalDetails { get; set; } = null!;  
         public DbSet<JournalInfo> JournalInfo { get; set; } = null!;  // <-- Add this line for
 
-        
+        public DbSet<AccountMapping> AccountMapping { get; set; } = null!;
 
         public DbSet<UserInfo> UserInfo { get; set; } = null!;
         public DbSet<Country> Country { get; set; }

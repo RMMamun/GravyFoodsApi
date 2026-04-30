@@ -9,7 +9,7 @@
         public string BranchId { get; set; } = string.Empty;
         public string CompanyId { get; set; } = string.Empty;
 
-        public string OrderStatus { get; set; } = "Pending";
+        public string OrderStatus { get; set; }
         public double TotalAmount { get; set; }
         public double TotalDiscountAmount { get; set; }
         public double TotalPaidAmount { get; set; }
