@@ -2,6 +2,7 @@
 {
     public class AccountMapping
     {
+        public int Id { get; set; }
         public string CompanyId { get; set; }
 
         public string CashAccountId { get; set; }
