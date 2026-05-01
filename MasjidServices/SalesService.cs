@@ -130,7 +130,12 @@ namespace GravyFoodsApi.MasjidServices
                     catch (Exception ex)
                     {
                         await transaction.RollbackAsync();
-                        throw; // This will be caught by the outer catch
+
+                        apiRes.Success = false;
+                        apiRes.Message = "Error creating sale: " + ex.Message;
+
+                        return apiRes;
+                        //throw; // This will be caught by the outer catch
                         
                     }
                 });
