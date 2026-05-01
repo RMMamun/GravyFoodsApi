@@ -37,6 +37,8 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     IsPosted = true,
                     PostedAt = DateTime.UtcNow,
                     PostedBy = "SYSTEM",
+                    BranchId = _tenant.BranchId,
+                    CompanyId = _tenant.CompanyId,
 
                     JournalDetails = new List<JournalDetails>()
                 };
@@ -54,7 +56,9 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                         ? settings.CashAccountId
                         : settings.ReceivableAccountId,
                     Debit = total,
-                    Credit = 0
+                    Credit = 0,
+                    BranchId = _tenant.BranchId,
+                    CompanyId = _tenant.CompanyId,
                 });
 
                 // 💵 Sales Revenue
@@ -62,7 +66,10 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 {
                     ACCode = settings.SalesAccountId,
                     Debit = 0,
-                    Credit = net
+                    Credit = net,
+
+                    BranchId = _tenant.BranchId,
+                    CompanyId = _tenant.CompanyId,
                 });
 
                 // 🧾 VAT
@@ -72,7 +79,10 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     {
                         ACCode = settings.VatAccountId,
                         Debit = 0,
-                        Credit = vat
+                        Credit = vat,
+
+                        BranchId = _tenant.BranchId,
+                        CompanyId = _tenant.CompanyId,
                     });
                 }
 
@@ -81,7 +91,10 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 {
                     ACCode = settings.CogsAccountId,
                     Debit = cost,
-                    Credit = 0
+                    Credit = 0,
+
+                    BranchId = _tenant.BranchId,
+                    CompanyId = _tenant.CompanyId,
                 });
 
                 // 📦 Inventory
@@ -89,7 +102,11 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 {
                     ACCode = settings.InventoryAccountId,
                     Debit = 0,
-                    Credit = cost
+                    Credit = cost,
+
+                    BranchId = _tenant.BranchId,
+                    CompanyId = _tenant.CompanyId,
+                    
                 });
 
                 _context.JournalInfo.Add(journal);
@@ -102,7 +119,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             }
             catch(Exception ex)
             {
-                apiRes.Success = true;
+                apiRes.Success = false;
                 apiRes.Message = "Sales posted to accounting";
                 return apiRes;
             }
