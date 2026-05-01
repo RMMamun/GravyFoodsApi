@@ -4,6 +4,7 @@ using GravyFoodsApi.MasjidRepository.TaskManager;
 using GravyFoodsApi.Models.DTOs.TaskManager;
 using GravyFoodsApi.Models.TaskManager;
 using Humanizer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -63,7 +64,7 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                 //}).ToList();
 
 
-                
+
 
                 var allTasks = await _context.TaskInfo
                 .OrderByDescending(x => x.CreatedDate)
@@ -250,12 +251,14 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                         StartDate = taskInfo.StartDate,
                         DueDate = taskInfo.DueDate,
                         OrderNo = taskInfo.OrderNo,
-                        BranchId = _tenant.BranchId,
-                        CompanyId = _tenant.CompanyId,
                         IsShifted = taskInfo.IsShifted,
                         IsCopied = taskInfo.IsCopied,
-                        ProposedTimeInMinutes =  (int)taskInfo.ProposedTimeInMinutes,
-                        TimeInputType = taskInfo.TimeInputType
+                        ProposedTimeInMinutes = (int)taskInfo.ProposedTimeInMinutes,
+                        TimeInputType = taskInfo.TimeInputType,
+
+                        BranchId = "1",
+                        CompanyId = "1",
+
                     };
 
                     _context.TaskInfo.Add(newTaskInfo);
@@ -286,7 +289,7 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                     Id = _dto.Id,
                     StartDateTime = _dto.StartDateTime,
                     EndDateTime = _dto.EndDateTime,
-                    
+
 
                 };
                 _context.TasksLog.Add(newTaskLog);
@@ -320,12 +323,13 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                         StartDate = taskInfo.StartDate,
                         DueDate = taskInfo.DueDate,
                         OrderNo = taskInfo.OrderNo,
-                        BranchId = _tenant.BranchId,
-                        CompanyId = _tenant.CompanyId,
                         IsCopied = taskInfo.IsCopied,
                         IsShifted = taskInfo.IsShifted,
                         ProposedTimeInMinutes = (int)taskInfo.ProposedTimeInMinutes,
-                        TimeInputType = taskInfo.TimeInputType
+                        TimeInputType = taskInfo.TimeInputType,
+
+                        BranchId = "1",
+                        CompanyId = "1",
 
                     };
 
@@ -376,14 +380,13 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                     existingTask.StartDate = taskInfo.StartDate;
                     existingTask.DueDate = taskInfo.DueDate;
                     existingTask.OrderNo = taskInfo.OrderNo;
-                    existingTask.BranchId = _tenant.BranchId;
-                    existingTask.CompanyId = _tenant.CompanyId;
                     existingTask.IsCopied = taskInfo.IsCopied;
                     existingTask.IsShifted = taskInfo.IsShifted;
                     existingTask.ProposedTimeInMinutes = (int)taskInfo.ProposedTimeInMinutes;
                     existingTask.TimeInputType = taskInfo.TimeInputType;
 
-
+                    existingTask.BranchId = "1";
+                    existingTask.CompanyId = "1";
 
                     _context.TaskInfo.Update(existingTask);
                     await _context.SaveChangesAsync();
@@ -431,8 +434,95 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                 Console.WriteLine($"Error deleting task: {ex.Message}");
                 return false;
             }
-        
+
 
         }
+
+        public async Task<ProjectStatusDto?> GetProjectStatusAsync(string projectId)
+        {
+            try
+            {
+
+                var result = await _context.TaskInfo
+                .Where(t => t.ProjectId == projectId)
+
+                // STEP 1: Group by TaskId (logical task)
+                .GroupBy(t => t.TaskId)
+
+                .Select(g => new
+                {
+                    TaskId = g.Key,
+
+                    IsCompleted = g.Any(x => x.IsCompleted),
+
+                    ProjectedMinutes = g.Sum(x => x.ProposedTimeInMinutes),
+
+                    // ✅ Calculate elapsed per group WITHOUT using Id list
+                    ElapsedMinutes = _context.TasksLog
+                        .Where(l =>
+                            l.StartDateTime != null &&
+                            l.EndDateTime != null &&
+                            _context.TaskInfo
+                                .Where(t => t.ProjectId == projectId && t.TaskId == g.Key)
+                                .Select(t => t.Id)
+                                .Contains(l.Id)
+                        )
+                        .Sum(l => EF.Functions.DateDiffMinute(
+                            l.StartDateTime.Value,
+                            l.EndDateTime.Value))
+                })
+
+                // STEP 2: Aggregate whole project
+                .GroupBy(x => 1)
+
+                .Select(g => new ProjectStatusDto
+                {
+                    ProjectId = projectId,
+
+                    TotalTasks = g.Count(),
+
+                    CompletedTasks = g.Count(x => x.IsCompleted),
+
+                    PendingTasks = g.Count() - g.Count(x => x.IsCompleted),
+
+                    ProjectedHours = g.Sum(x => x.ProjectedMinutes) / 60.0,
+
+                    ElapsedHours = g.Sum(x => x.ElapsedMinutes) / 60.0,
+
+                    ProgressByDoneTasks = g.Count() > 0
+                        ? (int)((double)g.Count(x => x.IsCompleted) * 100.0 / g.Count())
+                        : 0,
+
+                    ProgressByDoneHours = g.Sum(x => x.ProjectedMinutes) > 0
+                        ? (int)(g.Sum(x => x.ElapsedMinutes) * 100.0 / g.Sum(x => x.ProjectedMinutes))
+                        : 0
+                })
+                .FirstOrDefaultAsync();
+
+                return new ProjectStatusDto
+                {
+                    ProjectId = projectId,
+                    TotalTasks = result.TotalTasks,
+                    CompletedTasks = result.CompletedTasks,
+                    PendingTasks = result.PendingTasks,
+                    ElapsedHours = result.ElapsedHours,
+                    ProjectedHours = result.ProjectedHours,
+                    ProgressByDoneHours = (int)result.ProgressByDoneHours,
+                    ProgressByDoneTasks = (int)result.ProgressByDoneTasks,
+                };
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can use a logging framework like Serilog, NLog, etc.)
+                Console.WriteLine($"Error retrieving project status: {ex.Message}");
+                return null;
+            }
+        }
+
+
+
+
+
+
     }
 }

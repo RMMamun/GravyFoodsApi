@@ -34,7 +34,7 @@ namespace GravyFoodsApi.Controllers.TaskManager
         }
 
         [HttpGet("GetTasksSearchAsync/{strSearch}/{fromDate:Datetime}/{toDate:Datetime}")]
-        public async Task<ActionResult<TaskInfoDto>> GetTasksSearchAsync()
+        public async Task<ActionResult<TaskInfoDto>> GetTasksSearchAsync(string strSearch, DateTime fromDate, DateTime toDate)
         {
             var product = await _repo.GetAll();
             if (product == null) return NotFound();
@@ -91,5 +91,12 @@ namespace GravyFoodsApi.Controllers.TaskManager
         }
 
 
+        [HttpGet("GetProjectStatusAsync/{projectId}")]
+        public async Task<ActionResult<ProjectStatusDto>> GetProjectStatusAsync(string projectId)
+        {
+            var product = await _repo.GetProjectStatusAsync(projectId);
+            if (product == null) return NotFound();
+            return Ok(product);
+        }
     }
 }

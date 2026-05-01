@@ -14,5 +14,7 @@ namespace GravyFoodsApi.MasjidRepository.TaskManager
         Task<bool> CopyTask(TaskInfoDto _dto);
         Task<bool> Update(TaskInfoDto _dto);
         Task<bool> Delete(int id);
+
+        Task<ProjectStatusDto?> GetProjectStatusAsync(string projectId);
     }
 }
