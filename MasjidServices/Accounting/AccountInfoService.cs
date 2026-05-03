@@ -258,7 +258,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 //.Select(acc => new AccountInfoDto
                 //{
                 //    Id = acc.Id.ToString(),
-                //    ACCode = acc.ACCode,
+                //    AccountId = acc.AccountId,
                 //    ACName = acc.ACName,
                 //    ACType = acc.ACType,
                 //    Description = acc.Description,
@@ -270,15 +270,15 @@ namespace GravyFoodsApi.MasjidServices.Accounting
 
                 //if (query != null)
                 //{
-                //    if (string.IsNullOrEmpty(ACCode) == false)
+                //    if (string.IsNullOrEmpty(AccountId) == false)
                 //    {
 
-                //        if (!string.IsNullOrWhiteSpace(ACCode))
+                //        if (!string.IsNullOrWhiteSpace(AccountId))
                 //        {
                 //            query = query.Where(x =>
-                //                x.ACName.Contains(ACCode) ||
-                //                x.ACCode.Contains(ACCode) ||
-                //                x.ParentName.Contains(ACCode));
+                //                x.ACName.Contains(AccountId) ||
+                //                x.AccountId.Contains(AccountId) ||
+                //                x.ParentName.Contains(AccountId));
                 //        }
                 //    }
                 //}

@@ -73,7 +73,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
 
                     
                     JournalId = journal.Id,
-                    ACCode = x.ACCode,
+                    AccountId = x.AccountId,
                     Description = x.Description,
                     Debit = x.Debit,
                     Credit = x.Credit
@@ -133,10 +133,10 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 // OPTIONAL: prevent control account posting
                 var controlAccounts = await _context.AccountInfo
                     .Where(a => a.IsControlAccount)
-                    .Select(a => a.ACCode)
+                    .Select(a => a.Id)
                     .ToListAsync();
 
-                if (journal.JournalDetails.Any(x => controlAccounts.Contains(x.ACCode)))
+                if (journal.JournalDetails.Any(x => controlAccounts.Contains(x.AccountId)))
                 {
                     apiRes.Success = false;
                     apiRes.Message = "Cannot post to control account";
@@ -204,7 +204,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     BranchId = x.BranchId,
 
                     JournalId = reversal.Id,
-                    ACCode = x.ACCode,
+                    AccountId = x.AccountId,
                     Debit = x.Credit,   // 🔁 swap
                     Credit = x.Debit
                 }).ToList();

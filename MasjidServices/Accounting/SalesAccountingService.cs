@@ -35,7 +35,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     SourceModule = "SALES ENTRY",
                     Description = "Sales Invoice",
                     IsPosted = true,
-                    PostedAt = DateTime.UtcNow,
+                    PostedAt = sale.CreatedDateTime,
                     PostedBy = "SYSTEM",
                     BranchId = _tenant.BranchId,
                     CompanyId = _tenant.CompanyId,
@@ -52,7 +52,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 //*** sometime customer pay partially some in cash & some in card or in mobile banking. Need to handle this
                 journal.JournalDetails.Add(new JournalDetails
                 {
-                    ACCode = (sale.TotalAmount == sale.TotalPaidAmount)     //isCashPaid 
+                    AccountId = (sale.TotalAmount == sale.TotalPaidAmount)     //isCashPaid 
                         ? settings.CashAccountId
                         : settings.ReceivableAccountId,
                     Debit = total,
@@ -64,7 +64,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 // 💵 Sales Revenue
                 journal.JournalDetails.Add(new JournalDetails
                 {
-                    ACCode = settings.SalesAccountId,
+                    AccountId = settings.SalesAccountId,
                     Debit = 0,
                     Credit = net,
 
@@ -77,7 +77,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 {
                     journal.JournalDetails.Add(new JournalDetails
                     {
-                        ACCode = settings.VatAccountId,
+                        AccountId = settings.VatAccountId,
                         Debit = 0,
                         Credit = vat,
 
@@ -89,7 +89,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 // 📦 COGS
                 journal.JournalDetails.Add(new JournalDetails
                 {
-                    ACCode = settings.CogsAccountId,
+                    AccountId = settings.CogsAccountId,
                     Debit = cost,
                     Credit = 0,
 
@@ -100,7 +100,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 // 📦 Inventory
                 journal.JournalDetails.Add(new JournalDetails
                 {
-                    ACCode = settings.InventoryAccountId,
+                    AccountId = settings.InventoryAccountId,
                     Debit = 0,
                     Credit = cost,
 

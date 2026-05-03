@@ -26,7 +26,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 decimal opening = await LedgerOpeningBalanceAsync(accountId, from);
 
                 var query = await _context.JournalDetails
-                    .Where(x => x.ACCode == accountId &&
+                    .Where(x => x.AccountId.ToString() == accountId &&
                                 x.Journal.Date >= from &&
                                 x.Journal.Date <= to &&
                                 x.Journal.IsPosted)
@@ -109,7 +109,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             try
             {
                 var opening = await _context.JournalDetails
-                    .Where(x => x.ACCode == accountId &&
+                    .Where(x => x.AccountId.ToString() == accountId &&
                     x.Journal.Date < fromDate &&
                     x.Journal.IsPosted)
                     .SumAsync(x => x.Debit - x.Credit);
@@ -131,10 +131,10 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             //{
             //    Accounts = accounts.Select(x => new AccountBalanceDto
             //    {
-            //        ACCode = x.Id,
+            //        AccountId = x.Id,
             //        AccountName = x.Name,
-            //        Debit = _context.JournalDetails.Where(j => j.ACCode == x.Id).Sum(j => j.Debit),
-            //        Credit = _context.JournalDetails.Where(j => j.ACCode == x.Id).Sum(j => j.Credit)
+            //        Debit = _context.JournalDetails.Where(j => j.AccountId == x.Id).Sum(j => j.Debit),
+            //        Credit = _context.JournalDetails.Where(j => j.AccountId == x.Id).Sum(j => j.Credit)
             //    }).ToList()
             //};
             //return trialBalance;

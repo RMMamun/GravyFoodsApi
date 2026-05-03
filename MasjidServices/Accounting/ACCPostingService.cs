@@ -51,7 +51,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
         //            PostedBy = _tenant.UserId,
         //            JournalDetails = journal.Lines.Select(x => new JournalDetails
         //            {
-        //                ACCode = x.ACCode,
+        //                AccountId = x.AccountId,
         //                Debit = x.Debit,
         //                Credit = x.Credit,
         //                Description = x.Description

@@ -5,12 +5,12 @@
         public int Id { get; set; }
         public string CompanyId { get; set; }
 
-        public string CashAccountId { get; set; }
-        public string BankAccountId { get; set; }
-        public string SalesAccountId { get; set; }
-        public string VatAccountId { get; set; }
-        public string CogsAccountId { get; set; }
-        public string InventoryAccountId { get; set; }
-        public string ReceivableAccountId { get; set; }
+        public Guid CashAccountId { get; set; }
+        public Guid BankAccountId { get; set; }
+        public Guid SalesAccountId { get; set; }
+        public Guid VatAccountId { get; set; }
+        public Guid CogsAccountId { get; set; }
+        public Guid InventoryAccountId { get; set; }
+        public Guid ReceivableAccountId { get; set; }
     }
 }

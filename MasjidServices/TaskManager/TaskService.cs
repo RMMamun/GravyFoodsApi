@@ -483,7 +483,7 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
 
                     CompletedTasks = g.Count(x => x.IsCompleted),
 
-                    PendingTasks = g.Count() - g.Count(x => x.IsCompleted),
+                    PendingTasks = g.Count(x => x.IsCompleted == false),
 
                     ProjectedHours = g.Sum(x => x.ProjectedMinutes) / 60.0,
 
@@ -505,8 +505,8 @@ namespace GravyFoodsApi.MasjidServices.TaskManager
                     TotalTasks = result.TotalTasks,
                     CompletedTasks = result.CompletedTasks,
                     PendingTasks = result.PendingTasks,
-                    ElapsedHours = result.ElapsedHours,
-                    ProjectedHours = result.ProjectedHours,
+                    ElapsedHours = Math.Round(result.ElapsedHours, 1),
+                    ProjectedHours = Math.Round(result.ProjectedHours,1),
                     ProgressByDoneHours = (int)result.ProgressByDoneHours,
                     ProgressByDoneTasks = (int)result.ProgressByDoneTasks,
                 };
