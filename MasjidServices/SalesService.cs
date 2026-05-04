@@ -92,6 +92,7 @@ namespace GravyFoodsApi.MasjidServices
                         _context.SalesInfo.Add(sale);
                         await _context.SaveChangesAsync();
 
+                        saleDto.SalesId = strSalesId;
 
                         //Update Stock after creating Sale
                         var stockUpdate = await StockUpdate(saleDto);

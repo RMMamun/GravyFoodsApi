@@ -39,6 +39,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     PostedBy = "SYSTEM",
                     BranchId = _tenant.BranchId,
                     CompanyId = _tenant.CompanyId,
+                    
 
                     JournalDetails = new List<JournalDetails>()
                 };
@@ -47,7 +48,10 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 decimal vat = 0;   //sale.VatAmount
                 decimal net = total - vat;
                 decimal cost = 0;  //sale.TotalCost
+                decimal discount = 0;
+                decimal dueAmount = (decimal)sale.TotalAmount - (discount + (decimal)sale.TotalPaidAmount);
 
+                //--DEBIT SIDE ------------------------------------------------------
                 // 💰 Debit (Cash or Receivable)
                 //*** sometime customer pay partially some in cash & some in card or in mobile banking. Need to handle this
                 journal.JournalDetails.Add(new JournalDetails
@@ -61,6 +65,45 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     CompanyId = _tenant.CompanyId,
                 });
 
+                //Account Receivable Dr
+                if (sale.TotalAmount != sale.TotalPaidAmount)
+                {
+                    journal.JournalDetails.Add(new JournalDetails
+                    {
+                        AccountId = settings.ReceivableAccountId,
+                        Debit = total - (decimal)sale.TotalPaidAmount,
+                        Credit = 0,
+                        BranchId = _tenant.BranchId,
+                        CompanyId = _tenant.CompanyId,
+                    });
+                }
+
+                //Dicount 
+                if (discount > 0)
+                {
+                    journal.JournalDetails.Add(new JournalDetails
+                    {
+                        AccountId = settings.DiscountAccountId,
+                        Debit = discount,
+                        Credit = 0,
+                        BranchId = _tenant.BranchId,
+                        CompanyId = _tenant.CompanyId,
+                    });
+                }
+
+                // 📦 COGS
+                journal.JournalDetails.Add(new JournalDetails
+                {
+                    AccountId = settings.CogsAccountId,
+                    Debit = cost,
+                    Credit = 0,
+
+                    BranchId = _tenant.BranchId,
+                    CompanyId = _tenant.CompanyId,
+                });
+                //----------------------------------------------------
+
+                // CREDIT SIDE
                 // 💵 Sales Revenue
                 journal.JournalDetails.Add(new JournalDetails
                 {
@@ -86,16 +129,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     });
                 }
 
-                // 📦 COGS
-                journal.JournalDetails.Add(new JournalDetails
-                {
-                    AccountId = settings.CogsAccountId,
-                    Debit = cost,
-                    Credit = 0,
-
-                    BranchId = _tenant.BranchId,
-                    CompanyId = _tenant.CompanyId,
-                });
+                
 
                 // 📦 Inventory
                 journal.JournalDetails.Add(new JournalDetails
@@ -108,6 +142,8 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     CompanyId = _tenant.CompanyId,
                     
                 });
+
+                
 
                 _context.JournalInfo.Add(journal);
                 await _context.SaveChangesAsync();

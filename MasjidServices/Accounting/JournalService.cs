@@ -62,7 +62,8 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     ReferenceNo = dto.ReferenceNo,
                     SourceModule = dto.SourceModule,
                     Description = dto.Description,
-                    IsPosted = false
+                    IsPosted = false,
+
                 };
 
                 journal.JournalDetails = dto.Details.Select(x => new JournalDetails
@@ -144,7 +145,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 }
 
                 journal.IsPosted = true;
-                journal.PostedBy = user;
+                journal.PostedBy = _tenant.UserId;
                 journal.PostedAt = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync();
