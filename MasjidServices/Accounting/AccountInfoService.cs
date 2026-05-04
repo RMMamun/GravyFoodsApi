@@ -31,7 +31,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     ACType = account.ACType,
                     Description = account.Description,
 
-                    ParentId = account.ParentId != null ? Guid.Parse(account.ParentId) : Guid.Empty,
+                    ParentId = account.ParentId != null ? account.ParentId : Guid.Empty,
                     ParentACCode = account.ParentACCode,
                     IsControlAccount = account.IsControlAccount,
                     IsActive = account.IsActive,
@@ -72,7 +72,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             try
                 {
                 var existingAccount = await _context.AccountInfo
-                    .FirstOrDefaultAsync(a => a.Id.ToString() == account.Id && a.CompanyId == _tenant.CompanyId && a.BranchId == _tenant.BranchId);
+                    .FirstOrDefaultAsync(a => a.Id == account.Id && a.CompanyId == _tenant.CompanyId && a.BranchId == _tenant.BranchId);
                 if (existingAccount == null)
                 {
                     return new ApiResponse<bool>
@@ -86,7 +86,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 existingAccount.ACName = account.ACName;
                 existingAccount.ACType = account.ACType;
                 existingAccount.Description = account.Description;
-                existingAccount.ParentId = account.ParentId != null ? Guid.Parse(account.ParentId) : Guid.Empty;
+                existingAccount.ParentId = account.ParentId != null ? account.ParentId : Guid.Empty;
                 existingAccount.ParentACCode = account.ParentACCode;
                 existingAccount.IsControlAccount = account.IsControlAccount;
                 existingAccount.IsActive = account.IsActive;
@@ -118,7 +118,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             throw new NotImplementedException();
         }
 
-        public async Task<ApiResponse<AccountInfoDto>> GetAccountByIdAsync(string AccountId)
+        public async Task<ApiResponse<AccountInfoDto>> GetAccountByIdAsync(Guid AccountId)
         {
             ApiResponse<AccountInfoDto> apiRes = new ApiResponse<AccountInfoDto>();
 
@@ -126,16 +126,16 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             {
 
                 var query =
-                from acc in _context.AccountInfo.Where(a => a.Id.ToString() == AccountId && a.CompanyId == _tenant.CompanyId && a.BranchId == _tenant.BranchId)
+                from acc in _context.AccountInfo.Where(a => a.Id == AccountId && a.CompanyId == _tenant.CompanyId && a.BranchId == _tenant.BranchId)
 
                 select new AccountInfoDto
                 {
-                    Id = acc.Id.ToString(),
+                    Id = acc.Id,
                     ACCode = acc.ACCode,
                     ACName = acc.ACName,
                     ACType = acc.ACType,
                     Description = acc.Description,
-                    ParentId = acc.ParentId != Guid.Empty ? acc.ParentId.ToString() : null,
+                    ParentId = acc.ParentId != Guid.Empty ? acc.ParentId : null,
                     ParentACCode = acc.ParentACCode,
                     ParentName = null,
                     IsControlAccount = acc.IsControlAccount,
@@ -170,12 +170,12 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     .Where(a => a.CompanyId == _tenant.CompanyId && a.BranchId == _tenant.BranchId)
                     .Select(a => new AccountInfoDto
                     {
-                        Id = a.Id.ToString(),
+                        Id = a.Id,
                         ACCode = a.ACCode,
                         ACName = a.ACName,
                         ACType = a.ACType,
                         Description = a.Description,
-                        ParentId = a.ParentId != Guid.Empty ? a.ParentId.ToString() : null,
+                        ParentId = a.ParentId != Guid.Empty ? a.ParentId : null,
                         ParentACCode = a.ParentACCode,
                         IsControlAccount = a.IsControlAccount,
                         IsActive = a.IsActive
@@ -211,12 +211,12 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     .Where(a => a.CompanyId == _tenant.CompanyId & a.BranchId == _tenant.BranchId)
                     .Select(a => new AccountInfoDto
                     {
-                        Id = a.Id.ToString(),
+                        Id = a.Id,
                         ACCode = a.ACCode,
                         ACName = a.ACName,
                         ACType = a.ACType,
                         Description = a.Description,
-                        ParentId = a.ParentId != Guid.Empty ? a.ParentId.ToString() : null,
+                        ParentId = a.ParentId != Guid.Empty ? a.ParentId : null,
                         ParentACCode = a.ParentACCode,
                         IsControlAccount = a.IsControlAccount,
                         IsActive = a.IsActive
@@ -290,12 +290,12 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 from parent in parentJoin.DefaultIfEmpty()
                 select new AccountInfoDto
                 {
-                    Id = acc.Id.ToString(),
+                    Id = acc.Id,
                     ACCode = acc.ACCode,
                     ACName = acc.ACName,
                     ACType = acc.ACType,
                     Description = acc.Description,
-                    ParentId = acc.ParentId != Guid.Empty ? acc.ParentId.ToString() : null,
+                    ParentId = acc.ParentId != Guid.Empty ? acc.ParentId : null,
                     ParentACCode = acc.ParentACCode,
                     ParentName = parent != null ? parent.ACName : null,
                     IsControlAccount = acc.IsControlAccount,

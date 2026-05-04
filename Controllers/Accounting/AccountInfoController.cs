@@ -33,7 +33,7 @@ namespace GravyFoodsApi.Controllers.Accounting
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] AccountInfoDto accountInfoDto)
         {
-            if (accountInfoDto == null || string.IsNullOrEmpty(accountInfoDto.Id))
+            if (accountInfoDto == null || (accountInfoDto.Id) == Guid.Empty)
                 return BadRequest("Valid account information with ID is required.");
 
             var updatedAccount = await _repo.UpdateAccountAsync(accountInfoDto);
@@ -42,7 +42,7 @@ namespace GravyFoodsApi.Controllers.Accounting
 
 
         [HttpGet("GetAccountByIdAsync/{id}")]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var account = await _repo.GetAccountByIdAsync(id);
             if (account == null)
