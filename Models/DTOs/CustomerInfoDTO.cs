@@ -24,6 +24,8 @@ namespace GravyFoodsApi.Models.DTOs
         [StringLength(250)]
         public string Email { get; set; } = string.Empty;
 
+        public Guid? AccountId { get; set; }
+
         public string BranchId { get; set; } = string.Empty;
         public string CompanyId { get; set; } = string.Empty;
     }

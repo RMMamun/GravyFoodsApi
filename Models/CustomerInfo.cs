@@ -29,6 +29,8 @@ namespace GravyFoodsApi.Models
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
+        public Guid? AccountId { get; set; }
+
         public string BranchId { get; set; } = string.Empty;
         public string CompanyId { get; set; } = string.Empty;
     }

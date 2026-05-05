@@ -262,7 +262,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 //    ACName = acc.ACName,
                 //    ACType = acc.ACType,
                 //    Description = acc.Description,
-                //    ParentACCode = acc.ParentACCode,
+                //    ParentId = acc.ParentId,
                 //    ParentName = acc.Parent.ACName,
                 //    IsControlAccount = acc.IsControlAccount,
                 //    IsActive = acc.IsActive
@@ -347,10 +347,10 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     return apiRes;
                 }
 
-                List<AccountInfoDto> ToDtoTree(string? ParentACCode)
+                List<AccountInfoDto> ToDtoTree(Guid? ParentId)
                 {
                     return items.Data
-                        .Where(x => x.ParentACCode == ParentACCode)
+                        .Where(x => x.ParentId == ParentId)
                         .OrderBy(x => x.ACCode)
                         .Select(x => new AccountInfoDto
                         {
@@ -366,7 +366,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                             ParentName = x.ParentName,
 
                             IsActive = x.IsActive,
-                            Children = ToDtoTree(x.ACCode),
+                            Children = ToDtoTree(x.Id),
 
                         }).ToList();
                 }
