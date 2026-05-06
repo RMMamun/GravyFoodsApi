@@ -28,6 +28,13 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 var settings = await _context.AccountMapping
                     .FirstAsync(x => x.CompanyId == sale.CompanyId);
 
+                if (settings == null || string.IsNullOrEmpty(settings.CompanyId) == true )
+                {
+                    apiRes.Success = false;
+                    apiRes.Message = "Account mapping not found!";
+                    return apiRes;
+                }
+
                 var journal = new JournalInfo
                 {
                     Date = sale.CreatedDateTime,
@@ -44,12 +51,13 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     JournalDetails = new List<JournalDetails>()
                 };
 
-                decimal total = (decimal)sale.TotalAmount;
+                decimal discount = 0;
+                decimal total = (decimal)sale.TotalAmount - discount;
                 decimal vat = 0;   //sale.VatAmount
                 decimal net = total - vat;
                 decimal cost = 0;  //sale.TotalCost
-                decimal discount = 0;
-                decimal dueAmount = (decimal)sale.TotalAmount - (discount + (decimal)sale.TotalPaidAmount);
+                
+                decimal dueAmount = (decimal)sale.TotalAmount - (decimal)sale.TotalPaidAmount;
 
                 //--DEBIT SIDE ------------------------------------------------------
                 // 💰 Debit (Cash or Receivable)

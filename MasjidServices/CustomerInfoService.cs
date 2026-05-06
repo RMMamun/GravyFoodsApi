@@ -4,7 +4,7 @@ using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+//using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Collections.Immutable;
 
 namespace GravyFoodsApi.MasjidServices
@@ -207,6 +207,8 @@ namespace GravyFoodsApi.MasjidServices
                     existing.Address = dto.Address;
                     existing.PhoneNo = dto.PhoneNo;
                     existing.Email = dto.Email;
+                    existing.AccountId = dto.AccountId;
+
                     //existing.BranchId = dto.BranchId;
                     //existing.CompanyId = dto.CompanyId;
 

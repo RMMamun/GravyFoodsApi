@@ -4,6 +4,7 @@ using GravyFoodsApi.Data;
 using GravyFoodsApi.Mappings;
 using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidRepository.Accounting;
+using GravyFoodsApi.MasjidRepository.Settings;
 using GravyFoodsApi.MasjidRepository.TaskManager;
 using GravyFoodsApi.MasjidServices;
 using GravyFoodsApi.MasjidServices.Accounting;
@@ -135,6 +136,8 @@ builder.Services.AddScoped<RefreshTokenService>();
 builder.Services.AddScoped<ITaskInfoRepository, TaskInfoService>();
 
 builder.Services.AddScoped<IJournalRepository, JournalService>();
+
+builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodService>();
 
 
 //2028 08 21 <-

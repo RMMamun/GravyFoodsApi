@@ -17,7 +17,7 @@ namespace GravyFoodsApi.Data
         public DbSet<TasksLog> TasksLog { get; set; } = null!;
 
 
-
+        public DbSet<PaymentMethods> PaymentMethods { get; set; } = null!;
 
 
         public DbSet<AccountInfo> AccountInfo { get; set; } = null!;
