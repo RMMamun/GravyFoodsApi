@@ -30,7 +30,7 @@ namespace GravyFoodsApi.MasjidServices
             // Implementation to add Method info to database
             // Check if email or phone number already exists
             var isExisted = await _context.PaymentMethods.Where(x => x.PaymentMethodName == _dto.PaymentMethodName).AnyAsync();
-            if (isExisted != null)
+            if (isExisted == true)
             {
                 //return null;
                 apiRes.Success = false;
@@ -62,7 +62,7 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<ApiResponse<PaymentMethodsDto?>> GetAsync(Guid Id)
+        public async Task<ApiResponse<PaymentMethodsDto?>> GetByIdAsync(Guid Id)
         {
             ApiResponse<PaymentMethodsDto?> apiRes = new();
 
@@ -100,6 +100,39 @@ namespace GravyFoodsApi.MasjidServices
                 apiRes.Success = false;
                 apiRes.Message = ex.Message;
 
+                return apiRes;
+            }
+        }
+
+        public async Task<ApiResponse<IEnumerable<PaymentMethodsDto>>> GetAllAsync()
+        {
+            ApiResponse<IEnumerable<PaymentMethodsDto>> apiRes = new();
+            try
+            {
+                var Methods = await _context.PaymentMethods.Where(c => c.CompanyId == _tenant.CompanyId).ToListAsync();
+                if (Methods == null || !Methods.Any())
+                {
+                    apiRes.Success = true;
+                    apiRes.Message = "No Methods found";
+                    apiRes.Data = Enumerable.Empty<PaymentMethodsDto>();
+                    return apiRes;
+                }
+                var MethodDtos = Methods.Select(Method => new PaymentMethodsDto
+                {
+                    MethodId = Method.MethodId,
+                    PaymentMethodName = Method.PaymentMethodName,
+                    PaymentMethodCode = Method.PaymentMethodCode,
+                    AccountId = Method.AccountId
+                }).ToList();
+                apiRes.Data = MethodDtos;
+                apiRes.Success = true;
+                apiRes.Message = "Methods retrieved successfully";
+                return apiRes;
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = ex.Message;
                 return apiRes;
             }
         }

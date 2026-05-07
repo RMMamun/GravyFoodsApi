@@ -8,7 +8,8 @@ namespace GravyFoodsApi.MasjidRepository.Settings
         Task<ApiResponse<PaymentMethodsDto>> CreateAsync(PaymentMethodsDto _dto);
         Task<ApiResponse<bool>> UpdateAsync(PaymentMethodsDto _dto);
         Task<ApiResponse<bool>> DeleteAsync(Guid Id);
-        Task<ApiResponse<PaymentMethodsDto>> GetAsync(Guid Id);
+        Task<ApiResponse<PaymentMethodsDto>> GetByIdAsync(Guid Id);
+        Task<ApiResponse<IEnumerable<PaymentMethodsDto>>> GetAllAsync();
 
     }
 }
