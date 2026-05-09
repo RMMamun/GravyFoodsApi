@@ -107,15 +107,15 @@ namespace GravyFoodsApi.MasjidServices
 
 
                         //Post to Accounting
-                        var isPosted = await _AccService.PostSalesAsync(saleDto);
-                        if (isPosted.Success == false)
-                        {
-                            apiRes.Success = false;
-                            apiRes.Message = "Sale created but account posting failed: " + isPosted.Message;
+                        //var isPosted = await _AccService.PostSalesAsync(saleDto);
+                        //if (isPosted.Success == false)
+                        //{
+                        //    apiRes.Success = false;
+                        //    apiRes.Message = "Sale created but account posting failed: " + isPosted.Message;
 
-                            await transaction.RollbackAsync();
-                            return apiRes;
-                        }
+                        //    await transaction.RollbackAsync();
+                        //    return apiRes;
+                        //}
 
 
                         await transaction.CommitAsync();
@@ -309,6 +309,7 @@ namespace GravyFoodsApi.MasjidServices
 
                     }).ToList()
                 })
+                .AsNoTracking()
                 .ToListAsync();
 
 
@@ -368,42 +369,43 @@ namespace GravyFoodsApi.MasjidServices
                     .Select(s => new SalesInfoDto
                     {
 
-                    SalesId = s.SalesId.ToString(),   // adjust if Id is string
-                    CustomerId = s.CustomerId.ToString(),
-                    CustomerName = s.CustomerInfo.CustomerName,
-                    UserId = "", //s.UserId.ToString(),
-                    BranchId = "", //s.BranchId.ToString(),
-                    CompanyId = "", // s.CompanyId.ToString(),
+                        SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                        CustomerId = s.CustomerId.ToString(),
+                        CustomerName = s.CustomerInfo.CustomerName,
+                        UserId = "", //s.UserId.ToString(),
+                        BranchId = "", //s.BranchId.ToString(),
+                        CompanyId = "", // s.CompanyId.ToString(),
 
-                    OrderStatus = s.OrderStatus,
-                    TotalAmount = s.TotalAmount,
-                    TotalDiscountAmount = s.TotalDiscountAmount,
-                    TotalPaidAmount = s.TotalPaidAmount,
-                    CreatedDateTime = s.CreatedDateTime,
-                    Description = s.Description,
+                        OrderStatus = s.OrderStatus,
+                        TotalAmount = s.TotalAmount,
+                        TotalDiscountAmount = s.TotalDiscountAmount,
+                        TotalPaidAmount = s.TotalPaidAmount,
+                        CreatedDateTime = s.CreatedDateTime,
+                        Description = s.Description,
 
 
-                    SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
-                    {
-                        SalesId = d.SalesId.ToString(),
-                        ProductId = d.ProductId.ToString(),
-                        ProductName = d.Product.Name,   // assumes navigation to Product
-                        Quantity = d.Quantity,
-                        UnitType = d.UnitType,
-                        UnitId = d.UnitId,
-                        PricePerUnit = d.PricePerUnit,
-                        DiscountPerUnit = d.DiscountPerUnit,
-                        TotalPrice = d.TotalPrice,
-                        TotalDiscount = d.TotalDiscount,
-                        VATPerUnit = d.VATPerUnit,
-                        TotalVAT = d.TotalVAT,
-                        DiscountType = d.DiscountType,
-                        UserId = "", //d.UserId.ToString(),
-                        BranchId = "", //d.BranchId.ToString(),
-                        CompanyId = "", //d.CompanyId.ToString(),
+                        SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
+                        {
+                            SalesId = d.SalesId.ToString(),
+                            ProductId = d.ProductId.ToString(),
+                            ProductName = d.Product.Name,   // assumes navigation to Product
+                            Quantity = d.Quantity,
+                            UnitType = d.UnitType,
+                            UnitId = d.UnitId,
+                            PricePerUnit = d.PricePerUnit,
+                            DiscountPerUnit = d.DiscountPerUnit,
+                            TotalPrice = d.TotalPrice,
+                            TotalDiscount = d.TotalDiscount,
+                            VATPerUnit = d.VATPerUnit,
+                            TotalVAT = d.TotalVAT,
+                            DiscountType = d.DiscountType,
+                            UserId = "", //d.UserId.ToString(),
+                            BranchId = "", //d.BranchId.ToString(),
+                            CompanyId = "", //d.CompanyId.ToString(),
 
-                    }).ToList()
-                })
+                        }).ToList()
+                    })
+                    .AsNoTracking()
                 .ToListAsync();
 
 
@@ -473,6 +475,7 @@ namespace GravyFoodsApi.MasjidServices
 
                     }).ToList()
                 })
+                .AsNoTracking()
                 .ToListAsync();
 
 
@@ -537,7 +540,9 @@ namespace GravyFoodsApi.MasjidServices
                         
 
                     }).ToList()
-                }).FirstOrDefaultAsync();
+                })
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
 
 
                 apiRes.Message = "Sale retrieved successfully.";
@@ -590,7 +595,8 @@ namespace GravyFoodsApi.MasjidServices
                     .Include(s => s.CustomerInfo)            // load customer
                     .Include(s => s.SalesDetails)            // load sales details
                     .ThenInclude(d => d.Product)         // load product for each detail
-                .FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId);
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.SalesId == salesId && s.BranchId == _tenant.BranchId && s.CompanyId == _tenant.CompanyId);
 
 
 
@@ -641,6 +647,7 @@ namespace GravyFoodsApi.MasjidServices
                     CompanyId = _companyId
                 })
                 .OrderByDescending(x => x.TotalQuantitySold)
+                .AsNoTracking()
                 .ToListAsync();
 
                 apiRes.Data = bestSoldProducts;

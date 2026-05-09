@@ -8,6 +8,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace GravyFoodsApi.MasjidServices
 {
@@ -33,7 +34,8 @@ namespace GravyFoodsApi.MasjidServices
                 var user = await _loginService.GetUser(request.Username, request.Password, request.BranchCode, request.CompanyCode);
                 if (user == null) return null;
 
-                return GenerateTokenAsync(request).Result;
+                var _token = await GenerateTokenAsync(request);
+                return _token;
                 //return user;
             }
             catch (Exception ex)

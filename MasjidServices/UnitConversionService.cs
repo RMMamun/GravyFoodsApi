@@ -75,7 +75,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                var unitInfo = _UnitRepo.GetUnitsById(UnitId, _tenant.BranchId, _tenant.CompanyId).Result;
+                var unitInfo = await _UnitRepo.GetUnitsById(UnitId, _tenant.BranchId, _tenant.CompanyId);
                 if (unitInfo == null)
                 {
                     //response.Success = false;
