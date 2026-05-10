@@ -107,15 +107,15 @@ namespace GravyFoodsApi.MasjidServices
 
 
                         //Post to Accounting
-                        var isPosted = await _AccService.PostSalesAsync(saleDto);
-                        if (isPosted.Success == false)
-                        {
-                            apiRes.Success = false;
-                            apiRes.Message = "Sale created but account posting failed: " + isPosted.Message;
+                        //var isPosted = await _AccService.PostSalesAsync(saleDto);
+                        //if (isPosted.Success == false)
+                        //{
+                        //    apiRes.Success = false;
+                        //    apiRes.Message = "Sale created but account posting failed: " + isPosted.Message;
 
-                            await transaction.RollbackAsync();
-                            return apiRes;
-                        }
+                        //    await transaction.RollbackAsync();
+                        //    return apiRes;
+                        //}
 
 
                         await transaction.CommitAsync();
