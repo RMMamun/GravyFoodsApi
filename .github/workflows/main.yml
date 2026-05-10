@@ -27,7 +27,7 @@ jobs:
       #  run: dotnet test --no-build --verbosity normal
 
       - name: Publish project
-        run: dotnet publish GogetPOS.Web/GogetPOS.Web.csproj -c Release -o ./publish/
+        run: dotnet publish GravyFoodsApi/GravyFoodsApi.csproj -c Release -o ./publish/
       
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
