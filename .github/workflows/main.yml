@@ -1,0 +1,39 @@
+name: .NET CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "master" ]   # Only deploy from main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      #- name: Run tests
+      #  run: dotnet test --no-build --verbosity normal
+
+      - name: Publish project
+        run: dotnet publish GogetPOS.Web/GogetPOS.Web.csproj -c Release -o ./publish/
+      
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./publish/
+          server-dir: /uniposapi.goooget.com   # e.g. /public_html or /var/www/myapp
