@@ -10,10 +10,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
@@ -27,13 +27,18 @@ jobs:
       #  run: dotnet test --no-build --verbosity normal
 
       - name: Publish project
-        run: dotnet publish GogetPOS.Web/GogetPOS.Web.csproj -c Release -o ./publish/
+        run: dotnet publish GravyFoodsApi.csproj -c Release -o ./publish/
       
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
+          protocol: ftps
+          passive: true
+          dangerous-clean-slate: false
+          exclude: "**/*.tmp"
+          max-conn: 2       
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./publish/
-          server-dir: /uniposapi.goooget.com   # e.g. /public_html or /var/www/myapp
+          server-dir: /uniposapi.goooget.com/   # e.g. /public_html or /var/www/myapp
