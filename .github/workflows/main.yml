@@ -32,6 +32,11 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
+          protocol: ftps
+          passive: true
+          dangerous-clean-slate: false
+          exclude: "**/*.tmp"
+          max-conn: 2       
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
