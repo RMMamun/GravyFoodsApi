@@ -40,7 +40,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     Date = sale.CreatedDateTime,
                     ReferenceNo = sale.SalesId,
                     SourceModule = "SALES ENTRY",
-                    Description = "Sales Invoice",
+                    Description = sale.Description,
                     IsPosted = true,
                     PostedAt = sale.CreatedDateTime,
                     PostedBy = "SYSTEM",
