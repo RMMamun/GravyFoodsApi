@@ -5,9 +5,6 @@
         public string SalesId { get; set; } = string.Empty;
         public string CustomerId { get; set; } = string.Empty;
         public string CustomerName { get; set; } = string.Empty;
-        public string UserId { get; set; } = string.Empty;
-        public string BranchId { get; set; } = string.Empty;
-        public string CompanyId { get; set; } = string.Empty;
 
         public string OrderStatus { get; set; }
         public double TotalAmount { get; set; }
@@ -18,6 +15,8 @@
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
 
         public List<SalesDetailDto> SalesDetails { get; set; } = new();
+
+        
     }
 
     public class SalesDetailDto
@@ -39,11 +38,6 @@
         public string DiscountType { get; set; } = "%";
 
         public string WHId { get; set; } = string.Empty;
-
-        public string UserId { get; set; } = string.Empty;
-        public string BranchId { get; set; } = string.Empty;
-        public string CompanyId { get; set; } = string.Empty;
-
 
     }
 }
