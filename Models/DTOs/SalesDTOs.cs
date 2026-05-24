@@ -3,6 +3,9 @@
     public class SalesInfoDto
     {
         public string SalesId { get; set; } = string.Empty;
+
+        public string InvoiceNo { get; set; } = string.Empty;
+
         public string CustomerId { get; set; } = string.Empty;
         public string CustomerName { get; set; } = string.Empty;
 
@@ -16,7 +19,8 @@
 
         public List<SalesDetailDto> SalesDetails { get; set; } = new();
 
-        
+        public SalesPaymentParamDto SalesPaymentParam { get; set; } = new();
+
     }
 
     public class SalesDetailDto

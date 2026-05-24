@@ -49,11 +49,13 @@ namespace GravyFoodsApi.MasjidServices
                     try
                     {
                         string strSalesId = GenerateSalesId(_companyId);
+                        string invoiceNo = "INV-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss");
 
 
                         SalesInfo sale = new SalesInfo
                         {
                             SalesId = strSalesId,
+                            InvoiceNo = invoiceNo,
                             CustomerId = saleDto.CustomerId,
                             OrderStatus = saleDto.OrderStatus,
                             TotalAmount = saleDto.TotalAmount,
@@ -87,13 +89,16 @@ namespace GravyFoodsApi.MasjidServices
                                 CompanyId = _companyId,
 
 
-                                SalesId = strSalesId // Fix: Set the required SalesId property
+                                SalesId = strSalesId, // Fix: Set the required SalesId property
+                                
+
                             }).ToList()
                         };
                         _context.SalesInfo.Add(sale);
                         await _context.SaveChangesAsync();
 
                         saleDto.SalesId = strSalesId;
+                        saleDto.InvoiceNo = invoiceNo;
 
                         //Update Stock after creating Sale
                         var stockUpdate = await StockUpdate(saleDto);
@@ -279,6 +284,7 @@ namespace GravyFoodsApi.MasjidServices
                 .Select(s => new SalesInfoDto
                 {
                     SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                    InvoiceNo = s.InvoiceNo,
                     CustomerId = s.CustomerId.ToString(),
                     CustomerName = s.CustomerInfo.CustomerName,
                     OrderStatus = s.OrderStatus,
@@ -367,6 +373,7 @@ namespace GravyFoodsApi.MasjidServices
                     {
 
                     SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                    InvoiceNo = s.InvoiceNo,
                     CustomerId = s.CustomerId.ToString(),
                     CustomerName = s.CustomerInfo.CustomerName,
 
@@ -393,6 +400,7 @@ namespace GravyFoodsApi.MasjidServices
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
                         DiscountType = d.DiscountType,
+                        WHId = d.WHId,
 
                     }).ToList()
                 })
@@ -431,6 +439,7 @@ namespace GravyFoodsApi.MasjidServices
                 .Select(s => new SalesInfoDto
                 {
                     SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                    InvoiceNo = s.InvoiceNo,
                     CustomerId = s.CustomerId.ToString(),
                     CustomerName = s.CustomerInfo.CustomerName,
                     
@@ -488,6 +497,7 @@ namespace GravyFoodsApi.MasjidServices
                 .Select(s => new SalesInfoDto
                 {
                     SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                    InvoiceNo = s.InvoiceNo,
                     CustomerId = s.CustomerId.ToString(),
                     CustomerName = s.CustomerInfo.CustomerName,
 

@@ -12,6 +12,7 @@ namespace GravyFoodsApi.Models
         [Key]
         public required string SalesId { get; set; }
 
+        public string InvoiceNo { get; set; } = string.Empty;
         public string OrderStatus { get; set; } = "Pending"; // Pending, Completed, Cancelled, etc.
 
         public required string CustomerId { get; set; } = string.Empty;
