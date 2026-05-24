@@ -240,7 +240,7 @@ app.UseRouting();
 app.UseCors(builder =>
 {
     builder
-    .WithOrigins("https://goooget.com", "https://unipos.goooget.com", "https://taskmanager.goooget.com", "https://buysale.goooget.com", "https://localhost:7203", "https://localhost:7275", "https://localhost:7006", "https://localhost:7065")    
+    .WithOrigins("https://goooget.com", "https://unipos.goooget.com", "https://taskmanager.goooget.com", "https://buysale.goooget.com", "https://localhost:7203", "https://localhost:7275", "https://localhost:7006", "https://localhost:7065", "https://localhost:5170")    
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials();
