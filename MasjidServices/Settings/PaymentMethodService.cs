@@ -43,6 +43,8 @@ namespace GravyFoodsApi.MasjidServices
                 PaymentMethodCode = _dto.PaymentMethodCode,
                 PaymentMethodName = _dto.PaymentMethodName,
                 AccountId = _dto.AccountId,
+                SequenceNo = _dto.SequenceNo,
+                SystemData = _dto.SystemData,
 
                 CompanyId = _tenant.CompanyId,
 
@@ -83,8 +85,10 @@ namespace GravyFoodsApi.MasjidServices
                     MethodId = Method.MethodId,
                     PaymentMethodName = Method.PaymentMethodName,
                     PaymentMethodCode = Method.PaymentMethodCode,
-                    AccountId = Method.AccountId
-                    
+                    AccountId = Method.AccountId,
+                    SequenceNo = Method.SequenceNo,
+                    SystemData = Method.SystemData
+
                 };
 
                 apiRes.Data = newC;
@@ -122,7 +126,10 @@ namespace GravyFoodsApi.MasjidServices
                     MethodId = Method.MethodId,
                     PaymentMethodName = Method.PaymentMethodName,
                     PaymentMethodCode = Method.PaymentMethodCode,
-                    AccountId = Method.AccountId
+                    AccountId = Method.AccountId,
+                    SequenceNo = Method.SequenceNo,
+                    SystemData = Method.SystemData
+
                 }).ToList();
                 apiRes.Data = MethodDtos;
                 apiRes.Success = true;
@@ -151,6 +158,8 @@ namespace GravyFoodsApi.MasjidServices
                     existing.PaymentMethodName = dto.PaymentMethodName;
                     existing.PaymentMethodCode = dto.PaymentMethodCode;
                     existing.AccountId = dto.AccountId;
+                    existing.SequenceNo = dto.SequenceNo;
+                    existing.SystemData = dto.SystemData;
                     
                     await _context.SaveChangesAsync();
 
