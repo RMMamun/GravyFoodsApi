@@ -14,6 +14,9 @@
         public double TotalDiscountAmount { get; set; }
         public double TotalPaidAmount { get; set; }
 
+        public double TotalVATAmount { get; set; }
+        public double TotalTaxAmount { get; set; }
+        public double DueAmount { get; set; }
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
 
@@ -38,6 +41,7 @@
         public decimal TotalDiscount { get; set; }
         public decimal VATPerUnit { get; set; }
         public decimal TotalVAT { get; set; }
+        public decimal TotalTax { get; set; }
 
         public string DiscountType { get; set; } = "%";
 

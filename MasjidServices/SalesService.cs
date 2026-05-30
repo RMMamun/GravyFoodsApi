@@ -60,6 +60,9 @@ namespace GravyFoodsApi.MasjidServices
                             OrderStatus = saleDto.OrderStatus,
                             TotalAmount = saleDto.TotalAmount,
                             TotalDiscountAmount = saleDto.TotalDiscountAmount,
+                            TotalVATAmount = saleDto.TotalVATAmount,
+                            TotalTaxAmount = saleDto.TotalTaxAmount,
+                            DueAmount = saleDto.DueAmount,
                             TotalPaidAmount = saleDto.TotalPaidAmount,
                             CreatedDateTime = saleDto.CreatedDateTime,
                             BranchId = _branchId,
@@ -81,6 +84,7 @@ namespace GravyFoodsApi.MasjidServices
                                 TotalPrice = d.TotalPrice,
                                 VATPerUnit = d.VATPerUnit,
                                 TotalVAT = d.TotalVAT,
+                                TotalTax = d.TotalTax,
                                 UnitId = d.UnitId,
                                 WHId = d.WHId,
                                 DiscountAmountPerUnit = 0,
@@ -291,6 +295,9 @@ namespace GravyFoodsApi.MasjidServices
                     TotalAmount = s.TotalAmount,
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
+                    TotalVATAmount = s.TotalVATAmount,
+                    TotalTaxAmount = s.TotalTaxAmount,
+                    DueAmount = s.DueAmount,
                     CreatedDateTime = s.CreatedDateTime,
                     Description = s.Description,
                     
@@ -309,6 +316,7 @@ namespace GravyFoodsApi.MasjidServices
                         TotalDiscount = d.TotalDiscount,
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
+                        TotalTax = d.TotalTax,
                         DiscountType = d.DiscountType,
 
                     }).ToList()
@@ -381,6 +389,9 @@ namespace GravyFoodsApi.MasjidServices
                     TotalAmount = s.TotalAmount,
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
+                    TotalVATAmount = s.TotalVATAmount,
+                    TotalTaxAmount = s.TotalTaxAmount,
+                    DueAmount = s.DueAmount,
                     CreatedDateTime = s.CreatedDateTime,
                     Description = s.Description,
 
@@ -399,6 +410,7 @@ namespace GravyFoodsApi.MasjidServices
                         TotalDiscount = d.TotalDiscount,
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
+                        TotalTax = d.TotalTax,
                         DiscountType = d.DiscountType,
                         WHId = d.WHId,
 
@@ -447,6 +459,9 @@ namespace GravyFoodsApi.MasjidServices
                     TotalAmount = s.TotalAmount,
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
+                    TotalVATAmount = s.TotalVATAmount,
+                    TotalTaxAmount = s.TotalTaxAmount,
+                    DueAmount = s.DueAmount,
                     CreatedDateTime = s.CreatedDateTime,
                     Description = s.Description,
 
@@ -464,6 +479,7 @@ namespace GravyFoodsApi.MasjidServices
                         TotalDiscount = d.TotalDiscount,
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
+                        TotalTax = d.TotalTax,
                         DiscountType = d.DiscountType,
                     
 
@@ -506,6 +522,9 @@ namespace GravyFoodsApi.MasjidServices
                     TotalAmount = s.TotalAmount,
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
+                    TotalVATAmount = s.TotalVATAmount,
+                    TotalTaxAmount = s.TotalTaxAmount,
+                    DueAmount = s.DueAmount,
                     CreatedDateTime = s.CreatedDateTime,
                     Description = s.Description,
 
@@ -524,6 +543,7 @@ namespace GravyFoodsApi.MasjidServices
                         TotalDiscount = d.TotalDiscount,
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
+                        TotalTax = d.TotalTax,
                         DiscountType = d.DiscountType,
 
                         WHId = d.WHId,

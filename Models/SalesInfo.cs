@@ -29,6 +29,10 @@ namespace GravyFoodsApi.Models
         public double TotalDiscountAmount { get; set; }
         public double TotalPaidAmount { get; set; }
 
+        public double TotalVATAmount { get; set; }
+        public double TotalTaxAmount { get; set; }
+        public double DueAmount { get; set; }
+
         public string? Description { get; set; } = string.Empty;
         public string UserId { get; set; } = string.Empty;
         public string BranchId { get; set; } = string.Empty;

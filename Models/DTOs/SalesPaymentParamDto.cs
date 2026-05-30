@@ -21,6 +21,8 @@ namespace GravyFoodsApi.Models.DTOs
 
         public decimal VatAmount { get; set; }
 
+        public decimal TaxAmount { get; set; }
+
         public decimal PayableAmount { get; set; }
 
         // Calculated Payment Info
