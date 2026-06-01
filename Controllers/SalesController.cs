@@ -112,9 +112,6 @@ namespace GravyFoodsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse<SalesInfoDto>>> CreateSale(SalesInfoDto sale)
         {
-            sale.CompanyId = _tenant.CompanyId;
-            sale.BranchId = _tenant.BranchId;
-
 
             var apiResponse = await _salesService.CreateSalesAsync(sale);
 

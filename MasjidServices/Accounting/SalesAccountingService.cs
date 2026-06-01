@@ -26,7 +26,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
 
 
                 var settings = await _context.AccountMapping
-                    .FirstAsync(x => x.CompanyId == sale.CompanyId);
+                    .FirstAsync(x => x.CompanyId == _tenant.CompanyId);
 
                 if (settings == null || string.IsNullOrEmpty(settings.CompanyId) == true )
                 {

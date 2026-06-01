@@ -1,23 +1,34 @@
-﻿namespace GravyFoodsApi.Models.DTOs
+﻿using GravyFoodsApi.Models.DTOs.Accounting;
+
+namespace GravyFoodsApi.Models.DTOs
 {
     public class SalesInfoDto
     {
         public string SalesId { get; set; } = string.Empty;
+
+        public string InvoiceNo { get; set; } = string.Empty;
+
         public string CustomerId { get; set; } = string.Empty;
         public string CustomerName { get; set; } = string.Empty;
-        public string UserId { get; set; } = string.Empty;
-        public string BranchId { get; set; } = string.Empty;
-        public string CompanyId { get; set; } = string.Empty;
 
         public string OrderStatus { get; set; }
         public double TotalAmount { get; set; }
         public double TotalDiscountAmount { get; set; }
         public double TotalPaidAmount { get; set; }
 
+        public double TotalVATAmount { get; set; }
+        public double TotalTaxAmount { get; set; }
+
+        public double CashReceived { get; set; }
+        public double DueAmount { get; set; }
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
 
         public List<SalesDetailDto> SalesDetails { get; set; } = new();
+
+        //public SalesPaymentParamDto SalesPaymentParam { get; set; } = new();
+        public List<PaymentMethodsDto> PaymentDto { get; set; } = new();
+
     }
 
     public class SalesDetailDto
@@ -35,15 +46,11 @@
         public decimal TotalDiscount { get; set; }
         public decimal VATPerUnit { get; set; }
         public decimal TotalVAT { get; set; }
+        public decimal TotalTax { get; set; }
 
         public string DiscountType { get; set; } = "%";
 
         public string WHId { get; set; } = string.Empty;
-
-        public string UserId { get; set; } = string.Empty;
-        public string BranchId { get; set; } = string.Empty;
-        public string CompanyId { get; set; } = string.Empty;
-
 
     }
 }

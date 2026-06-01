@@ -34,6 +34,7 @@ namespace GravyFoodsApi.MasjidServices
 
             string _branchId = _tenant.BranchId;
             string _companyId = _tenant.CompanyId;
+            string _userId = _tenant.UserId;
 
             // Get execution strategy (required for SQL Azure / retry logic)
             var strategy = _context.Database.CreateExecutionStrategy();
@@ -47,21 +48,26 @@ namespace GravyFoodsApi.MasjidServices
 
                     try
                     {
-                        string strSalesId = GenerateSalesId(saleDto.CompanyId);
+                        string strSalesId = GenerateSalesId(_companyId);
+                        string invoiceNo = "INV-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss");
 
 
                         SalesInfo sale = new SalesInfo
                         {
                             SalesId = strSalesId,
+                            InvoiceNo = invoiceNo,
                             CustomerId = saleDto.CustomerId,
                             OrderStatus = saleDto.OrderStatus,
                             TotalAmount = saleDto.TotalAmount,
                             TotalDiscountAmount = saleDto.TotalDiscountAmount,
+                            TotalVATAmount = saleDto.TotalVATAmount,
+                            TotalTaxAmount = saleDto.TotalTaxAmount,
+                            DueAmount = saleDto.DueAmount,
                             TotalPaidAmount = saleDto.TotalPaidAmount,
                             CreatedDateTime = saleDto.CreatedDateTime,
                             BranchId = _branchId,
                             CompanyId = _companyId,
-                            UserId = saleDto.UserId,
+                            UserId = _userId,
                             Description = saleDto.Description,
                             
 
@@ -78,6 +84,7 @@ namespace GravyFoodsApi.MasjidServices
                                 TotalPrice = d.TotalPrice,
                                 VATPerUnit = d.VATPerUnit,
                                 TotalVAT = d.TotalVAT,
+                                TotalTax = d.TotalTax,
                                 UnitId = d.UnitId,
                                 WHId = d.WHId,
                                 DiscountAmountPerUnit = 0,
@@ -86,13 +93,16 @@ namespace GravyFoodsApi.MasjidServices
                                 CompanyId = _companyId,
 
 
-                                SalesId = strSalesId // Fix: Set the required SalesId property
+                                SalesId = strSalesId, // Fix: Set the required SalesId property
+                                
+
                             }).ToList()
                         };
                         _context.SalesInfo.Add(sale);
                         await _context.SaveChangesAsync();
 
                         saleDto.SalesId = strSalesId;
+                        saleDto.InvoiceNo = invoiceNo;
 
                         //Update Stock after creating Sale
                         var stockUpdate = await StockUpdate(saleDto);
@@ -268,6 +278,9 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
+                string _branchId = _tenant.BranchId;
+                string _companyId = _tenant.CompanyId;
+                string _userId = _tenant.UserId;
 
                 var salesDtos = await _context.SalesInfo.Where(s => s.CreatedDateTime.Date >= fromDate.Date && s.CreatedDateTime.Date <= toDate.Date && s.BranchId ==_tenant.BranchId && s.CompanyId == _tenant.CompanyId)
                 .Include(s => s.SalesDetails)
@@ -275,18 +288,19 @@ namespace GravyFoodsApi.MasjidServices
                 .Select(s => new SalesInfoDto
                 {
                     SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                    InvoiceNo = s.InvoiceNo,
                     CustomerId = s.CustomerId.ToString(),
                     CustomerName = s.CustomerInfo.CustomerName,
-                    UserId = "", //s.UserId.ToString(),
-                    BranchId = "", //s.BranchId.ToString(),
-                    CompanyId = "", // s.CompanyId.ToString(),
-
                     OrderStatus = s.OrderStatus,
                     TotalAmount = s.TotalAmount,
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
+                    TotalVATAmount = s.TotalVATAmount,
+                    TotalTaxAmount = s.TotalTaxAmount,
+                    DueAmount = s.DueAmount,
                     CreatedDateTime = s.CreatedDateTime,
                     Description = s.Description,
+                    
 
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
@@ -302,10 +316,8 @@ namespace GravyFoodsApi.MasjidServices
                         TotalDiscount = d.TotalDiscount,
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
+                        TotalTax = d.TotalTax,
                         DiscountType = d.DiscountType,
-                        UserId = "", //d.UserId.ToString(),
-                        BranchId = "", //d.BranchId.ToString(),
-                        CompanyId = "", //d.CompanyId.ToString(),
 
                     }).ToList()
                 })
@@ -369,39 +381,42 @@ namespace GravyFoodsApi.MasjidServices
                     .Select(s => new SalesInfoDto
                     {
 
-                        SalesId = s.SalesId.ToString(),   // adjust if Id is string
-                        CustomerId = s.CustomerId.ToString(),
-                        CustomerName = s.CustomerInfo.CustomerName,
-                        UserId = "", //s.UserId.ToString(),
-                        BranchId = "", //s.BranchId.ToString(),
-                        CompanyId = "", // s.CompanyId.ToString(),
+                    SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                    CustomerId = s.CustomerId.ToString(),
+                    CustomerName = s.CustomerInfo.CustomerName,
+                    UserId = "", //s.UserId.ToString(),
+                    BranchId = "", //s.BranchId.ToString(),
+                    CompanyId = "", // s.CompanyId.ToString(),
 
-                        OrderStatus = s.OrderStatus,
-                        TotalAmount = s.TotalAmount,
-                        TotalDiscountAmount = s.TotalDiscountAmount,
-                        TotalPaidAmount = s.TotalPaidAmount,
-                        CreatedDateTime = s.CreatedDateTime,
-                        Description = s.Description,
+                    OrderStatus = s.OrderStatus,
+                    TotalAmount = s.TotalAmount,
+                    TotalDiscountAmount = s.TotalDiscountAmount,
+                    TotalPaidAmount = s.TotalPaidAmount,
+                    TotalVATAmount = s.TotalVATAmount,
+                    TotalTaxAmount = s.TotalTaxAmount,
+                    DueAmount = s.DueAmount,
+                    CreatedDateTime = s.CreatedDateTime,
+                    Description = s.Description,
 
 
-                        SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
-                        {
-                            SalesId = d.SalesId.ToString(),
-                            ProductId = d.ProductId.ToString(),
-                            ProductName = d.Product.Name,   // assumes navigation to Product
-                            Quantity = d.Quantity,
-                            UnitType = d.UnitType,
-                            UnitId = d.UnitId,
-                            PricePerUnit = d.PricePerUnit,
-                            DiscountPerUnit = d.DiscountPerUnit,
-                            TotalPrice = d.TotalPrice,
-                            TotalDiscount = d.TotalDiscount,
-                            VATPerUnit = d.VATPerUnit,
-                            TotalVAT = d.TotalVAT,
-                            DiscountType = d.DiscountType,
-                            UserId = "", //d.UserId.ToString(),
-                            BranchId = "", //d.BranchId.ToString(),
-                            CompanyId = "", //d.CompanyId.ToString(),
+                    SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
+                    {
+                        SalesId = d.SalesId.ToString(),
+                        ProductId = d.ProductId.ToString(),
+                        ProductName = d.Product.Name,   // assumes navigation to Product
+                        Quantity = d.Quantity,
+                        UnitType = d.UnitType,
+                        UnitId = d.UnitId,
+                        PricePerUnit = d.PricePerUnit,
+                        DiscountPerUnit = d.DiscountPerUnit,
+                        TotalPrice = d.TotalPrice,
+                        TotalDiscount = d.TotalDiscount,
+                        VATPerUnit = d.VATPerUnit,
+                        TotalVAT = d.TotalVAT,
+                        DiscountType = d.DiscountType,
+                        UserId = "", //d.UserId.ToString(),
+                        BranchId = "", //d.BranchId.ToString(),
+                        CompanyId = "", //d.CompanyId.ToString(),
 
                         }).ToList()
                     })
@@ -441,16 +456,17 @@ namespace GravyFoodsApi.MasjidServices
                 .Select(s => new SalesInfoDto
                 {
                     SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                    InvoiceNo = s.InvoiceNo,
                     CustomerId = s.CustomerId.ToString(),
                     CustomerName = s.CustomerInfo.CustomerName,
-                    UserId = "", //s.UserId.ToString(),
-                    BranchId = "", //s.BranchId.ToString(),
-                    CompanyId = "", // s.CompanyId.ToString(),
-
+                    
                     OrderStatus = s.OrderStatus,
                     TotalAmount = s.TotalAmount,
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
+                    TotalVATAmount = s.TotalVATAmount,
+                    TotalTaxAmount = s.TotalTaxAmount,
+                    DueAmount = s.DueAmount,
                     CreatedDateTime = s.CreatedDateTime,
                     Description = s.Description,
 
@@ -468,10 +484,9 @@ namespace GravyFoodsApi.MasjidServices
                         TotalDiscount = d.TotalDiscount,
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
+                        TotalTax = d.TotalTax,
                         DiscountType = d.DiscountType,
-                        UserId = "", //d.UserId.ToString(),
-                        BranchId = "", //d.BranchId.ToString(),
-                        CompanyId = "", //d.CompanyId.ToString(),
+                    
 
                     }).ToList()
                 })
@@ -504,16 +519,18 @@ namespace GravyFoodsApi.MasjidServices
                 .Select(s => new SalesInfoDto
                 {
                     SalesId = s.SalesId.ToString(),   // adjust if Id is string
+                    InvoiceNo = s.InvoiceNo,
                     CustomerId = s.CustomerId.ToString(),
                     CustomerName = s.CustomerInfo.CustomerName,
-                    UserId = s.UserId.ToString(),
-                    BranchId = s.BranchId.ToString(),
-                    CompanyId = s.CompanyId.ToString(),
+
 
                     OrderStatus = s.OrderStatus,
                     TotalAmount = s.TotalAmount,
                     TotalDiscountAmount = s.TotalDiscountAmount,
                     TotalPaidAmount = s.TotalPaidAmount,
+                    TotalVATAmount = s.TotalVATAmount,
+                    TotalTaxAmount = s.TotalTaxAmount,
+                    DueAmount = s.DueAmount,
                     CreatedDateTime = s.CreatedDateTime,
                     Description = s.Description,
 
@@ -532,10 +549,9 @@ namespace GravyFoodsApi.MasjidServices
                         TotalDiscount = d.TotalDiscount,
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
+                        TotalTax = d.TotalTax,
                         DiscountType = d.DiscountType,
-                        UserId = s.UserId.ToString(),
-                        BranchId = d.BranchId.ToString(),
-                        CompanyId = d.CompanyId.ToString(),
+
                         WHId = d.WHId,
                         
 

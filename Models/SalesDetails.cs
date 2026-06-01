@@ -26,6 +26,9 @@ namespace GravyFoodsApi.Models
         public decimal TotalDiscount { get; set; }
         public decimal VATPerUnit { get; set; }
         public decimal TotalVAT { get; set; }
+
+        public decimal TotalTax { get; set; }
+
         public string WHId { get; set; } = string.Empty;
 
         public string DiscountType { get; set; } = "%"; // Default to Percentage and Amount can be another option

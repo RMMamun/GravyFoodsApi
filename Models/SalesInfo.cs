@@ -12,6 +12,7 @@ namespace GravyFoodsApi.Models
         [Key]
         public required string SalesId { get; set; }
 
+        public string InvoiceNo { get; set; } = string.Empty;
         public string OrderStatus { get; set; } = "Pending"; // Pending, Completed, Cancelled, etc.
 
         public required string CustomerId { get; set; } = string.Empty;
@@ -27,6 +28,12 @@ namespace GravyFoodsApi.Models
         public double TotalAmount { get; set; }
         public double TotalDiscountAmount { get; set; }
         public double TotalPaidAmount { get; set; }
+
+        public double TotalVATAmount { get; set; }
+        public double TotalTaxAmount { get; set; }
+
+        public double CashReceived { get; set; }
+        public double DueAmount { get; set; }
 
         public string? Description { get; set; } = string.Empty;
         public string UserId { get; set; } = string.Empty;
