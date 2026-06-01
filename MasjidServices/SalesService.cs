@@ -384,9 +384,6 @@ namespace GravyFoodsApi.MasjidServices
                     SalesId = s.SalesId.ToString(),   // adjust if Id is string
                     CustomerId = s.CustomerId.ToString(),
                     CustomerName = s.CustomerInfo.CustomerName,
-                    UserId = "", //s.UserId.ToString(),
-                    BranchId = "", //s.BranchId.ToString(),
-                    CompanyId = "", // s.CompanyId.ToString(),
 
                     OrderStatus = s.OrderStatus,
                     TotalAmount = s.TotalAmount,
@@ -414,9 +411,6 @@ namespace GravyFoodsApi.MasjidServices
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
                         DiscountType = d.DiscountType,
-                        UserId = "", //d.UserId.ToString(),
-                        BranchId = "", //d.BranchId.ToString(),
-                        CompanyId = "", //d.CompanyId.ToString(),
 
                         }).ToList()
                     })
