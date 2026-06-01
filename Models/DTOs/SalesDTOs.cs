@@ -1,4 +1,6 @@
-﻿namespace GravyFoodsApi.Models.DTOs
+﻿using GravyFoodsApi.Models.DTOs.Accounting;
+
+namespace GravyFoodsApi.Models.DTOs
 {
     public class SalesInfoDto
     {
@@ -16,13 +18,16 @@
 
         public double TotalVATAmount { get; set; }
         public double TotalTaxAmount { get; set; }
+
+        public double CashReceived { get; set; }
         public double DueAmount { get; set; }
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
 
         public List<SalesDetailDto> SalesDetails { get; set; } = new();
 
-        public SalesPaymentParamDto SalesPaymentParam { get; set; } = new();
+        //public SalesPaymentParamDto SalesPaymentParam { get; set; } = new();
+        public List<PaymentMethodsDto> PaymentDto { get; set; } = new();
 
     }
 

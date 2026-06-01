@@ -31,6 +31,8 @@ namespace GravyFoodsApi.Models
 
         public double TotalVATAmount { get; set; }
         public double TotalTaxAmount { get; set; }
+
+        public double CashReceived { get; set; }
         public double DueAmount { get; set; }
 
         public string? Description { get; set; } = string.Empty;
