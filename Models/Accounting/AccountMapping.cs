@@ -9,6 +9,7 @@
         public Guid BankAccountId { get; set; }
         public Guid SalesAccountId { get; set; }
         public Guid VatAccountId { get; set; }
+        public Guid TaxAccountId { get; set; }
         public Guid DiscountAccountId { get; set; }
 
         public Guid CogsAccountId { get; set; }

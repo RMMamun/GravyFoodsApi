@@ -14,11 +14,12 @@ namespace GravyFoodsApi.Models.DTOs
         public string OrderStatus { get; set; }
         public double TotalAmount { get; set; }
         public double TotalDiscountAmount { get; set; }
-        public double TotalPaidAmount { get; set; }
 
         public double TotalVATAmount { get; set; }
         public double TotalTaxAmount { get; set; }
 
+        public double TotalPayableAmount { get; set; }
+        public double TotalPaidAmount { get; set; }
         public double CashReceived { get; set; }
         public double DueAmount { get; set; }
         public string Description { get; set; } = string.Empty;
@@ -27,7 +28,7 @@ namespace GravyFoodsApi.Models.DTOs
         public List<SalesDetailDto> SalesDetails { get; set; } = new();
 
         //public SalesPaymentParamDto SalesPaymentParam { get; set; } = new();
-        public List<PaymentMethodsDto> PaymentDto { get; set; } = new();
+        public List<PaymentMethodsDto> PaymentMethodsDto { get; set; } = new();
 
     }
 

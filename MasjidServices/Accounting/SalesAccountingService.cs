@@ -51,27 +51,58 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     JournalDetails = new List<JournalDetails>()
                 };
 
-                decimal discount = 0;
-                decimal total = (decimal)sale.TotalAmount - discount;
-                decimal vat = 0;   //sale.VatAmount
-                decimal net = total - vat;
+
+                //sale.TotalAmount;
+                //sale.TotalDiscountAmount
+                //sale.TotalVATAmount
+                //sale.TotalTaxAmount
+                //sale.TotalPayableAmount
+                //sale.TotalPaidAmount
+                //sale.DueAmount
+
+
+
+                decimal discount = (decimal)sale.TotalDiscountAmount;
+                decimal NetAmount = (decimal)sale.TotalAmount - discount;
+                decimal vat = (decimal)sale.TotalVATAmount;   //sale.VatAmount
+                decimal tax = (decimal)sale.TotalTaxAmount;   //sale.TaxAmount
+                decimal Payable = NetAmount - vat - tax;
+                //decimal PaidAmount = (decimal)sale.TotalPaidAmount;   *** paid amount will be taken from the payment module. sometime customer pay partially some in cash & some in card or in mobile banking. Need to handle this
                 decimal cost = 0;  //sale.TotalCost
                 
                 decimal dueAmount = (decimal)sale.TotalAmount - (decimal)sale.TotalPaidAmount;
 
-                //--DEBIT SIDE ------------------------------------------------------
-                // 💰 Debit (Cash or Receivable)
-                //*** sometime customer pay partially some in cash & some in card or in mobile banking. Need to handle this
-                journal.JournalDetails.Add(new JournalDetails
+                ////--DEBIT SIDE ------------------------------------------------------
+                //// 💰 Debit (Cash or Receivable)
+                ////*** sometime customer pay partially some in cash & some in card or in mobile banking. Need to handle this
+                //journal.JournalDetails.Add(new JournalDetails
+                //{
+                //    AccountId = (sale.TotalAmount == sale.TotalPaidAmount)     //isCashPaid 
+                //        ? settings.CashAccountId
+                //        : settings.ReceivableAccountId,
+                //    Debit = NetAmount,
+                //    Credit = 0,
+                //    BranchId = _tenant.BranchId,
+                //    CompanyId = _tenant.CompanyId,
+                //});
+
+                //CASH, BANK or Mobile banking Payment
+                foreach (var payment in sale.PaymentMethodsDto)
                 {
-                    AccountId = (sale.TotalAmount == sale.TotalPaidAmount)     //isCashPaid 
-                        ? settings.CashAccountId
-                        : settings.ReceivableAccountId,
-                    Debit = total,
-                    Credit = 0,
-                    BranchId = _tenant.BranchId,
-                    CompanyId = _tenant.CompanyId,
-                });
+                    if (payment.Amount > 0)
+                    {
+                        journal.JournalDetails.Add(new JournalDetails
+                        {
+                            AccountId = payment.AccountId,
+                            Description = payment.PaymentMethodName,
+                            Debit = (decimal)payment.Amount,
+                            Credit = 0,
+                            BranchId = _tenant.BranchId,
+                            CompanyId = _tenant.CompanyId,
+                        });
+                    }
+                }
+
 
                 //Account Receivable Dr
                 if (sale.TotalAmount != sale.TotalPaidAmount)
@@ -79,19 +110,21 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     journal.JournalDetails.Add(new JournalDetails
                     {
                         AccountId = settings.ReceivableAccountId,
-                        Debit = total - (decimal)sale.TotalPaidAmount,
+                        Description = "Accounts Receivable",
+                        Debit = NetAmount - (decimal)sale.TotalPaidAmount,
                         Credit = 0,
                         BranchId = _tenant.BranchId,
                         CompanyId = _tenant.CompanyId,
                     });
                 }
 
-                //Dicount 
+                //Discount 
                 if (discount > 0)
                 {
                     journal.JournalDetails.Add(new JournalDetails
                     {
                         AccountId = settings.DiscountAccountId,
+                        Description = "Sales Total Discount",
                         Debit = discount,
                         Credit = 0,
                         BranchId = _tenant.BranchId,
@@ -103,6 +136,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 journal.JournalDetails.Add(new JournalDetails
                 {
                     AccountId = settings.CogsAccountId,
+                    Description = "Cost of Goods Sold",
                     Debit = cost,
                     Credit = 0,
 
@@ -116,8 +150,9 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 journal.JournalDetails.Add(new JournalDetails
                 {
                     AccountId = settings.SalesAccountId,
+                    Description = "Sales Revenue",
                     Debit = 0,
-                    Credit = net,
+                    Credit = Payable,
 
                     BranchId = _tenant.BranchId,
                     CompanyId = _tenant.CompanyId,
@@ -129,6 +164,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     journal.JournalDetails.Add(new JournalDetails
                     {
                         AccountId = settings.VatAccountId,
+                        Description = "VAT on Sales",
                         Debit = 0,
                         Credit = vat,
 
@@ -137,12 +173,27 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     });
                 }
 
-                
+                // 🧾 Tax
+                if (tax > 0)
+                {
+                    journal.JournalDetails.Add(new JournalDetails
+                    {
+                        AccountId = settings.TaxAccountId,
+                        Description = "Tax on Sales",
+                        Debit = 0,
+                        Credit = tax,
+                        BranchId = _tenant.BranchId,
+                        CompanyId = _tenant.CompanyId,
+                    });
+                }
+
+
 
                 // 📦 Inventory
                 journal.JournalDetails.Add(new JournalDetails
                 {
                     AccountId = settings.InventoryAccountId,
+                    Description = "Inventory",
                     Debit = 0,
                     Credit = cost,
 
