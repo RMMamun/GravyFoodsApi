@@ -1,6 +1,6 @@
 ﻿namespace GravyFoodsApi.Models.DTOs.Accounting
 {
-    //public class PaymentMethodsDto
+    //public class PaymentDto
     //{
     //    public Guid MethodId { get; set; }
     //    public string PaymentMethodName { get; set; }

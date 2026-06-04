@@ -17,13 +17,14 @@ namespace GravyFoodsApi.MasjidServices.Accounting
             _context = context;
             _tenant = tenant;
         }
+
+
         public async Task<ApiResponse<Guid>> PostSalesAsync(SalesInfoDto sale)
         {
             ApiResponse<Guid> apiRes = new();
 
             try
             {
-
 
                 var settings = await _context.AccountMapping
                     .FirstAsync(x => x.CompanyId == _tenant.CompanyId);
@@ -47,7 +48,6 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     BranchId = _tenant.BranchId,
                     CompanyId = _tenant.CompanyId,
                     
-
                     JournalDetails = new List<JournalDetails>()
                 };
 
@@ -66,28 +66,17 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 decimal NetAmount = (decimal)sale.TotalAmount - discount;
                 decimal vat = (decimal)sale.TotalVATAmount;   //sale.VatAmount
                 decimal tax = (decimal)sale.TotalTaxAmount;   //sale.TaxAmount
-                decimal Payable = NetAmount - vat - tax;
-                //decimal PaidAmount = (decimal)sale.TotalPaidAmount;   *** paid amount will be taken from the payment module. sometime customer pay partially some in cash & some in card or in mobile banking. Need to handle this
+                decimal Payable = (decimal)sale.TotalPayableAmount; // NetAmount - vat - tax;
+                decimal PaidAmount = 0; // (decimal)sale.TotalPaidAmount;   //*** paid amount will be taken from the payment module. sometime customer pay partially some in cash & some in card or in mobile banking. Need to handle this
                 decimal cost = 0;  //sale.TotalCost
                 
-                decimal dueAmount = (decimal)sale.TotalAmount - (decimal)sale.TotalPaidAmount;
+                //decimal dueAmount = (decimal)sale.TotalAmount - (decimal)sale.TotalPaidAmount;
 
                 ////--DEBIT SIDE ------------------------------------------------------
                 //// 💰 Debit (Cash or Receivable)
-                ////*** sometime customer pay partially some in cash & some in card or in mobile banking. Need to handle this
-                //journal.JournalDetails.Add(new JournalDetails
-                //{
-                //    AccountId = (sale.TotalAmount == sale.TotalPaidAmount)     //isCashPaid 
-                //        ? settings.CashAccountId
-                //        : settings.ReceivableAccountId,
-                //    Debit = NetAmount,
-                //    Credit = 0,
-                //    BranchId = _tenant.BranchId,
-                //    CompanyId = _tenant.CompanyId,
-                //});
 
                 //CASH, BANK or Mobile banking Payment
-                foreach (var payment in sale.PaymentMethodsDto)
+                foreach (var payment in sale.PaymentDto)
                 {
                     if (payment.Amount > 0)
                     {
@@ -100,18 +89,20 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                             BranchId = _tenant.BranchId,
                             CompanyId = _tenant.CompanyId,
                         });
+
+                        PaidAmount = PaidAmount + payment.Amount;
                     }
                 }
 
 
-                //Account Receivable Dr
-                if (sale.TotalAmount != sale.TotalPaidAmount)
+                //Account Receivable (Due) Dr
+                if ((decimal)sale.TotalPayableAmount != PaidAmount)
                 {
                     journal.JournalDetails.Add(new JournalDetails
                     {
                         AccountId = settings.ReceivableAccountId,
                         Description = "Accounts Receivable",
-                        Debit = NetAmount - (decimal)sale.TotalPaidAmount,
+                        Debit = NetAmount - PaidAmount,
                         Credit = 0,
                         BranchId = _tenant.BranchId,
                         CompanyId = _tenant.CompanyId,
@@ -133,30 +124,36 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 }
 
                 // 📦 COGS
-                journal.JournalDetails.Add(new JournalDetails
+                if (cost > 0)
                 {
-                    AccountId = settings.CogsAccountId,
-                    Description = "Cost of Goods Sold",
-                    Debit = cost,
-                    Credit = 0,
+                    journal.JournalDetails.Add(new JournalDetails
+                    {
+                        AccountId = settings.CogsAccountId,
+                        Description = "Cost of Goods Sold",
+                        Debit = cost,
+                        Credit = 0,
 
-                    BranchId = _tenant.BranchId,
-                    CompanyId = _tenant.CompanyId,
-                });
+                        BranchId = _tenant.BranchId,
+                        CompanyId = _tenant.CompanyId,
+                    });
+                }
                 //----------------------------------------------------
 
                 // CREDIT SIDE
                 // 💵 Sales Revenue
-                journal.JournalDetails.Add(new JournalDetails
+                if (Payable > 0)
                 {
-                    AccountId = settings.SalesAccountId,
-                    Description = "Sales Revenue",
-                    Debit = 0,
-                    Credit = Payable,
+                    journal.JournalDetails.Add(new JournalDetails
+                    {
+                        AccountId = settings.SalesAccountId,
+                        Description = "Sales Revenue",
+                        Debit = 0,
+                        Credit = Payable,
 
-                    BranchId = _tenant.BranchId,
-                    CompanyId = _tenant.CompanyId,
-                });
+                        BranchId = _tenant.BranchId,
+                        CompanyId = _tenant.CompanyId,
+                    });
+                }
 
                 // 🧾 VAT
                 if (vat > 0)
@@ -190,17 +187,20 @@ namespace GravyFoodsApi.MasjidServices.Accounting
 
 
                 // 📦 Inventory
-                journal.JournalDetails.Add(new JournalDetails
+                if (Payable > 0)
                 {
-                    AccountId = settings.InventoryAccountId,
-                    Description = "Inventory",
-                    Debit = 0,
-                    Credit = cost,
+                    journal.JournalDetails.Add(new JournalDetails
+                    {
+                        AccountId = settings.InventoryAccountId,
+                        Description = "Inventory",
+                        Debit = 0,
+                        Credit = cost,
 
-                    BranchId = _tenant.BranchId,
-                    CompanyId = _tenant.CompanyId,
-                    
-                });
+                        BranchId = _tenant.BranchId,
+                        CompanyId = _tenant.CompanyId,
+
+                    });
+                }
 
                 
 

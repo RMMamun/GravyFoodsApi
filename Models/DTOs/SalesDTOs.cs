@@ -28,7 +28,8 @@ namespace GravyFoodsApi.Models.DTOs
         public List<SalesDetailDto> SalesDetails { get; set; } = new();
 
         //public SalesPaymentParamDto SalesPaymentParam { get; set; } = new();
-        public List<PaymentMethodsDto> PaymentMethodsDto { get; set; } = new();
+        public List<PaymentMethodsDto> PaymentDto { get; set; } = new();
+
 
     }
 

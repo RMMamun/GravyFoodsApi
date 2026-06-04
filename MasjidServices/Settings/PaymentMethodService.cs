@@ -55,7 +55,7 @@ namespace GravyFoodsApi.MasjidServices
 
             _dto.MethodId = newEntry.MethodId;
 
-            //return ServiceResultWrapper<PaymentMethodsDto>.Ok(_dto);
+            //return ServiceResultWrapper<PaymentDto>.Ok(_dto);
             apiRes.Success = true;
             apiRes.Message = "Successfully create the Method";
             apiRes.Data = _dto;

@@ -108,7 +108,7 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<ApiResponse<CustomerInfoDTO?>> GetCustomerInfoById(string Id, string branchId, string companyId)
+        public async Task<ApiResponse<CustomerInfoDTO?>> GetCustomerInfoById(string Id)
         {
             ApiResponse<CustomerInfoDTO?> apiRes = new();
 
@@ -150,7 +150,9 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<ApiResponse<CustomerInfoDTO?>> GetCustomerByMobileOrEmail(string PhoneNo, string email, string branchId, string companyId)
+        
+
+        public async Task<ApiResponse<CustomerInfoDTO?>> GetCustomerByMobileOrEmail(string PhoneNo, string email)
         {
             ApiResponse<CustomerInfoDTO?> apiRes = new();
             try
@@ -244,7 +246,7 @@ namespace GravyFoodsApi.MasjidServices
             
         }
 
-        public async Task<ApiResponse<IEnumerable<CustomerInfoDTO>?>> GetAllCustomersAsync(string branchId, string companyId)
+        public async Task<ApiResponse<IEnumerable<CustomerInfoDTO>?>> GetAllCustomersAsync(string branchId)
         {
             ApiResponse<IEnumerable<CustomerInfoDTO>?> apiRes = new();
             try

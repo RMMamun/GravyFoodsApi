@@ -25,7 +25,7 @@ namespace GravyFoodsApi.Controllers
             //var created = await _repo.Create(customer);
             //return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
 
-            var customerExists = await _repository.GetCustomerByMobileOrEmail(customer.PhoneNo, customer.Email, customer.BranchId, customer.CompanyId);
+            var customerExists = await _repository.GetCustomerByMobileOrEmail(customer.PhoneNo, customer.Email);
             if (customerExists != null)
             {
                 return Ok(customerExists);
@@ -44,7 +44,7 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("{id}/{branchId}/{companyId}")]
         public async Task<IActionResult> GetCustomerById(string id, string branchId, string companyId)
         {
-            var product = await _repository.GetCustomerInfoById(id,branchId,companyId);
+            var product = await _repository.GetCustomerInfoById(id);
 
             if (product == null)
                 return NotFound(product);
@@ -56,7 +56,7 @@ namespace GravyFoodsApi.Controllers
         [HttpGet("{branchId}/{companyId}")]
         public async Task<IActionResult> GetAllCustomersAsync(string branchId, string companyId)
         {
-            var product = await _repository.GetAllCustomersAsync(branchId, companyId);
+            var product = await _repository.GetAllCustomersAsync(branchId);
 
             if (product == null)
                 return NotFound();
