@@ -57,7 +57,7 @@ namespace GravyFoodsApi.Controllers
             ApiResponse<List<CustomSelectionListDto>> apiRes = new ApiResponse<List<CustomSelectionListDto>>();
             try
             {
-                var res = await _cusRepo.GetAllCustomersAsync(branchId, companyId);
+                var res = await _cusRepo.GetAllCustomersAsync(branchId);
                 if (res.Success == false)
                 {
                     apiRes.Success = res.Success;

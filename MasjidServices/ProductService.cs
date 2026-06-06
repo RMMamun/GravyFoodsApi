@@ -203,6 +203,54 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
+
+        public async Task<ApiResponse<ProductDto>> GetProductCostByIdAsync(string ProductId)
+        {
+            ApiResponse<ProductDto> apiRes = new ApiResponse<ProductDto>();
+
+            try
+            {
+                Product? _product = await _context.Product
+                                .Where(w => w.BranchId == _tenant.BranchId && w.CompanyId == _tenant.CompanyId && w.ProductId == ProductId)
+                                .FirstOrDefaultAsync();
+
+                if (_product == null)
+                {
+                    apiRes.Success = false;
+                    apiRes.Message = "Product not found!";
+                    return apiRes;
+                }
+                else
+                {
+                    ProductDto productDtos = new ProductDto
+                    {
+                        ProductId = _product.ProductId,
+                        Name = _product.Name,
+                        Cost = _product.Cost,
+                        ExpiryDate = _product.ExpiryDate,
+                        IsSerialBased = _product.IsSerialBased,
+                        StockLimit = _product.StockLimit
+
+                    };
+
+                    apiRes.Data = productDtos;
+                    apiRes.Success = true;
+                    apiRes.Message = "Product retrieved successfully.";
+
+                    return apiRes;
+                }
+            }
+            catch (Exception ex)
+            {
+                apiRes.Success = false;
+                apiRes.Message = "Error retrieving product.";
+                apiRes.Errors = new List<string> { ex.Message };
+                return apiRes;
+            }
+        }
+
+
+
         public async Task<bool> UpdateProductByIdAsync(ProductDto _product)
         {
             try

@@ -3,6 +3,7 @@ using GravyFoodsApi.MasjidRepository;
 using GravyFoodsApi.MasjidRepository.Accounting;
 using GravyFoodsApi.Models.Accounting;
 using GravyFoodsApi.Models.DTOs;
+using GravyFoodsApi.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace GravyFoodsApi.MasjidServices.Accounting
@@ -11,11 +12,15 @@ namespace GravyFoodsApi.MasjidServices.Accounting
     {
         private readonly MasjidDBContext _context;
         private readonly ITenantContextRepository _tenant;
+        private readonly ICustomerInfoService _customerService;
+        private readonly IProductRepository _product;
 
-        public SalesAccountingService(MasjidDBContext context, ITenantContextRepository tenant)
+        public SalesAccountingService(MasjidDBContext context, ITenantContextRepository tenant, ICustomerInfoService customerService, IProductRepository product)
         {
             _context = context;
             _tenant = tenant;
+            _customerService = customerService;
+            _product = product;
         }
 
 
@@ -63,16 +68,26 @@ namespace GravyFoodsApi.MasjidServices.Accounting
 
 
                 decimal discount = (decimal)sale.TotalDiscountAmount;
-                decimal NetAmount = (decimal)sale.TotalAmount - discount;
+                //decimal NetAmount = (decimal)sale.TotalAmount - discount;
                 decimal vat = (decimal)sale.TotalVATAmount;   //sale.VatAmount
                 decimal tax = (decimal)sale.TotalTaxAmount;   //sale.TaxAmount
-                decimal Payable = (decimal)sale.TotalPayableAmount; // NetAmount - vat - tax;
-                decimal PaidAmount = 0; // (decimal)sale.TotalPaidAmount;   //*** paid amount will be taken from the payment module. sometime customer pay partially some in cash & some in card or in mobile banking. Need to handle this
+                decimal Payable = (decimal)sale.TotalPayableAmount; 
+                decimal PaidAmount = (decimal)sale.TotalPaidAmount; 
                 decimal cost = 0;  //sale.TotalCost
                 
-                //decimal dueAmount = (decimal)sale.TotalAmount - (decimal)sale.TotalPaidAmount;
+                decimal dueAmount = (decimal)sale.DueAmount;
 
-                ////--DEBIT SIDE ------------------------------------------------------
+                //Find out COGS (Cost of Goods Sold)
+                foreach (var item in sale.SalesDetails)
+                {
+                    var product = await _product.GetProductCostByIdAsync(item.ProductId);
+                    if (product.Data != null)
+                    {
+                        cost = cost + ((decimal)product.Data.Cost * (decimal)item.Quantity);
+                    }
+                }
+
+                ////--DEBIT SIDE  ==============================================================================================
                 //// 💰 Debit (Cash or Receivable)
 
                 //CASH, BANK or Mobile banking Payment
@@ -95,21 +110,38 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 }
 
 
-                //Account Receivable (Due) Dr
-                if ((decimal)sale.TotalPayableAmount != PaidAmount)
+                //Account Receivable (Due) Dr ----------------------------------------------------------------
+                if (dueAmount > 0)
                 {
+                    Guid? AccId = Guid.NewGuid();
+                    
+                    if ( sale.CustomerId != null)
+                    {
+                        var customer = await _customerService.GetCustomerInfoById(sale.CustomerId);
+                        if (customer != null)
+                        {
+                            AccId = (Guid)customer.Data.AccountId;
+                        }
+                    }
+                    else
+                    {
+                        AccId = settings.ReceivableAccountId;
+                    }
+                        
+
                     journal.JournalDetails.Add(new JournalDetails
                     {
-                        AccountId = settings.ReceivableAccountId,
-                        Description = "Accounts Receivable",
-                        Debit = NetAmount - PaidAmount,
+                        AccountId = AccId,
+                        Description = "Accounts Receivable on Sales No: " + sale.InvoiceNo,
+                        Debit = dueAmount,
                         Credit = 0,
                         BranchId = _tenant.BranchId,
                         CompanyId = _tenant.CompanyId,
                     });
                 }
 
-                //Discount 
+
+                //Discount ----------------------------------------------------------------------------------
                 if (discount > 0)
                 {
                     journal.JournalDetails.Add(new JournalDetails
@@ -137,9 +169,10 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                         CompanyId = _tenant.CompanyId,
                     });
                 }
-                //----------------------------------------------------
+                //===============================================DEBIT SIDE END======================================================================
 
-                // CREDIT SIDE
+
+                // CREDIT SIDE     ====================================================================================================
                 // 💵 Sales Revenue
                 if (Payable > 0)
                 {
@@ -187,7 +220,7 @@ namespace GravyFoodsApi.MasjidServices.Accounting
 
 
                 // 📦 Inventory
-                if (Payable > 0)
+                if (cost > 0)
                 {
                     journal.JournalDetails.Add(new JournalDetails
                     {
@@ -202,7 +235,8 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                     });
                 }
 
-                
+                //=====================================================================================================================
+
 
                 _context.JournalInfo.Add(journal);
                 await _context.SaveChangesAsync();

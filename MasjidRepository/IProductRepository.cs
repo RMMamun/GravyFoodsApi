@@ -15,6 +15,8 @@ namespace GravyFoodsApi.Repositories
         Task<ApiResponse<ProductDto>> GetProductByIdAsync(string ProductId, string branchId, string companyId);
         Task<ApiResponse<ProductDto>> GetProductByBarcodeAsync(string ProductId, string Barcode, string branchId, string companyId );
 
+        Task<ApiResponse<ProductDto>> GetProductCostByIdAsync(string ProductId);
+
         Task<bool> UpdateProductByIdAsync(ProductDto product);
 
         Task<ApiResponse<ProductDto>> AddProductAsync(ProductDto product);
