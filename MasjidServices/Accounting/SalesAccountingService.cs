@@ -113,12 +113,12 @@ namespace GravyFoodsApi.MasjidServices.Accounting
                 //Account Receivable (Due) Dr ----------------------------------------------------------------
                 if (dueAmount > 0)
                 {
-                    Guid? AccId = Guid.NewGuid();
+                    Guid AccId = Guid.NewGuid();
                     
                     if ( sale.CustomerId != null)
                     {
                         var customer = await _customerService.GetCustomerInfoById(sale.CustomerId);
-                        if (customer != null)
+                        if (customer.Data != null && customer.Data.AccountId != null)
                         {
                             AccId = (Guid)customer.Data.AccountId;
                         }
