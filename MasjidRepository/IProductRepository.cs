@@ -10,10 +10,10 @@ namespace GravyFoodsApi.Repositories
 {
     public interface IProductRepository : IRepository<Product>
     {
-        Task<IEnumerable<ProductDto>> GetProductsWithDetailsAsync(string branchId, string companyId);
+        Task<IEnumerable<ProductDto>> GetProductsWithDetailsAsync();
 
-        Task<ApiResponse<ProductDto>> GetProductByIdAsync(string ProductId, string branchId, string companyId);
-        Task<ApiResponse<ProductDto>> GetProductByBarcodeAsync(string ProductId, string Barcode, string branchId, string companyId );
+        Task<ApiResponse<ProductDto>> GetProductByIdAsync(string ProductId);
+        Task<ApiResponse<ProductDto>> GetProductByBarcodeAsync(string ProductId, string Barcode);
 
         Task<ApiResponse<ProductDto>> GetProductCostByIdAsync(string ProductId);
 
@@ -21,7 +21,7 @@ namespace GravyFoodsApi.Repositories
 
         Task<ApiResponse<ProductDto>> AddProductAsync(ProductDto product);
 
-        Task<bool> DeleteProductAsync(string ProductId, string branchId, string companyId);
+        Task<bool> DeleteProductAsync(string ProductId);
     }
 
     

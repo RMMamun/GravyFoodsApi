@@ -11,10 +11,10 @@ namespace GravyFoodsApi.Repositories
     {
         Task<ProductUnits> CreateUnitAsync(ProductUnitsDto  productUnits);
         Task<bool> UpdateUnitAsync(ProductUnitsDto productUnits);
-        Task<ProductUnitsDto?> GetUnitsById(string unitId, string branchId, string companyId);
-        Task<IEnumerable<ProductUnitsDto>> GetAllUnitsAsync(string branchId, string companyId);
+        Task<ProductUnitsDto?> GetUnitByIdAsync(string unitId);
+        Task<IEnumerable<ProductUnitsDto>> GetAllUnitsAsync();
 
-        Task<bool> DeleteUnitAsync(string unitId,  string branchId, string companyId);
+        Task<bool> DeleteUnitAsync(string unitId);
     }
 
 

@@ -485,7 +485,7 @@ namespace GravyFoodsApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Quantity = table.Column<double>(type: "float", nullable: false),
-                    UnitType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PricePerUnit = table.Column<double>(type: "float", nullable: false),
                     DiscountPerUnit = table.Column<double>(type: "float", nullable: false),
                     DiscountAmountPerUnit = table.Column<double>(type: "float", nullable: false),

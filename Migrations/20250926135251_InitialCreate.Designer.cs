@@ -693,7 +693,7 @@ namespace GravyFoodsApi.Migrations
                     b.Property<decimal>("TotalVAT")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("UnitType")
+                    b.Property<string>("Unit")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

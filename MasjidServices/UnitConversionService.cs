@@ -1,15 +1,8 @@
 ﻿using GravyFoodsApi.Data;
 using GravyFoodsApi.MasjidRepository;
-using GravyFoodsApi.Models;
 using GravyFoodsApi.Models.DTOs;
 using GravyFoodsApi.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace GravyFoodsApi.MasjidServices
@@ -75,7 +68,7 @@ namespace GravyFoodsApi.MasjidServices
         {
             try
             {
-                var unitInfo = await _UnitRepo.GetUnitsById(UnitId, _tenant.BranchId, _tenant.CompanyId);
+                var unitInfo = await _UnitRepo.GetUnitByIdAsync(UnitId);
                 if (unitInfo == null)
                 {
                     //response.Success = false;

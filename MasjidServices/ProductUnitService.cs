@@ -31,7 +31,7 @@ namespace GravyFoodsApi.MasjidServices
             {
                 var newUnit = new ProductUnits
                 {
-                    UnitId = await GenerateUnitId(unitDto.CompanyId),
+                    UnitId = await GenerateUnitId(_tenant.CompanyId),
                     UnitName = unitDto.UnitName,
                     UnitDescription = unitDto.UnitDescription,
                     UnitSegments = unitDto.UnitSegments,
@@ -77,8 +77,6 @@ namespace GravyFoodsApi.MasjidServices
                 unit.UnitSegments = unitdto.UnitSegments;
                 unit.UnitSegmentsRatio = unitdto.UnitSegmentsRatio;
                 unit.IsActive = unitdto.IsActive;
-                unit.BranchId = unitdto.BranchId;
-                unit.CompanyId = unitdto.CompanyId;
 
                 _context.ProductUnits.Update(unit);
                 await _context.SaveChangesAsync();
@@ -101,7 +99,7 @@ namespace GravyFoodsApi.MasjidServices
 
 
 
-        public async Task<ProductUnitsDto?> GetUnitsById(string unitId, string branchId, string companyId)
+        public async Task<ProductUnitsDto?> GetUnitByIdAsync(string unitId)
         {
             try
             {
@@ -119,8 +117,6 @@ namespace GravyFoodsApi.MasjidServices
                     UnitSegments = p.UnitSegments,
                     UnitSegmentsRatio = p.UnitSegmentsRatio,
                     IsActive = p.IsActive,
-                    BranchId = p.BranchId,
-                    CompanyId = p.CompanyId
 
                 };
             }
@@ -132,7 +128,7 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<IEnumerable<ProductUnitsDto>> GetAllUnitsAsync(string branchId, string companyId)
+        public async Task<IEnumerable<ProductUnitsDto>> GetAllUnitsAsync()
         {
             try
             {
@@ -145,9 +141,6 @@ namespace GravyFoodsApi.MasjidServices
                     UnitSegments = p.UnitSegments,
                     UnitSegmentsRatio = p.UnitSegmentsRatio,
                     IsActive = p.IsActive,
-                    BranchId = p.BranchId,
-                    CompanyId = p.CompanyId,
-
 
                 });
 
@@ -159,7 +152,7 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<bool> DeleteUnitAsync(string unitId, string branchId, string companyId)
+        public async Task<bool> DeleteUnitAsync(string unitId)
         {
             try
             {
@@ -180,5 +173,8 @@ namespace GravyFoodsApi.MasjidServices
             }
 
         }
+
+
+
     }
 }

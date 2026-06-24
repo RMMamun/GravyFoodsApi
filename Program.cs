@@ -138,6 +138,7 @@ builder.Services.AddScoped<ITaskInfoRepository, TaskInfoService>();
 builder.Services.AddScoped<IJournalRepository, JournalService>();
 
 builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodService>();
+builder.Services.AddScoped<IUnitPriceConversionRepository, UnitPriceConversionService>();
 
 
 //2028 08 21 <-

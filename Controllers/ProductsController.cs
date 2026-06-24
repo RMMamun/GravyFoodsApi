@@ -24,15 +24,15 @@ namespace MasjidWorldwide.Controllers
         [HttpGet("{branchId}/{companyId}")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll(string branchId, string companyId)
         {
-            var products = await _repository.GetProductsWithDetailsAsync(branchId, companyId);
+            var products = await _repository.GetProductsWithDetailsAsync();
             return Ok(products);
         }
 
 
         [HttpGet("{productId}/{branchId}/{companyId}")]
-        public async Task<ActionResult<ApiResponse<ProductDto>>> GetProductByIdAsync(string productId, string branchId, string companyId)
+        public async Task<ActionResult<ApiResponse<ProductDto>>> GetProductByIdAsync(string productId)
         {
-            var product = await _repository.GetProductByIdAsync(productId, branchId, companyId);
+            var product = await _repository.GetProductByIdAsync(productId);
             if (product.Success == false) return NotFound(product);
             return Ok(product);
         }
@@ -46,9 +46,9 @@ namespace MasjidWorldwide.Controllers
         //}
 
         [HttpGet("by-barcode/{productId}/{barcode}/{branchId}/{companyId}")]
-        public async Task<ActionResult<ApiResponse<ProductDto>>> GetProductByBarcode(string productId, string barcode, string branchId, string companyId)
+        public async Task<ActionResult<ApiResponse<ProductDto>>> GetProductByBarcode(string productId, string barcode)
         {
-            var product = await _repository.GetProductByBarcodeAsync(productId, barcode, branchId, companyId);
+            var product = await _repository.GetProductByBarcodeAsync(productId, barcode);
             if (product.Success == false) return NotFound(product);
             return Ok(product);
         }
@@ -98,7 +98,7 @@ namespace MasjidWorldwide.Controllers
         [HttpDelete("{id}/{branchId}/{companyId}")]
         public async Task<IActionResult> Delete(string id, string branchId, string companyId)
         {
-            await _repository.DeleteProductAsync(id, branchId, companyId);
+            await _repository.DeleteProductAsync(id);
             return NoContent();
         }
     }

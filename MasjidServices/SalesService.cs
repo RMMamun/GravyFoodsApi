@@ -76,7 +76,7 @@ namespace GravyFoodsApi.MasjidServices
                             {
                                 ProductId = d.ProductId,
                                 Quantity = d.Quantity,
-                                UnitType = d.UnitType,
+                                Unit = d.Unit,
                                 PricePerUnit = d.PricePerUnit,
                                 DiscountPerUnit = d.DiscountPerUnit,
                                 DiscountType = d.DiscountType,
@@ -177,7 +177,7 @@ namespace GravyFoodsApi.MasjidServices
                 ProductStockDto stock = new ProductStockDto();
                 foreach (var item in sale.SalesDetails)
                 {
-                    response = await _StockRepo.UpdateProductStockAsync(false,item.ProductId, item.Quantity, item.UnitType, item.UnitId, item.WHId, _tenant.BranchId, _tenant.CompanyId);
+                    response = await _StockRepo.UpdateProductStockAsync(false,item.ProductId, item.Quantity, item.Unit, item.UnitId, item.WHId, _tenant.BranchId, _tenant.CompanyId);
                 }
 
                 response.Success = true;
@@ -223,7 +223,7 @@ namespace GravyFoodsApi.MasjidServices
         //        {
         //            ProductId = d.ProductId,
         //            Quantity = d.Quantity,
-        //            UnitType = d.UnitType,
+        //            Unit = d.Unit,
         //            PricePerUnit = d.PricePerUnit,
         //            DiscountPerUnit = d.DiscountPerUnit,
         //            DiscountType = d.DiscountType
@@ -308,7 +308,7 @@ namespace GravyFoodsApi.MasjidServices
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
-                        UnitType = d.UnitType,
+                        Unit = d.Unit,
                         UnitId = d.UnitId,
                         PricePerUnit = d.PricePerUnit,
                         DiscountPerUnit = d.DiscountPerUnit,
@@ -402,7 +402,7 @@ namespace GravyFoodsApi.MasjidServices
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
-                        UnitType = d.UnitType,
+                        Unit = d.Unit,
                         UnitId = d.UnitId,
                         PricePerUnit = d.PricePerUnit,
                         DiscountPerUnit = d.DiscountPerUnit,
@@ -470,7 +470,7 @@ namespace GravyFoodsApi.MasjidServices
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
-                        UnitType = d.UnitType,
+                        Unit = d.Unit,
                         UnitId = d.UnitId,
                         PricePerUnit = d.PricePerUnit,
                         DiscountPerUnit = d.DiscountPerUnit,
@@ -535,7 +535,7 @@ namespace GravyFoodsApi.MasjidServices
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
-                        UnitType = d.UnitType,
+                        Unit = d.Unit,
                         UnitId = d.UnitId,
                         PricePerUnit = d.PricePerUnit,
                         DiscountPerUnit = d.DiscountPerUnit,

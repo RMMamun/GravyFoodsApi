@@ -27,7 +27,7 @@ namespace GravyFoodsApi.MasjidServices
             _tenant = tenant;
         }
 
-        public async Task<IEnumerable<ProductDto>> GetProductsWithDetailsAsync(string branchId, string companyId)
+        public async Task<IEnumerable<ProductDto>> GetProductsWithDetailsAsync()
         {
             try
             {
@@ -63,7 +63,7 @@ namespace GravyFoodsApi.MasjidServices
 
                 //});
 
-                var products = await GetProductsDetailsAsyc(_tenant.BranchId, _tenant.CompanyId);
+                var products = await GetProductsDetailsAsyc();
                 var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
 
                 return productDtos;
@@ -76,7 +76,7 @@ namespace GravyFoodsApi.MasjidServices
 
         }
 
-        public async Task<ApiResponse<ProductDto>> GetProductByBarcodeAsync(string ProductId,string Barcode, string branchId, string companyId)
+        public async Task<ApiResponse<ProductDto>> GetProductByBarcodeAsync(string ProductId,string Barcode)
         {
             ApiResponse<ProductDto> apiRes = new ApiResponse<ProductDto>();
 
@@ -103,7 +103,7 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<IEnumerable<Product?>> GetProductsDetailsAsyc(string branchId, string companyId)
+        public async Task<IEnumerable<Product?>> GetProductsDetailsAsyc()
         {
             try
             {
@@ -128,7 +128,7 @@ namespace GravyFoodsApi.MasjidServices
             }
         }
 
-        public async Task<ApiResponse<ProductDto>> GetProductByIdAsync(string ProductId, string branchId, string companyId)
+        public async Task<ApiResponse<ProductDto>> GetProductByIdAsync(string ProductId)
         {
             ApiResponse<ProductDto> apiRes = new ApiResponse<ProductDto>();
 
@@ -385,7 +385,7 @@ namespace GravyFoodsApi.MasjidServices
         }
 
 
-        public async Task<bool> DeleteProductAsync(string ProductId, string branchId, string companyId)
+        public async Task<bool> DeleteProductAsync(string ProductId)
         {
 
             string BranchId = _tenant.BranchId;

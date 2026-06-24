@@ -16,10 +16,17 @@ namespace GravyFoodsApi.Controllers
             _repository = repository;
         }
 
-        [HttpGet("{branchId}/{companyId}")]
-        public async Task<ActionResult<IEnumerable<ProductUnits>>> GetAll(string branchId, string companyId)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProductUnits>>> GetAll()
         {
-            var units = await _repository.GetAllUnitsAsync(branchId, companyId);
+            var units = await _repository.GetAllUnitsAsync();
+            return Ok(units);
+        }
+
+        [HttpGet("GetUnitByIdAsync/{UnitId}")]
+        public async Task<ActionResult<IEnumerable<ProductUnits>>> GetUnitByIdAsync(string UnitId)
+        {
+            var units = await _repository.GetUnitByIdAsync(UnitId);
             return Ok(units);
         }
 
@@ -46,7 +53,7 @@ namespace GravyFoodsApi.Controllers
         [HttpPut]
         public async Task<IActionResult> Update(ProductUnitsDto unit)
         {
-            var existed = await _repository.GetUnitsById(unit.UnitId, unit.BranchId, unit.CompanyId);
+            var existed = await _repository.GetUnitByIdAsync(unit.UnitId);
             if (existed == null)
                 return NotFound("Unit not found");
 
@@ -57,12 +64,12 @@ namespace GravyFoodsApi.Controllers
         [HttpDelete("{unitId}/{branchId}/{companyId}")]
         public async Task<ActionResult<bool>> Delete(string unitId, string branchId, string companyId)
         {
-            var isExisted = await _repository.GetUnitsById(unitId, branchId, companyId);
+            var isExisted = await _repository.GetUnitByIdAsync(unitId);
             if (isExisted == null)
             {
                 return NotFound("Unit not found");
             }
-            var units = await _repository.DeleteUnitAsync(unitId, branchId, companyId);
+            var units = await _repository.DeleteUnitAsync(unitId);
             return Ok(units);
         }
 

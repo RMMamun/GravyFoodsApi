@@ -24,7 +24,7 @@
         public string ProductId { get; set; } = string.Empty;
         public string ProductName { get; set; } = string.Empty;
         public double Quantity { get; set; }
-        public string UnitType { get; set; }
+        public string Unit { get; set; }
 
         public string UnitId { get; set; }
         public string WHId { get; set; }

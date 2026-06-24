@@ -24,7 +24,7 @@ namespace GravyFoodsApi.Models
 
         [Required]
         [StringLength(20)]
-        public string UnitType { get; set; } = string.Empty;
+        public string Unit { get; set; } = string.Empty;
 
         public required string UnitId { get; set; } = string.Empty;
         public required string WHId { get; set; } = string.Empty;

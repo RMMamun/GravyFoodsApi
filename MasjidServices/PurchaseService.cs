@@ -69,7 +69,7 @@ namespace GravyFoodsApi.MasjidServices
                             {
                                 ProductId = d.ProductId,
                                 Quantity = d.Quantity,
-                                UnitType = d.UnitType,
+                                Unit = d.Unit,
                                 UnitId = d.UnitId,
                                 WHId = d.WHId,
                                 PricePerUnit = d.PricePerUnit,
@@ -174,7 +174,7 @@ namespace GravyFoodsApi.MasjidServices
                 foreach (var item in purDto.PurchaseDetails)
                 {
 
-                    response = await _StockRepo.UpdateProductStockAsync(true, item.ProductId, item.Quantity, item.UnitType, item.UnitId, item.WHId, _tenant.BranchId, _tenant.CompanyId);
+                    response = await _StockRepo.UpdateProductStockAsync(true, item.ProductId, item.Quantity, item.Unit, item.UnitId, item.WHId, _tenant.BranchId, _tenant.CompanyId);
                 }
 
                 response.Success = true;
@@ -220,7 +220,7 @@ namespace GravyFoodsApi.MasjidServices
         //        {
         //            ProductId = d.ProductId,
         //            Quantity = d.Quantity,
-        //            UnitType = d.UnitType,
+        //            Unit = d.Unit,
         //            PricePerUnit = d.PricePerUnit,
         //            DiscountPerUnit = d.DiscountPerUnit,
         //            DiscountType = d.DiscountType
@@ -322,7 +322,7 @@ namespace GravyFoodsApi.MasjidServices
                             ProductId = d.ProductId.ToString(),
                             ProductName = d.Product.Name,
                             Quantity = d.Quantity,
-                            UnitType = d.UnitType,
+                            Unit = d.Unit,
                             UnitId = d.UnitId,
                             WHId = d.WHId,
                             PricePerUnit = d.PricePerUnit,
@@ -382,7 +382,7 @@ namespace GravyFoodsApi.MasjidServices
         //                ProductId = d.ProductId.ToString(),
         //                ProductName = d.Product.Name,   // assumes navigation to Product
         //                Quantity = d.Quantity,
-        //                UnitType = d.UnitType,
+        //                Unit = d.Unit,
         //                UnitId = d.UnitId,
         //                WHId = d.WHId,
         //                PricePerUnit = d.PricePerUnit,
@@ -447,7 +447,7 @@ namespace GravyFoodsApi.MasjidServices
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
-                        UnitType = d.UnitType,
+                        Unit = d.Unit,
                         UnitId = d.UnitId,
                         WHId = d.WHId,
                         PricePerUnit = d.PricePerUnit,
