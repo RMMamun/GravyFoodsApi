@@ -33,6 +33,7 @@ namespace GravyFoodsApi.Models
 
         public string DiscountType { get; set; } = "%"; // Default to Percentage and Amount can be another option
 
+        public int SequenceNo { get; set; } = 0;
 
         [ForeignKey(nameof(ProductId))]
         public Product Product { get; set; } = null!;

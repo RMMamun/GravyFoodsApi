@@ -54,5 +54,7 @@ namespace GravyFoodsApi.Models.DTOs
 
         public string WHId { get; set; } = string.Empty;
 
+        public int SequenceNo { get; set; } = 0;
+
     }
 }

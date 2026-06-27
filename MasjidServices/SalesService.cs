@@ -74,6 +74,7 @@ namespace GravyFoodsApi.MasjidServices
 
                             SalesDetails = saleDto.SalesDetails.Select(d => new SalesDetails
                             {
+                                SequenceNo = d.SequenceNo,
                                 ProductId = d.ProductId,
                                 Quantity = d.Quantity,
                                 Unit = d.Unit,
@@ -305,6 +306,7 @@ namespace GravyFoodsApi.MasjidServices
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
                         SalesId = d.SalesId.ToString(),
+                        SequenceNo = d.SequenceNo,
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
@@ -318,6 +320,7 @@ namespace GravyFoodsApi.MasjidServices
                         TotalVAT = d.TotalVAT,
                         TotalTax = d.TotalTax,
                         DiscountType = d.DiscountType,
+                        WHId = d.WHId,
 
                     }).ToList()
                 })
@@ -399,6 +402,7 @@ namespace GravyFoodsApi.MasjidServices
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
                         SalesId = d.SalesId.ToString(),
+                        SequenceNo = d.SequenceNo,
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
@@ -411,8 +415,9 @@ namespace GravyFoodsApi.MasjidServices
                         VATPerUnit = d.VATPerUnit,
                         TotalVAT = d.TotalVAT,
                         DiscountType = d.DiscountType,
+                        WHId = d.WHId,
 
-                        }).ToList()
+                    }).ToList()
                     })
                     .AsNoTracking()
                 .ToListAsync();
@@ -467,6 +472,7 @@ namespace GravyFoodsApi.MasjidServices
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
                         SalesId = d.SalesId.ToString(),
+                        SequenceNo = d.SequenceNo,
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
@@ -480,7 +486,7 @@ namespace GravyFoodsApi.MasjidServices
                         TotalVAT = d.TotalVAT,
                         TotalTax = d.TotalTax,
                         DiscountType = d.DiscountType,
-                    
+                        WHId = d.WHId,
 
                     }).ToList()
                 })
@@ -532,6 +538,7 @@ namespace GravyFoodsApi.MasjidServices
                     SalesDetails = s.SalesDetails.Select(d => new SalesDetailDto
                     {
                         SalesId = d.SalesId,
+                        SequenceNo = d.SequenceNo,
                         ProductId = d.ProductId.ToString(),
                         ProductName = d.Product.Name,   // assumes navigation to Product
                         Quantity = d.Quantity,
