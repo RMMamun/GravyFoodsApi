@@ -9,6 +9,7 @@ using GravyFoodsApi.MasjidRepository.TaskManager;
 using GravyFoodsApi.MasjidServices;
 using GravyFoodsApi.MasjidServices.Accounting;
 using GravyFoodsApi.MasjidServices.RegContext;
+using GravyFoodsApi.MasjidServices.Settings;
 using GravyFoodsApi.MasjidServices.TaskManager;
 using GravyFoodsApi.Repositories;
 
@@ -139,6 +140,7 @@ builder.Services.AddScoped<IJournalRepository, JournalService>();
 
 builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodService>();
 builder.Services.AddScoped<IUnitPriceConversionRepository, UnitPriceConversionService>();
+
 
 
 //2028 08 21 <-

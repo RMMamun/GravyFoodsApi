@@ -58,7 +58,7 @@ namespace GravyFoodsApi.MasjidServices
                     new Claim(JwtRegisteredClaimNames.Sub, request.Username.ToString()),
                     new Claim("companyId", request.CompanyCode.ToString()),
                     new Claim("branchId", request.BranchCode.ToString()),
-                    
+
 
                 };
 
@@ -80,8 +80,8 @@ namespace GravyFoodsApi.MasjidServices
 
         private async Task GenerateRefreshTocken()
         {
-            var refreshToken = RefreshTokenGenerator.Generate();
-            var refreshTokenHash = RefreshTokenGenerator.Hash(refreshToken);
+            //var refreshToken = RefreshTokenGenerator.Generate();
+            //var refreshTokenHash = RefreshTokenGenerator.Hash(refreshToken);
 
             //_db.RefreshTokens.Add(new RefreshTokens
             //{

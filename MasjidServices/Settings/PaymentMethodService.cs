@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Collections.Immutable;
 
-namespace GravyFoodsApi.MasjidServices
+namespace GravyFoodsApi.MasjidServices.Settings
 {
     public class PaymentMethodService : IPaymentMethodRepository
     {
